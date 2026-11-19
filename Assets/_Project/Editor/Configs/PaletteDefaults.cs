@@ -46,6 +46,8 @@ namespace FB.Editor.Configs
             yield return Entry(PaletteColor.Window, "#BDE6FF", unlit: true);
             yield return Entry(PaletteColor.Bulb, "#FFF3B8", unlit: true);
             yield return Entry(PaletteColor.Player, "#FF8C1A");
+            yield return Entry(PaletteColor.Hose, "#D7263D");
+            yield return Entry(PaletteColor.Water, "#7FD4FF", unlit: true);
         }
 
         private static PaletteEntry Entry(PaletteColor id, string hex, bool unlit = false)

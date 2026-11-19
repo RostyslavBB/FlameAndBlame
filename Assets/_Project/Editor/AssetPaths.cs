@@ -9,6 +9,9 @@ namespace FB.Editor
         public const string Prefabs = Root + "/Prefabs";
         public const string Scenes = Root + "/Scenes";
         public const string Resources = Root + "/Resources";
+        public const string Textures = Root + "/Textures";
+        public const string SplashPrefab = Prefabs + "/WaterSplash.prefab";
+        public const string WaterParticleMaterial = Materials + "/M_WaterParticle.mat";
 
         public const string GameScene = Scenes + "/Game.unity";
         public const string PlayerPrefab = Prefabs + "/Player.prefab";

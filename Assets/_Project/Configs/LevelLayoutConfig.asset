@@ -18,6 +18,8 @@ MonoBehaviour:
   _ceilingColor: 1
   _spawnPosition: {x: -7.2, y: 0, z: -1}
   _spawnYaw: 90
+  _hoseAnchor: {x: -6.6, y: 0.85, z: 2.2}
+  _defaultsVersion: 2
   _rooms:
   - _name: Hall
     _min: {x: -8, y: -2.5}
@@ -52,6 +54,36 @@ MonoBehaviour:
     _width: 2
     _height: 2.3
   _props:
+  - _id: Tap
+    _position: {x: -6.6, y: 0, z: 2.4}
+    _yaw: 0
+    _isDynamic: 0
+    _mass: 1
+    _parts:
+    - _shape: 0
+      _position: {x: 0, y: 0.9, z: 0}
+      _scale: {x: 0.28, y: 0.34, z: 0.04}
+      _euler: {x: 0, y: 0, z: 0}
+      _color: 9
+      _noCollider: 0
+    - _shape: 1
+      _position: {x: 0, y: 0.85, z: -0.1}
+      _scale: {x: 0.07, y: 0.2, z: 0.07}
+      _euler: {x: 90, y: 0, z: 0}
+      _color: 9
+      _noCollider: 1
+    - _shape: 1
+      _position: {x: 0, y: 1, z: -0.08}
+      _scale: {x: 0.2, y: 0.03, z: 0.2}
+      _euler: {x: 90, y: 0, z: 0}
+      _color: 19
+      _noCollider: 1
+    - _shape: 1
+      _position: {x: 0, y: 0.85, z: -0.2}
+      _scale: {x: 0.11, y: 0.06, z: 0.11}
+      _euler: {x: 90, y: 0, z: 0}
+      _color: 23
+      _noCollider: 1
   - _id: EntryDoor
     _position: {x: -7.9, y: 0, z: 1}
     _yaw: 0

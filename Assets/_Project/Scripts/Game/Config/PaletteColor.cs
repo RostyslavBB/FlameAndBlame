@@ -25,6 +25,8 @@ namespace FB.Game.Config
         Accent,
         Window,
         Bulb,
-        Player
+        Player,
+        Hose,
+        Water
     }
 }

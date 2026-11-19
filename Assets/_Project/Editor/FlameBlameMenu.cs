@@ -1,5 +1,7 @@
 using FB.Editor.Building;
 using FB.Editor.Configs;
+using FB.Game.Config;
+using FB.Game.Hose;
 using FB.Game.Player;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -16,13 +18,19 @@ namespace FB.Editor
         [MenuItem(Menu + "Build All", priority = 0)]
         public static void BuildAll()
         {
+            LayerSetup.Ensure();
             ConfigAssets configs = ConfigAssets.Ensure();
-            LevelBuilder level = CreateLevelBuilder(configs);
-            PlayerPrefabBuilder.Build();
+            MaterialLibrary materials = new MaterialLibrary(configs.Palette);
+            MeshLibrary meshes = new MeshLibrary();
+            Material water = WaterParticleFactory.CreateMaterial(TextureLibrary.Droplet(),
+                configs.Palette.Get(PaletteColor.Water));
+
+            PlayerPrefabBuilder.Build(materials, meshes, water);
+            SplashPrefabBuilder.Build(water);
             ProjectContextBuilder.Build();
-            GameSceneBuilder.Build(level);
+            GameSceneBuilder.Build(new LevelBuilder(configs.Layout, materials, meshes));
             AssetDatabase.SaveAssets();
-            Debug.Log("[Build] Build All finished: configs, materials, meshes, prefabs, Game.unity.");
+            Debug.Log("[Build] Build All finished: configs, materials, meshes, textures, prefabs, Game.unity.");
         }
 
         [MenuItem(Menu + "Rebuild Level", priority = 1)]
@@ -36,6 +44,11 @@ namespace FB.Editor
                 if (root.TryGetComponent(out PlayerBody player))
                 {
                     GameSceneBuilder.PlacePlayer(player.transform, configs);
+                }
+
+                if (root.name == HoseIds.Anchor)
+                {
+                    GameSceneBuilder.PlaceHoseAnchor(root.transform, configs);
                 }
             }
 
@@ -63,6 +76,16 @@ namespace FB.Editor
         public static void BatchBuildAll()
         {
             BuildAll();
+            EditorApplication.Exit(0);
+        }
+
+        /// <summary>Batch mode: Zenject validation of Game.unity (missing bindings fail without entering Play Mode).</summary>
+        public static void BatchValidateScene()
+        {
+            EditorSceneManager.OpenScene(AssetPaths.GameScene, OpenSceneMode.Single);
+            // Throws (exit code 1) on any missing binding or resolve error.
+            Zenject.Internal.ZenUnityEditorUtil.ValidateCurrentSceneSetup();
+            Debug.Log("[Build] Zenject validation: OK");
             EditorApplication.Exit(0);
         }
 

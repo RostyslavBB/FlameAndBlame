@@ -1,17 +1,18 @@
+using FB.Game.Common;
 using FB.Game.Player;
 using UnityEditor;
 using UnityEngine;
 
 namespace FB.Editor.Building
 {
-    /// <summary>Player prefab: frictionless capsule rigidbody + camera pivot at eye height.</summary>
+    /// <summary>Player prefab: frictionless capsule rigidbody, camera pivot at eye height, hose rig.</summary>
     internal static class PlayerPrefabBuilder
     {
         private const float Height = 1.8f;
         private const float Radius = 0.35f;
         private const float EyeHeight = 1.62f;
 
-        public static void Build()
+        public static void Build(MaterialLibrary materials, MeshLibrary meshes, Material waterMaterial)
         {
             GameObject root = new GameObject("Player");
 
@@ -46,6 +47,9 @@ namespace FB.Editor.Building
             EditorAssetUtility.SetReference(player, "_collider", capsule);
             EditorAssetUtility.SetReference(player, "_cameraPivot", pivot);
             EditorAssetUtility.SetReference(player, "_camera", camera);
+
+            HoseRigBuilder.Attach(root, cameraObject.transform, materials, meshes, waterMaterial);
+            LayerSetup.SetLayerRecursively(root, GameLayers.Player);
 
             EditorAssetUtility.EnsureFolder(AssetPaths.Prefabs);
             PrefabUtility.SaveAsPrefabAsset(root, AssetPaths.PlayerPrefab);

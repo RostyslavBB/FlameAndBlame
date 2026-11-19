@@ -5,6 +5,7 @@
         "FB.Core",
         "FB.Game",
         "Zenject",
+        "Zenject-Editor",
         "UniTask",
         "Unity.TextMeshPro",
         "Unity.RenderPipelines.Universal.Runtime",

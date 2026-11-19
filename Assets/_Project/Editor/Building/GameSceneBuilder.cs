@@ -1,4 +1,5 @@
 using FB.Editor.Configs;
+using FB.Game.Hose;
 using FB.Game.Installers;
 using FB.Game.Player;
 using UnityEditor;
@@ -10,7 +11,7 @@ using Zenject;
 
 namespace FB.Editor.Building
 {
-    /// <summary>Creates Game.unity from scratch: light, ambient, level, player, SceneContext.</summary>
+    /// <summary>Creates Game.unity from scratch: light, ambient, level, player, hose anchor, SceneContext.</summary>
     internal static class GameSceneBuilder
     {
         public static void Build(LevelBuilder level)
@@ -26,12 +27,20 @@ namespace FB.Editor.Building
             GameObject player = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab, scene);
             PlacePlayer(player.transform, configs);
 
+            GameObject anchor = new GameObject(HoseIds.Anchor);
+            PlaceHoseAnchor(anchor.transform, configs);
+            WaterSplash splashPrefab = AssetDatabase.LoadAssetAtPath<WaterSplash>(AssetPaths.SplashPrefab);
+
             GameObject contextObject = new GameObject("SceneContext");
             GameplayInstaller installer = contextObject.AddComponent<GameplayInstaller>();
             EditorAssetUtility.SetReference(installer, "_palette", configs.Palette);
             EditorAssetUtility.SetReference(installer, "_playerConfig", configs.Player);
             EditorAssetUtility.SetReference(installer, "_roundConfig", configs.Round);
+            EditorAssetUtility.SetReference(installer, "_hoseConfig", configs.Hose);
             EditorAssetUtility.SetReference(installer, "_player", player.GetComponent<PlayerBody>());
+            EditorAssetUtility.SetReference(installer, "_hoseView", player.GetComponent<HoseView>());
+            EditorAssetUtility.SetReference(installer, "_hoseAnchor", anchor.transform);
+            EditorAssetUtility.SetReference(installer, "_splashPrefab", splashPrefab);
             SceneContext context = contextObject.AddComponent<SceneContext>();
             context.Installers = new MonoInstaller[] { installer };
 
@@ -43,6 +52,11 @@ namespace FB.Editor.Building
         public static void PlacePlayer(Transform player, ConfigAssets configs)
         {
             player.SetPositionAndRotation(configs.Layout.SpawnPosition, Quaternion.Euler(0f, configs.Layout.SpawnYaw, 0f));
+        }
+
+        public static void PlaceHoseAnchor(Transform anchor, ConfigAssets configs)
+        {
+            anchor.position = configs.Layout.HoseAnchor;
         }
 
         private static void SetupLighting()

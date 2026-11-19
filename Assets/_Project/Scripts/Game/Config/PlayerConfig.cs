@@ -26,6 +26,18 @@ namespace FB.Game.Config
         [SerializeField, Min(0f)] private float _webGlSensitivityMultiplier = 1f;
         [SerializeField, Range(10f, 89f)] private float _pitchLimit = 85f;
 
+        [Header("Camera shake")]
+        [SerializeField, Min(0f)] private float _shakeMaxAngle = 2.5f;
+        [SerializeField, Min(0f)] private float _shakeMaxOffset = 0.04f;
+        [Tooltip("Trauma lost per second (trauma is 0..1).")]
+        [SerializeField, Min(0f)] private float _shakeDecay = 1.6f;
+        [SerializeField, Min(0f)] private float _shakeFrequency = 22f;
+
+        public float ShakeMaxAngle => _shakeMaxAngle;
+        public float ShakeMaxOffset => _shakeMaxOffset;
+        public float ShakeDecay => _shakeDecay;
+        public float ShakeFrequency => _shakeFrequency;
+
         public float MaxSpeed => _maxSpeed;
         public float Acceleration => _acceleration;
         public float AirControl => _airControl;
@@ -35,16 +47,8 @@ namespace FB.Game.Config
         public float MinGroundNormalY => _minGroundNormalY;
         public float PitchLimit => _pitchLimit;
 
-        public float MouseSensitivity
-        {
-            get
-            {
-#if UNITY_WEBGL && !UNITY_EDITOR
-                return _mouseSensitivity * _webGlSensitivityMultiplier;
-#else
-                return _mouseSensitivity;
-#endif
-            }
-        }
+        public float MouseSensitivity => Application.platform == RuntimePlatform.WebGLPlayer
+            ? _mouseSensitivity * _webGlSensitivityMultiplier
+            : _mouseSensitivity;
     }
 }

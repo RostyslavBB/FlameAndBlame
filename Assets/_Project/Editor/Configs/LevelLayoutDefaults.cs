@@ -12,9 +12,13 @@ namespace FB.Editor.Configs
     /// </summary>
     internal static class LevelLayoutDefaults
     {
+        /// <summary>Bump when the defaults change: Build All regenerates layouts made from an older version.</summary>
+        public const int Version = 2;
+
         public static void Apply(LevelLayoutConfig config)
         {
-            config.EditorSetLayout(new Vector3(-7.2f, 0f, -1f), 90f, Rooms(), Walls(), Doorways(), Props());
+            config.EditorSetLayout(Version, new Vector3(-7.2f, 0f, -1f), 90f, HallProps.HoseAnchor,
+                Rooms(), Walls(), Doorways(), Props());
         }
 
         private static IEnumerable<RoomDefinition> Rooms()

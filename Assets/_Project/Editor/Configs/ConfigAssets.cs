@@ -4,43 +4,48 @@ using UnityEditor;
 
 namespace FB.Editor.Configs
 {
-    /// <summary>Creates config assets with defaults. Existing assets keep the values tuned by hand.</summary>
+    /// <summary>
+    /// Creates config assets with defaults. Existing assets keep hand-tuned values; the level layout is
+    /// regenerated only when the code defaults got a newer version.
+    /// </summary>
     internal sealed class ConfigAssets
     {
-        private ConfigAssets(PaletteConfig palette, PlayerConfig player, RoundConfig round, LevelLayoutConfig layout)
+        private ConfigAssets(PaletteConfig palette, PlayerConfig player, RoundConfig round, HoseConfig hose,
+            LevelLayoutConfig layout)
         {
             Palette = palette;
             Player = player;
             Round = round;
+            Hose = hose;
             Layout = layout;
         }
 
         public PaletteConfig Palette { get; }
         public PlayerConfig Player { get; }
         public RoundConfig Round { get; }
+        public HoseConfig Hose { get; }
         public LevelLayoutConfig Layout { get; }
 
         public static ConfigAssets Ensure()
         {
-            PaletteConfig palette = EditorAssetUtility.LoadOrCreate<PaletteConfig>(Path("PaletteConfig"), out _);
+            PaletteConfig palette = Load<PaletteConfig>("PaletteConfig");
             PaletteDefaults.Merge(palette);
             EditorUtility.SetDirty(palette);
 
-            PlayerConfig player = EditorAssetUtility.LoadOrCreate<PlayerConfig>(Path("PlayerConfig"), out _);
-            RoundConfig round = EditorAssetUtility.LoadOrCreate<RoundConfig>(Path("RoundConfig"), out _);
-
-            LevelLayoutConfig layout = EditorAssetUtility.LoadOrCreate<LevelLayoutConfig>(
-                Path("LevelLayoutConfig"), out bool layoutCreated);
-            if (layoutCreated)
+            LevelLayoutConfig layout = Load<LevelLayoutConfig>("LevelLayoutConfig");
+            if (layout.DefaultsVersion < LevelLayoutDefaults.Version)
             {
                 LevelLayoutDefaults.Apply(layout);
                 EditorUtility.SetDirty(layout);
             }
 
+            ConfigAssets configs = new ConfigAssets(palette, Load<PlayerConfig>("PlayerConfig"),
+                Load<RoundConfig>("RoundConfig"), Load<HoseConfig>("HoseConfig"), layout);
             AssetDatabase.SaveAssets();
-            return new ConfigAssets(palette, player, round, layout);
+            return configs;
         }
 
-        private static string Path(string name) => $"{AssetPaths.Configs}/{name}.asset";
+        private static T Load<T>(string name) where T : UnityEngine.ScriptableObject =>
+            EditorAssetUtility.LoadOrCreate<T>($"{AssetPaths.Configs}/{name}.asset", out _);
     }
 }
