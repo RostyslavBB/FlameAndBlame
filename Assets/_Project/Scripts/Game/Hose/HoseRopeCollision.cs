@@ -40,7 +40,7 @@ namespace FB.Game.Hose
                 return;
             }
 
-            int count = Physics.OverlapCapsuleNonAlloc(a, b, _radius, _overlaps, GameLayers.AllButPlayerMask,
+            int count = Physics.OverlapCapsuleNonAlloc(a, b, _radius, _overlaps, GameLayers.EnvironmentMask,
                 QueryTriggerInteraction.Ignore);
             Quaternion rotation = Quaternion.LookRotation(axis);
             for (int i = 0; i < count; i++)

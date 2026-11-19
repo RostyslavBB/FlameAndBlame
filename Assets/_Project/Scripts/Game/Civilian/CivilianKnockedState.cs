@@ -14,6 +14,7 @@ namespace FB.Game.Civilian
             _timer = Body.Config.KnockedSeconds;
             Body.IsKnocked = true;
             Body.Stop();
+            Body.PrepareToFall();
             Body.View.SetDizzy(true);
         }
 

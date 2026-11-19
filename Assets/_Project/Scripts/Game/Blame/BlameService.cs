@@ -90,6 +90,9 @@ namespace FB.Game.Blame
                 case CivilianIncident.Soaked:
                     Record(NarrativeEvent.CivilianSoaked, signal.Cause, signal.Damage, neighbour, null, neighbour);
                     break;
+                case CivilianIncident.Ignited:
+                    Record(NarrativeEvent.CivilianIgnited, signal.Cause, signal.Damage, neighbour, null, neighbour);
+                    break;
                 default:
                     Record(NarrativeEvent.CivilianShocked, signal.Cause, signal.Damage, neighbour, null, neighbour);
                     break;
@@ -110,7 +113,8 @@ namespace FB.Game.Blame
             float points = damage > 0 ? damage : severity * PointsPerSeverity;
 
             string text = _narrator.Narrate(kind, main, item, source);
-            BlameRecord record = new BlameRecord(text, _formatter.Format(cause, victim), damage, severity, main);
+            BlameRecord record = new BlameRecord(kind, text, _formatter.Format(cause, victim), damage, severity,
+                main, cause, victim ?? (item != null ? "«" + item + "»" : null));
             _ledger.Add(_shares, damage, points, record);
             Last = record;
 
@@ -139,7 +143,8 @@ namespace FB.Game.Blame
             {
                 case NarrativeEvent.ShockPlayer: return 3;
                 case NarrativeEvent.CivilianSoaked:
-                case NarrativeEvent.CivilianShocked: return Math.Max(2, byDamage);
+                case NarrativeEvent.CivilianShocked:
+                case NarrativeEvent.CivilianIgnited: return Math.Max(2, byDamage);
                 case NarrativeEvent.FireStart:
                 case NarrativeEvent.ShortCircuit:
                 case NarrativeEvent.Drowned: return Math.Max(2, byDamage);

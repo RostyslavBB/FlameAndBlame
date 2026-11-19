@@ -14,15 +14,14 @@ namespace FB.Editor.Ui
     {
         public static UiInstaller Build(GameObject contextObject, UiConfig config)
         {
-            TMP_FontAsset font = TmpFontBuilder.Ensure();
-            UiFactory ui = new UiFactory(font, UiSpriteLibrary.Ensure());
+            UiFactory ui = new UiFactory(TmpFontBuilder.Ensure(), UiSpriteLibrary.Ensure());
             FeedEntryView entryPrefab = FeedEntryPrefabBuilder.Build(ui);
 
             Transform canvas = CreateCanvas();
             HudView hud = HudUiBuilder.Hud(ui, canvas);
             FeedView feed = HudUiBuilder.Feed(ui, canvas);
             ShockOverlayView shock = ShockOverlay(ui, canvas);
-            BriefingView briefing = HudUiBuilder.Briefing(ui, canvas);
+            BriefingView briefing = BriefingUiBuilder.Build(ui, canvas);
             ReportView report = ReportUiBuilder.Build(ui, canvas);
             CreateEventSystem();
 

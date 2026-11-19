@@ -87,7 +87,10 @@ namespace FB.Game.Hose
                 return;
             }
 
-            body.AddForceAtPosition(hit.velocity * _config.PushPerParticle, hit.intersection, ForceMode.Impulse);
+            // A slight lift makes items skid and tumble instead of grinding against the floor.
+            Vector3 impulse = (hit.velocity + Vector3.up * hit.velocity.magnitude * 0.15f) * _config.PushPerParticle;
+            impulse = Vector3.ClampMagnitude(impulse, body.mass * _config.MaxPushPerHit);
+            body.AddForceAtPosition(impulse, hit.intersection, ForceMode.Impulse);
         }
     }
 }

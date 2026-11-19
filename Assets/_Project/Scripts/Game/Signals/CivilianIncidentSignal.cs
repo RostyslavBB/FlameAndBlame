@@ -11,6 +11,9 @@ namespace FB.Game.Signals
         /// <summary>The hose knocked the neighbour off his feet.</summary>
         Soaked,
 
+        /// <summary>He stood too close to a fire and caught it.</summary>
+        Ignited,
+
         /// <summary>The neighbour stepped into a live puddle.</summary>
         Shocked
     }

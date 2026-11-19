@@ -55,9 +55,9 @@ namespace FB.Game.Hose
 
             _line.positionCount = count;
             _line.SetPositions(_points);
-            float width = Mathf.Lerp(0.04f, 0.09f, pressure);
+            float width = Mathf.Lerp(0.05f, 0.15f, pressure);
             _line.startWidth = width;
-            _line.endWidth = width * 2.2f;
+            _line.endWidth = width * 2.8f;
             Color color = new Color(1f, 1f, 1f, Mathf.Clamp01(pressure * 1.6f));
             _line.startColor = color;
             _line.endColor = color;

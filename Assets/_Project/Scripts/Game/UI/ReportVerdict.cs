@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FB.Game.UI
 {
-    /// <summary>Model of the report: who is guilty (by blame points) and the most expensive chains.</summary>
+    /// <summary>Model of the report: who is guilty (by blame points), the most expensive events and the top one.</summary>
     public sealed class ReportVerdict
     {
         private readonly IActorRegistry _actors;
@@ -39,6 +39,21 @@ namespace FB.Game.UI
                 _actors.ColorOf(guilty));
         }
 
+        /// <summary>The single most expensive event (null when nothing was damaged).</summary>
+        public BlameRecord MostExpensive(IBlameLedger ledger)
+        {
+            BlameRecord best = null;
+            foreach (BlameRecord record in ledger.Records)
+            {
+                if (record.Damage > 0 && (best == null || record.Damage > best.Damage))
+                {
+                    best = record;
+                }
+            }
+
+            return best;
+        }
+
         public string TopChains(IBlameLedger ledger, int count)
         {
             List<BlameRecord> sorted = new List<BlameRecord>(ledger.Records);
@@ -55,8 +70,7 @@ namespace FB.Game.UI
 
                 shown++;
                 builder.Append(shown).Append(". <b>").Append(Money.Of(record.Damage)).Append("</b>  ")
-                    .Append(record.Text).Append('\n')
-                    .Append("<size=70%><color=#8A8A8A>").Append(record.Chain).Append("</color></size>\n");
+                    .Append(record.Text).Append('\n');
             }
 
             return shown == 0 ? "Нічого не зіпсовано. Ви точно пожежник?" : builder.ToString();

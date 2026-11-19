@@ -49,7 +49,7 @@ flowchart LR
   Blame -- BlameEventSignal --> TimeFx[TimeScaleService]
   Flow[GameStateMachine] -- GamePhaseChangedSignal --> UI[Briefing / HUD / Report presenters]
   Flow -- GamePhaseChangedSignal --> Starter[FireStarter]
-  Hose -- WaterHitSignal --> Npc[CivilianBrain<br/>Wander / Panic / Knocked]
+  Hose -- WaterHitSignal --> Npc[CivilianBrain<br/>Wander / Panic / Knocked / Shocked]
   Elec --> Npc
   Npc -- CivilianIncidentSignal --> Blame
   Shock -- ElectrocutionSignal --> ShockUi[ShockOverlayPresenter]
@@ -88,6 +88,9 @@ flowchart LR
   short-circuited, the power cause itself leads back to the player, so the verdict is 100% "Ти".
 - `BlameLedger` adds $ and points per root actor; $ of the player = "firefighter damage", the rest = "fire damage".
 - `ChainNarrator` picks Ukrainian lines from `BlameTextConfig` (actor-aware, no repeats in a row).
+- The report shows the most expensive event as a chain of cards (`BlameChainBuilder`): root culprit -> causes
+  (repeats merged, "Вогонь ×3"; long chains collapse to root, "…", last steps) -> damaged target and price. At a
+  branch (puddle + power) it follows the parent that leads to the record's main culprit, so the chain explains the verdict.
 - The blame core (`CauseGraph`, `BlameLedger`, `ChainNarrator`, `CauseFormatter`) is plain C#.
 
 ## Patterns, where to look
@@ -96,10 +99,10 @@ flowchart LR
 |---|---|
 | Dependency Injection | `ProjectInstaller`, `GameplayInstaller`, `UiInstaller` |
 | Observer | Zenject SignalBus, all signals above |
-| MVP | `*View` (passive MonoBehaviours) + `*Presenter` (plain C#) in `UI/`, `Debugging/` |
+| MVP | `*View` (passive MonoBehaviours) + `*Presenter` (plain C#) in `UI/`, `Debugging/`; every UI animation (UniTask tweens, `UiPulse` punches) lives in presenters, views only expose setters |
 | Object Pool | `ComponentPool<T>` over `MonoMemoryPool`: splashes, steam, sparks, fire, arcs, feed lines |
 | Factory | `CauseFactory`, editor builders |
-| State Machine | `StateMachine<T>` + `BriefingState` / `PlayingState` / `ReportState`; neighbour AI `CivilianWanderState` / `CivilianPanicState` / `CivilianKnockedState` |
+| State Machine | `StateMachine<T>` + `BriefingState` / `PlayingState` / `ReportState`; neighbour AI `CivilianWanderState` / `CivilianPanicState` / `CivilianKnockedState` / `CivilianShockedState` |
 | Strategy | `IInteractionRule` assets (Extinguish, WaterCooling, WaterDamage x2, NeighborIgnition) |
 | Facade | `IHoseFacade`, `ISurfaceActions` (single mutation point for surfaces) |
 | Data-driven | ScriptableObject configs for every number, rule, text, color and the level layout |
@@ -125,7 +128,7 @@ flowchart LR
 ## Level and assets
 
 `Tools/Flame&Blame/Build All` generates everything from code and configs, idempotently: palette materials, low-poly
-meshes, textures (droplet, flame flipbook, UI sprites), TMP font with Cyrillic (static atlas), prefabs, and
+meshes, textures (droplet, flame flipbook, UI sprites), two TMP fonts with Cyrillic (Russo One + Rubik, static atlases, outline/shadow presets), prefabs, and
 `Game.unity` from `LevelLayoutConfig` (rooms, walls with doorway cut-outs, props with surface data).
 Furniture with complex silhouettes (sofa, TV, fridge, bed, wardrobe, bathroom, lamps...) uses CC0 models from the
 Kenney Furniture Kit: `ModelPropBuilder` fits them into the
@@ -164,7 +167,13 @@ prop box, recolors their materials into the palette and adds a box collider; gam
 
 - `CivilianBrain` (plain C#, ticked centrally) owns a `StateMachine<CivilianState>`: **Wander** between room waypoints,
   **Panic** (runs screaming away from the nearest fire, arms flailing) and **Knocked** (on the floor with spiral eyes,
-  then panics again). States share a `CivilianBody` context and switch through `ICivilianStates`.
+  then panics again) and **Shocked** (twitches on the floor of a live puddle under repeated arcs until the current
+  stops, then jumps up and panics). States share a `CivilianBody` context and switch through `ICivilianStates`.
+- He lives on his own physics layer (`GameLayers.Civilian`): the hose rope, puddles and chaos queries use
+  `EnvironmentMask` and ignore him, while water particles still hit him.
+- Hose water shoves him along the nav mesh (`CivilianBody.Shove` + `NavMeshAgent.Move`), even while he lies on the floor.
+  `CivilianBurning` sets him on fire next to a burning item (`Cause(Вогонь: Burn)` with that fire as parent), and he
+  then ignites the loose items he knocks over; water puts him out and keeps him fireproof for a few seconds.
 - `CivilianChaos` flings any loose gameplay item he runs into and reports it as `Cause(Сусід: KnockOver)`, so he is
   a fourth actor in the verdict. Hose water knocks him down (`Cause(Ти: Soak)` with the spray as parent); a live
   puddle shocks him (two parents: puddle + power source), exactly like the player's shock.

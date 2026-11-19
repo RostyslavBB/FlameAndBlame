@@ -39,7 +39,8 @@ namespace FB.Editor.Building
             collision.enabled = true;
             collision.type = ParticleSystemCollisionType.World;
             collision.mode = ParticleSystemCollisionMode.Collision3D;
-            collision.quality = ParticleSystemCollisionQuality.Medium;
+            // High: exact raycasts, so moving props and the neighbour are never missed by the voxel cache.
+            collision.quality = ParticleSystemCollisionQuality.High;
             collision.collidesWith = GameLayers.AllButPlayerMask;
             collision.enableDynamicColliders = true;
             collision.sendCollisionMessages = true;

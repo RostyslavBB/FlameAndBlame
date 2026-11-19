@@ -2,7 +2,7 @@ using FB.Core.StateMachine;
 
 namespace FB.Game.Civilian
 {
-    /// <summary>Base of the neighbour's AI states (Wander, Panic, Knocked).</summary>
+    /// <summary>Base of the neighbour's AI states (Wander, Panic, Knocked, Shocked).</summary>
     public abstract class CivilianState : IState, ITickableState
     {
         protected CivilianState(CivilianBody body, ICivilianStates states)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FB.Game.Blame;
 using FB.Game.Surfaces;
 using UnityEngine;
 using UnityEngine.AI;
@@ -16,6 +17,8 @@ namespace FB.Game.Civilian
         private readonly CivilianView _view;
         private readonly SurfaceRegistry _registry;
         private readonly List<Vector3> _waypoints = new List<Vector3>();
+        private readonly CivilianFallSpace _fallSpace = new CivilianFallSpace();
+        private Vector3 _shove;
 
         public CivilianBody(CivilianView view, CivilianConfig config, SurfaceRegistry registry)
         {
@@ -28,6 +31,11 @@ namespace FB.Game.Civilian
         public CivilianView View => _view;
         public bool IsPanicking { get; set; }
         public bool IsKnocked { get; set; }
+        public bool IsShocked { get; set; }
+        public bool IsBurning => BurnCause != null;
+
+        /// <summary>Why he is on fire (null when not burning); things he sets alight inherit it.</summary>
+        public Cause BurnCause { get; set; }
         public Vector3 Position => _view.transform.position;
         public float Speed => Agent.enabled ? Agent.velocity.magnitude : 0f;
 
@@ -65,6 +73,34 @@ namespace FB.Game.Civilian
             Agent.isStopped = true;
             Agent.ResetPath();
             Agent.velocity = Vector3.zero;
+        }
+
+        /// <summary>Turns him so he falls backwards into open space (call when he is knocked down).</summary>
+        public void PrepareToFall() => _fallSpace.PrepareToFall(_view.transform, Agent);
+
+        /// <summary>Adds a horizontal shove (hose water); it slides him along the nav mesh and dies out.</summary>
+        public void Shove(Vector3 velocity)
+        {
+            velocity.y = 0f;
+            _shove = Vector3.ClampMagnitude(_shove + velocity, Config.MaxShoveSpeed);
+        }
+
+        public void TickShove(float deltaTime)
+        {
+            if (_shove.sqrMagnitude < 0.0025f || !Agent.isOnNavMesh)
+            {
+                _shove = Vector3.zero;
+                return;
+            }
+
+            Agent.Move(_shove * deltaTime);
+            if (IsKnocked)
+            {
+                // Lying down and washed along the floor: never let the body slide into a wall.
+                _fallSpace.KeepClear(_view.transform, Agent);
+            }
+
+            _shove = Vector3.MoveTowards(_shove, Vector3.zero, Config.ShoveDamping * deltaTime);
         }
 
         public Vector3 RandomWaypoint() =>

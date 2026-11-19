@@ -106,6 +106,10 @@ namespace FB.Editor.Configs
             yield return T(E.CivilianShocked, F.Any, "Сусіда вдарило струмом. Зачіска тепер сміливіша.");
             yield return T(E.CivilianShocked, F.Any, "Сусід став у калюжу під напругою. Танцює.");
             yield return T(E.CivilianShocked, F.Any, "Мокра підлога + сусід = феєрверк. Дякуємо: {A}.");
+
+            yield return T(E.CivilianIgnited, F.Any, "Сусід підійшов погрітись. Тепер горить сам.");
+            yield return T(E.CivilianIgnited, F.Any, "Палаючий сусід бігає квартирою. Полий його!");
+            yield return T(E.CivilianIgnited, F.Any, "Сусіду гаряче. Прямо дуже. Дякуємо: {A}.");
         }
 
         private static BlameTemplate T(E narrativeEvent, F filter, string text) =>

@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb5a682a37ff759489ae9dfe3facc30d, type: 3}
   m_Name: UiConfig
   m_EditorClassIdentifier: FB.Game::FB.Game.UI.UiConfig
-  _feedMaxEntries: 5
-  _feedEntrySeconds: 7
-  _feedPopSeconds: 0.15
+  _feedMaxEntries: 3
+  _feedEntrySeconds: 5
+  _feedPopSeconds: 0.35
   _feedFadeSeconds: 0.4
   _feedShakeSeconds: 0.35
   _feedShakePixels: 14
-  _feedShakeMinSeverity: 2
+  _feedShakeMinSeverity: 3
+  _feedMinSeverity: 2
+  _feedCooldownSeconds: 3
   _reportFadeSeconds: 0.3
   _counterSeconds: 1.4
   _stampDelaySeconds: 0.4

@@ -28,6 +28,26 @@ namespace FB.Game.Civilian
         [SerializeField, Min(0.5f)] private float _knockedSeconds = 3f;
         [SerializeField, Min(0)] private int _soakedDamage = 100;
         [SerializeField, Min(0)] private int _shockedDamage = 150;
+        [Tooltip("Seconds between arcs striking him while he lies in a live puddle.")]
+        [SerializeField, Min(0.03f)] private float _shockArcInterval = 0.12f;
+        [Tooltip("Seconds after the current stops before he jumps up.")]
+        [SerializeField, Min(0f)] private float _shockRecoverSeconds = 0.6f;
+
+        [Header("Water push")]
+        [Tooltip("Shove speed (m/s) per unit of hose water hitting him.")]
+        [SerializeField, Min(0f)] private float _shovePerWater = 2.4f;
+        [SerializeField, Min(0f)] private float _maxShoveSpeed = 4.5f;
+        [Tooltip("How fast the shove dies out (m/s per second).")]
+        [SerializeField, Min(0.1f)] private float _shoveDamping = 5f;
+
+        [Header("Burning")]
+        [Tooltip("Closer than this (m) to a burning item and he catches fire.")]
+        [SerializeField, Min(0.05f)] private float _igniteDistance = 0.7f;
+        [Tooltip("Seconds he stays fireproof after a soaking.")]
+        [SerializeField, Min(0f)] private float _wetSeconds = 5f;
+        [Tooltip("He burns this long unless hosed, then the fire dies by itself.")]
+        [SerializeField, Min(1f)] private float _burnSeconds = 12f;
+        [SerializeField, Min(0)] private int _burnDamage = 200;
 
         public float WalkSpeed => _walkSpeed;
         public float PanicSpeed => _panicSpeed;
@@ -42,5 +62,14 @@ namespace FB.Game.Civilian
         public float KnockedSeconds => _knockedSeconds;
         public int SoakedDamage => _soakedDamage;
         public int ShockedDamage => _shockedDamage;
+        public float ShockArcInterval => _shockArcInterval;
+        public float ShockRecoverSeconds => _shockRecoverSeconds;
+        public float ShovePerWater => _shovePerWater;
+        public float MaxShoveSpeed => _maxShoveSpeed;
+        public float ShoveDamping => _shoveDamping;
+        public float IgniteDistance => _igniteDistance;
+        public float WetSeconds => _wetSeconds;
+        public float BurnSeconds => _burnSeconds;
+        public int BurnDamage => _burnDamage;
     }
 }

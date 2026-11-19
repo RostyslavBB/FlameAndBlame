@@ -11,7 +11,8 @@ using Zenject;
 namespace FB.Game.UI
 {
     /// <summary>
-    /// Blame feed: every BlameEventSignal becomes a pooled line on top; at most N lines; big events shake.
+    /// Blame feed: notable BlameEventSignals become pooled lines on top (small ones skipped, spaced by a cooldown);
+    /// at most N lines; top-severity events shake.
     /// Each line owns a CancellationTokenSource, cancelled when it is pushed out or the scene is disposed.
     /// </summary>
     public sealed class FeedPresenter : IInitializable, IDisposable
@@ -20,7 +21,12 @@ namespace FB.Game.UI
         private readonly IPool<FeedEntryView> _pool;
         private readonly SignalBus _signalBus;
         private readonly UiConfig _config;
+        private const float FlyInPixels = 460f;
+        private const float CountSeconds = 0.45f;
+        private const int TopSeverity = 3;
+
         private readonly List<Line> _lines = new List<Line>();
+        private float _nextLineTime;
 
         public FeedPresenter(FeedView view, IPool<FeedEntryView> pool, SignalBus signalBus, UiConfig config)
         {
@@ -56,6 +62,11 @@ namespace FB.Game.UI
 
         private void OnBlameEvent(BlameEventSignal signal)
         {
+            if (_config.IsHiddenInFeed(signal.Kind) || !ShouldShow(signal.Severity))
+            {
+                return;
+            }
+
             if (_lines.Count >= _config.FeedMaxEntries)
             {
                 Remove(_lines[0]);
@@ -64,25 +75,55 @@ namespace FB.Game.UI
             FeedEntryView entry = _pool.Spawn();
             entry.transform.SetParent(_view.Container, false);
             entry.transform.SetAsFirstSibling();
-            entry.Set(signal.ActorName, signal.ActorColor, signal.Text,
-                signal.Damage > 0 ? "+" + Money.Of(signal.Damage) : null);
+            entry.Set(signal.ActorName, signal.ActorColor, signal.Text);
+            entry.SetDamage(null);
 
             Line line = new Line(entry, new CancellationTokenSource());
             _lines.Add(line);
-            Animate(line, signal.Severity).Forget();
+            Animate(line, signal.Severity, signal.Damage).Forget();
         }
 
-        private async UniTaskVoid Animate(Line line, int severity)
+        /// <summary>
+        /// Keeps the feed readable: small events are skipped and lines are spaced out; only top-severity events
+        /// may break the cooldown. Filtering is UI-only: the ledger and the bill still count everything.
+        /// </summary>
+        private bool ShouldShow(int severity)
+        {
+            if (severity < _config.FeedMinSeverity)
+            {
+                return false;
+            }
+
+            float now = Time.unscaledTime;
+            if (now < _nextLineTime && severity < TopSeverity)
+            {
+                return false;
+            }
+
+            _nextLineTime = now + _config.FeedCooldownSeconds;
+            return true;
+        }
+
+        private async UniTaskVoid Animate(Line line, int severity, int damage)
         {
             FeedEntryView entry = line.Entry;
             CancellationToken token = line.Cancellation.Token;
             try
             {
+                // Fly in from the right with a little tilt, flashing white as it lands.
                 await UiTween.Run(_config.FeedPopSeconds, t =>
                 {
-                    entry.SetAlpha(t);
-                    entry.SetScale(Mathf.LerpUnclamped(0.8f, 1f, UiTween.EaseOutBack(t)));
+                    float eased = UiTween.EaseOutBack(t);
+                    entry.SetAlpha(Mathf.Clamp01(t * 2.5f));
+                    entry.SetOffset(new Vector2(Mathf.LerpUnclamped(FlyInPixels, 0f, eased), 0f));
+                    entry.SetTilt(Mathf.LerpUnclamped(-6f, 0f, eased));
+                    entry.SetFlash(0.8f * (1f - t));
                 }, token);
+
+                if (damage > 0)
+                {
+                    await CountDamage(entry, damage, token);
+                }
 
                 if (severity >= _config.FeedShakeMinSeverity)
                 {
@@ -92,13 +133,24 @@ namespace FB.Game.UI
                 }
 
                 await UiTween.Wait(_config.FeedEntrySeconds, token);
-                await UiTween.Run(_config.FeedFadeSeconds, t => entry.SetAlpha(1f - t), token);
+                await UiTween.Run(_config.FeedFadeSeconds, t =>
+                {
+                    entry.SetAlpha(1f - t);
+                    entry.SetOffset(new Vector2(UiTween.EaseInCubic(t) * FlyInPixels, 0f));
+                }, token);
                 Remove(line);
             }
             catch (OperationCanceledException)
             {
                 // Pushed out by a newer line or the scene is being disposed: nothing to clean up here.
             }
+        }
+
+        private static async UniTask CountDamage(FeedEntryView entry, int damage, CancellationToken token)
+        {
+            await UiTween.Run(CountSeconds, t =>
+                entry.SetDamage("+" + Money.Of(Mathf.RoundToInt(damage * UiTween.EaseOutCubic(t)))), token);
+            await UiTween.Run(0.3f, t => entry.SetDamageScale(1f + UiTween.Punch(t) * 0.45f), token);
         }
 
         private void Remove(Line line)

@@ -41,7 +41,7 @@ namespace FB.Game.Civilian
                 return;
             }
 
-            if (Body.TryFindFire(Body.Config.PanicRadius, out _))
+            if (Body.IsBurning || Body.TryFindFire(Body.Config.PanicRadius, out _))
             {
                 _calmDown = Body.Config.PanicSeconds;
             }

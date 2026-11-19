@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace FB.Editor.Ui
 {
-    /// <summary>Procedural UI sprites (PNG + sprite import): rounded panel (9-sliced), circle, rubber stamp.</summary>
+    /// <summary>Procedural UI sprites (PNG + sprite import): rounded panel and pill (9-sliced), soft drop
+    /// shadow, circle, ring, glow, rubber stamp, lightning.</summary>
     internal sealed class UiSpriteLibrary
     {
         private UiSpriteLibrary()
@@ -15,6 +16,10 @@ namespace FB.Editor.Ui
         public Sprite Rounded { get; private set; }
         public Sprite Circle { get; private set; }
         public Sprite Stamp { get; private set; }
+        public Sprite Shadow { get; private set; }
+        public Sprite Ring { get; private set; }
+        public Sprite Glow { get; private set; }
+        public Sprite Pill { get; private set; }
 
         public Texture2D Lightning { get; private set; }
 
@@ -23,9 +28,13 @@ namespace FB.Editor.Ui
             EditorAssetUtility.EnsureFolder(AssetPaths.Textures);
             return new UiSpriteLibrary
             {
-                Rounded = Save("UI_Rounded", 64, RoundedRect, 20),
-                Circle = Save("UI_Circle", 64, Disc, 0),
-                Stamp = Save("UI_Stamp", 256, StampRing, 0),
+                Rounded = Save("UI_Rounded", 64, UiSpriteShapes.RoundedRect, 20),
+                Circle = Save("UI_Circle", 64, UiSpriteShapes.Disc, 0),
+                Stamp = Save("UI_Stamp", 256, UiSpriteShapes.StampRing, 0),
+                Shadow = Save("UI_Shadow", 96, UiSpriteShapes.SoftShadow, 40),
+                Ring = Save("UI_Ring", 64, UiSpriteShapes.Ring, 0),
+                Glow = Save("UI_Glow", 64, UiSpriteShapes.Glow, 0),
+                Pill = Save("UI_Pill", 64, UiSpriteShapes.Pill, 31),
                 Lightning = LightningTexture()
             };
         }
@@ -128,33 +137,6 @@ namespace FB.Editor.Ui
                 }
             }
         }
-
-        private static float RoundedRect(float x, float y, int size)
-        {
-            const float radius = 16f;
-            float dx = Mathf.Max(0f, Mathf.Abs(x - size * 0.5f) - (size * 0.5f - radius));
-            float dy = Mathf.Max(0f, Mathf.Abs(y - size * 0.5f) - (size * 0.5f - radius));
-            return Mathf.Clamp01(radius - Mathf.Sqrt(dx * dx + dy * dy) + 0.5f);
-        }
-
-        private static float Disc(float x, float y, int size)
-        {
-            float distance = Vector2.Distance(new Vector2(x, y), new Vector2(size * 0.5f, size * 0.5f));
-            return Mathf.Clamp01(size * 0.5f - 1f - distance + 0.5f);
-        }
-
-        private static float StampRing(float x, float y, int size)
-        {
-            float half = size * 0.5f;
-            float distance = Vector2.Distance(new Vector2(x, y), new Vector2(half, half));
-            float outer = Band(distance, half - 20f, half - 4f);
-            float inner = Band(distance, half - 36f, half - 30f);
-            float grunge = Mathf.PerlinNoise(x * 0.11f, y * 0.11f) > 0.68f ? 0.25f : 1f;
-            return Mathf.Max(outer, inner) * grunge;
-        }
-
-        private static float Band(float distance, float from, float to) =>
-            Mathf.Clamp01(Mathf.Min(distance - from, to - distance) + 0.5f);
 
         private static Sprite Save(string name, int size, Func<float, float, int, float> alpha, int border)
         {

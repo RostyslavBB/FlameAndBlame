@@ -11,14 +11,13 @@ namespace FB.Editor.Building
         {
             Object tagManager = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0];
             SerializedObject serialized = new SerializedObject(tagManager);
-            SerializedProperty layer = serialized.FindProperty("layers").GetArrayElementAtIndex(GameLayers.Player);
-            if (layer.stringValue == GameLayers.PlayerName)
+            SerializedProperty layers = serialized.FindProperty("layers");
+            bool changed = SetName(layers, GameLayers.Player, GameLayers.PlayerName);
+            changed |= SetName(layers, GameLayers.Civilian, GameLayers.CivilianName);
+            if (changed)
             {
-                return;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
             }
-
-            layer.stringValue = GameLayers.PlayerName;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         public static void SetLayerRecursively(GameObject root, int layer)
@@ -27,6 +26,18 @@ namespace FB.Editor.Building
             {
                 child.gameObject.layer = layer;
             }
+        }
+
+        private static bool SetName(SerializedProperty layers, int index, string name)
+        {
+            SerializedProperty layer = layers.GetArrayElementAtIndex(index);
+            if (layer.stringValue == name)
+            {
+                return false;
+            }
+
+            layer.stringValue = name;
+            return true;
         }
     }
 }

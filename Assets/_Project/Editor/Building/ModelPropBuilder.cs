@@ -36,10 +36,22 @@ namespace FB.Editor.Building
             model.transform.localScale = Vector3.one * scale;
             model.transform.localPosition = -new Vector3(bounds.center.x, bounds.min.y, bounds.center.z) * scale;
 
-            BoxCollider collider = model.AddComponent<BoxCollider>();
-            collider.center = bounds.center;
-            collider.size = bounds.size;
+            AddCollider(model);
             Recolor(prop, model);
+        }
+
+        /// <summary>
+        /// The box must be expressed in the model's own frame: many FBX roots carry a rotation (and a tiny scale),
+        /// so root-space bounds used directly would put the collider beside the mesh.
+        /// </summary>
+        private static void AddCollider(GameObject model)
+        {
+            Bounds placed = LocalBounds(model);
+            Transform frame = model.transform;
+            Vector3 size = frame.InverseTransformVector(placed.size);
+            BoxCollider collider = model.AddComponent<BoxCollider>();
+            collider.center = frame.InverseTransformPoint(placed.center);
+            collider.size = new Vector3(Mathf.Abs(size.x), Mathf.Abs(size.y), Mathf.Abs(size.z));
         }
 
         private static Bounds LocalBounds(GameObject model)

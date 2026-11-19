@@ -12,6 +12,7 @@ namespace FB.Game.Blame
         ShockObject,
         CivilianKnock,
         CivilianSoaked,
-        CivilianShocked
+        CivilianShocked,
+        CivilianIgnited
     }
 }

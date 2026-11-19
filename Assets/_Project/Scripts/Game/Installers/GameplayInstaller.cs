@@ -157,7 +157,8 @@ namespace FB.Game.Installers
         {
             Container.BindInterfacesAndSelfTo<FireSimulation>().AsSingle();
             Container.BindInterfacesTo<FireStarter>().AsSingle();
-            Container.BindComponentPool(_fireVfxPrefab, _fireConfig.MaxFires);
+            // +1: the burning neighbour borrows one set of flames.
+            Container.BindComponentPool(_fireVfxPrefab, _fireConfig.MaxFires + 1);
             Container.BindInterfacesTo<FireVisualService>().AsSingle();
             float lifetime = _fireConfig.OneShotLifetime;
             BindEffect(_steamPrefab, new EffectSpawnSettings(_fireConfig.MaxSteamPuffs, lifetime, 0.1f));
@@ -186,6 +187,7 @@ namespace FB.Game.Installers
             Container.BindInstance(_civilian);
             Container.Bind<CivilianBody>().AsSingle();
             Container.Bind<CivilianChaos>().AsSingle();
+            Container.Bind<CivilianBurning>().AsSingle();
             Container.BindInterfacesTo<CivilianBrain>().AsSingle();
         }
 
@@ -204,7 +206,7 @@ namespace FB.Game.Installers
         private void BindFlow()
         {
             Container.BindInterfacesAndSelfTo<RoundClock>().AsSingle();
-            Container.Bind<IGameState>().To<BriefingState>().AsSingle();
+            Container.Bind(typeof(IGameState), typeof(IBriefingClock)).To<BriefingState>().AsSingle();
             Container.Bind<IGameState>().To<PlayingState>().AsSingle();
             Container.Bind<IGameState>().To<ReportState>().AsSingle();
             Container.BindInterfacesAndSelfTo<GameStateMachine>().AsSingle();

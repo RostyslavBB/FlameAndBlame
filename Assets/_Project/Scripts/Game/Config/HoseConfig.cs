@@ -14,23 +14,23 @@ namespace FB.Game.Config
         [SerializeField, Min(0.1f)] private float _decayPerSecond = 3f;
 
         [Header("Jet")]
-        [SerializeField, Min(0f)] private float _maxEmissionRate = 300f;
+        [SerializeField, Min(0f)] private float _maxEmissionRate = 420f;
         [SerializeField, Min(0f)] private float _minJetSpeed = 5f;
-        [SerializeField, Min(0f)] private float _maxJetSpeed = 17f;
+        [SerializeField, Min(0f)] private float _maxJetSpeed = 22f;
         [SerializeField, Range(0f, 15f)] private float _spreadAngle = 2.5f;
-        [SerializeField, Min(16)] private int _maxParticles = 600;
+        [SerializeField, Min(16)] private int _maxParticles = 900;
         [SerializeField, Min(0.1f)] private float _particleLifetime = 1.4f;
         [SerializeField, Min(0f)] private float _particleGravity = 0.6f;
-        [SerializeField, Min(0.01f)] private float _particleSize = 0.07f;
+        [SerializeField, Min(0.01f)] private float _particleSize = 0.1f;
         [Tooltip("Mist particles per second at full pressure (fire-hose spray around the jet).")]
-        [SerializeField, Min(0f)] private float _maxMistRate = 45f;
+        [SerializeField, Min(0f)] private float _maxMistRate = 80f;
 
         [Header("Recoil")]
         [Tooltip("Share of max recoil (0..1) by pressure (0..1). Steep at the end: max pressure overpowers the legs.")]
         [SerializeField] private AnimationCurve _recoilCurve = new AnimationCurve(
             new Keyframe(0f, 0f), new Keyframe(0.7f, 0.2f), new Keyframe(1f, 1f, 3f, 0f));
         [Tooltip("Newtons at full pressure. Player legs resist ~mass * acceleration (70 kg * 45 = 3150 N).")]
-        [SerializeField, Min(0f)] private float _maxRecoilForce = 3900f;
+        [SerializeField, Min(0f)] private float _maxRecoilForce = 4600f;
         [SerializeField, Range(0f, 1f)] private float _verticalRecoilScale = 0.4f;
         [Tooltip("Camera trauma added per second at full pressure.")]
         [SerializeField, Min(0f)] private float _shakePerSecond = 1.4f;
@@ -47,9 +47,11 @@ namespace FB.Game.Config
         [SerializeField, Range(1, 30)] private int _ropeIterations = 16;
 
         [Header("Water effects")]
-        [SerializeField, Min(0f)] private float _waterPerParticle = 0.02f;
+        [SerializeField, Min(0f)] private float _waterPerParticle = 0.015f;
         [Tooltip("Impulse per particle hit, multiplied by particle velocity.")]
-        [SerializeField, Min(0f)] private float _pushPerParticle = 0.02f;
+        [SerializeField, Min(0f)] private float _pushPerParticle = 0.06f;
+        [Tooltip("Cap on the speed change (m/s) one particle hit can give a body: heavy items slide, light ones fly but not to orbit.")]
+        [SerializeField, Min(0f)] private float _maxPushPerHit = 0.35f;
         [SerializeField, Min(1)] private int _maxActiveSplashes = 12;
         [SerializeField, Min(0.05f)] private float _splashLifetime = 0.6f;
         [SerializeField, Min(0f)] private float _splashCooldown = 0.05f;
@@ -79,6 +81,7 @@ namespace FB.Game.Config
         public int RopeIterations => _ropeIterations;
         public float WaterPerParticle => _waterPerParticle;
         public float PushPerParticle => _pushPerParticle;
+        public float MaxPushPerHit => _maxPushPerHit;
         public int MaxActiveSplashes => _maxActiveSplashes;
         public float SplashLifetime => _splashLifetime;
         public float SplashCooldown => _splashCooldown;

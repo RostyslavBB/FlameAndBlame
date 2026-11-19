@@ -7,7 +7,7 @@ using Zenject;
 namespace FB.Game.Flow
 {
     /// <summary>Short intro card before the round. Switches to Playing after a fixed delay.</summary>
-    public sealed class BriefingState : IGameState, ITickableState
+    public sealed class BriefingState : IGameState, ITickableState, IBriefingClock
     {
         private readonly RoundConfig _config;
         private readonly ICursorService _cursor;
@@ -25,6 +25,10 @@ namespace FB.Game.Flow
         }
 
         public GamePhase Phase => GamePhase.Briefing;
+
+        public float Duration => _config.BriefingSeconds;
+
+        public float Remaining => UnityEngine.Mathf.Max(0f, _config.BriefingSeconds - _elapsed);
 
         public void Enter()
         {

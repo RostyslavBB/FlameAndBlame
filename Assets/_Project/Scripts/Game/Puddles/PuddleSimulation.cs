@@ -134,7 +134,7 @@ namespace FB.Game.Puddles
             {
                 Vector3 center = _grid.CellCenter(i) + Vector3.up * 0.04f;
                 int count = Physics.OverlapBoxNonAlloc(center, halfExtents, _overlaps, Quaternion.identity,
-                    GameLayers.AllButPlayerMask, QueryTriggerInteraction.Ignore);
+                    GameLayers.EnvironmentMask, QueryTriggerInteraction.Ignore);
                 for (int c = 0; c < count; c++)
                 {
                     if (_overlaps[c].attachedRigidbody == null)

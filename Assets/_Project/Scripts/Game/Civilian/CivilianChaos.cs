@@ -10,7 +10,7 @@ namespace FB.Game.Civilian
 {
     /// <summary>
     /// The neighbour bulldozes through loose items: any dynamic gameplay item he runs into gets flung
-    /// (harder in panic) and reported once per cooldown as his fault.
+    /// (harder in panic) and reported once per cooldown as his fault; while he burns, it catches fire too.
     /// </summary>
     public sealed class CivilianChaos
     {
@@ -19,16 +19,19 @@ namespace FB.Game.Civilian
 
         private readonly CivilianBody _body;
         private readonly SurfaceRegistry _registry;
+        private readonly ISurfaceActions _actions;
         private readonly ICauseFactory _causes;
         private readonly SignalBus _signalBus;
         private readonly Collider[] _hits = new Collider[16];
         private readonly Dictionary<int, float> _lastKnock = new Dictionary<int, float>(64);
         private float _next;
 
-        public CivilianChaos(CivilianBody body, SurfaceRegistry registry, ICauseFactory causes, SignalBus signalBus)
+        public CivilianChaos(CivilianBody body, SurfaceRegistry registry, ISurfaceActions actions, ICauseFactory causes,
+            SignalBus signalBus)
         {
             _body = body;
             _registry = registry;
+            _actions = actions;
             _causes = causes;
             _signalBus = signalBus;
         }
@@ -44,7 +47,7 @@ namespace FB.Game.Civilian
             _next = now + Interval;
             CivilianConfig config = _body.Config;
             Vector3 center = _body.Position + Vector3.up * 0.5f;
-            int count = Physics.OverlapSphereNonAlloc(center, config.KnockRadius, _hits, GameLayers.AllButPlayerMask,
+            int count = Physics.OverlapSphereNonAlloc(center, config.KnockRadius, _hits, GameLayers.EnvironmentMask,
                 QueryTriggerInteraction.Ignore);
             for (int i = 0; i < count; i++)
             {
@@ -56,6 +59,11 @@ namespace FB.Game.Civilian
 
                 Fling(body, center, config);
                 Report(surface, now, config);
+                if (_body.IsBurning)
+                {
+                    // A burning neighbour sets alight whatever he bumps into.
+                    _actions.Ignite(surface, _causes.Create(ActorId.Civilian, CauseAction.FireSpread, _body.BurnCause));
+                }
             }
         }
 

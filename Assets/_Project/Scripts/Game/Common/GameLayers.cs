@@ -5,8 +5,13 @@ namespace FB.Game.Common
     {
         public const int Player = 8;
         public const string PlayerName = "Player";
+        public const int Civilian = 9;
+        public const string CivilianName = "Civilian";
 
         /// <summary>Everything except the player: water must not hit the one holding the hose.</summary>
         public const int AllButPlayerMask = ~(1 << Player);
+
+        /// <summary>Level geometry and props only: the hose rope, puddles and chaos ignore the characters.</summary>
+        public const int EnvironmentMask = ~((1 << Player) | (1 << Civilian));
     }
 }

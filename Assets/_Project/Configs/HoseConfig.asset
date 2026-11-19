@@ -47,14 +47,14 @@ MonoBehaviour:
     m_RotationOrder: 4
   _rampSeconds: 1.6
   _decayPerSecond: 3
-  _maxEmissionRate: 300
+  _maxEmissionRate: 420
   _minJetSpeed: 5
-  _maxJetSpeed: 17
+  _maxJetSpeed: 22
   _spreadAngle: 2.5
-  _maxParticles: 600
+  _maxParticles: 900
   _particleLifetime: 1.4
   _particleGravity: 0.6
-  _particleSize: 0.07
+  _particleSize: 0.1
   _recoilCurve:
     serializedVersion: 2
     m_Curve:
@@ -88,7 +88,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _maxRecoilForce: 3900
+  _maxRecoilForce: 4600
   _verticalRecoilScale: 0.4
   _shakePerSecond: 1.4
   _maxLength: 18
@@ -97,8 +97,10 @@ MonoBehaviour:
   _ropeWidth: 0.1
   _ropeDamping: 0.97
   _ropeIterations: 16
-  _waterPerParticle: 0.02
-  _pushPerParticle: 0.02
+  _waterPerParticle: 0.015
+  _pushPerParticle: 0.06
+  _maxPushPerHit: 0.35
+  _maxMistRate: 80
   _maxActiveSplashes: 12
   _splashLifetime: 0.6
   _splashCooldown: 0.05

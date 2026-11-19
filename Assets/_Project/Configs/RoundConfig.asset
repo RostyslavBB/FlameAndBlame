@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6061775960962464ab729c991c4da63a, type: 3}
   m_Name: RoundConfig
   m_EditorClassIdentifier: FB.Game::FB.Game.Config.RoundConfig
-  _briefingSeconds: 3
+  _briefingSeconds: 5
   _roundSeconds: 150

@@ -17,6 +17,7 @@ namespace FB.Game.Signals
         public string Text => Record.Text;
         public int Damage => Record.Damage;
         public int Severity => Record.Severity;
+        public NarrativeEvent Kind => Record.Kind;
         public ActorId Actor => Record.MainActor;
         public Color ActorColor { get; }
         public string ActorName { get; }

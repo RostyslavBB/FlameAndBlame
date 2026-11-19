@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FB.Game.Civilian;
+using FB.Game.Common;
 using FB.Game.Level;
 using UnityEditor;
 using UnityEngine;
@@ -46,6 +47,8 @@ namespace FB.Editor.Building
             capsule.radius = 0.3f;
             Rigidbody body = root.AddComponent<Rigidbody>();
             body.isKinematic = true;
+            // Own layer: the hose rope, puddles and his own chaos query ignore him; water still hits him.
+            LayerSetup.SetLayerRecursively(root, GameLayers.Civilian);
 
             CivilianView view = root.AddComponent<CivilianView>();
             EditorAssetUtility.SetReference(view, "_agent", agent);

@@ -28,8 +28,10 @@ namespace FB.Game.Installers
 
             Container.BindInterfacesTo<BriefingPresenter>().AsSingle();
             Container.BindInterfacesTo<HudPresenter>().AsSingle();
+            Container.BindInterfacesTo<HudGaugesPresenter>().AsSingle();
             Container.BindInterfacesTo<FeedPresenter>().AsSingle();
             Container.Bind<ReportVerdict>().AsSingle();
+            Container.Bind<BlameChainBuilder>().AsSingle();
             Container.BindInterfacesTo<ReportPresenter>().AsSingle();
             Container.BindInterfacesTo<ShockOverlayPresenter>().AsSingle();
         }
