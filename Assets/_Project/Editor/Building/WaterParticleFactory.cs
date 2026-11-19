@@ -1,5 +1,4 @@
 using FB.Game.Common;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -8,33 +7,8 @@ namespace FB.Editor.Building
     /// <summary>Shuriken setup for the hose jet and impact splashes, plus their transparent droplet material.</summary>
     internal static class WaterParticleFactory
     {
-        public static Material CreateMaterial(Texture2D droplet, Color color)
-        {
-            Shader shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            Material material = AssetDatabase.LoadAssetAtPath<Material>(AssetPaths.WaterParticleMaterial);
-            if (material == null)
-            {
-                material = new Material(shader);
-                AssetDatabase.CreateAsset(material, AssetPaths.WaterParticleMaterial);
-            }
-
-            material.shader = shader;
-            material.SetTexture("_BaseMap", droplet);
-            material.SetColor("_BaseColor", color);
-            material.SetFloat("_Surface", 1f);
-            material.SetFloat("_Blend", 0f);
-            material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-            material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-            material.SetFloat("_SrcBlendAlpha", (float)BlendMode.One);
-            material.SetFloat("_DstBlendAlpha", (float)BlendMode.OneMinusSrcAlpha);
-            material.SetFloat("_ZWrite", 0f);
-            material.SetOverrideTag("RenderType", "Transparent");
-            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            material.renderQueue = (int)RenderQueue.Transparent;
-            material.enableInstancing = true;
-            EditorUtility.SetDirty(material);
-            return material;
-        }
+        public static Material CreateMaterial(Texture2D droplet, Color color) =>
+            ParticleMaterialFactory.Create(AssetPaths.WaterParticleMaterial, droplet, color);
 
         /// <summary>Continuous jet along local +Z. Emission and speed are driven at runtime by HoseController.</summary>
         public static ParticleSystem CreateJet(Transform parent, Material material)
@@ -106,7 +80,7 @@ namespace FB.Editor.Building
             return particles;
         }
 
-        private static ParticleSystem CreateSystem(string name, Transform parent, Material material)
+        internal static ParticleSystem CreateSystem(string name, Transform parent, Material material)
         {
             GameObject go = new GameObject(name);
             if (parent != null)

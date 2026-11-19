@@ -4,6 +4,10 @@ namespace FB.Game.Blame
     public enum CauseAction
     {
         HoseSpray,
-        Ignite
+        Ignite,
+        FireSpread,
+        Burn,
+        ShortCircuit,
+        Drown
     }
 }

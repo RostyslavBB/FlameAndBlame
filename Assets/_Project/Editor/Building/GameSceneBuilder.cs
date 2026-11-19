@@ -1,7 +1,10 @@
 using FB.Editor.Configs;
+using FB.Game.Effects;
+using FB.Game.Fire;
 using FB.Game.Hose;
 using FB.Game.Installers;
 using FB.Game.Player;
+using FB.Game.Surfaces;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -14,13 +17,14 @@ namespace FB.Editor.Building
     /// <summary>Creates Game.unity from scratch: light, ambient, level, player, hose anchor, SceneContext.</summary>
     internal static class GameSceneBuilder
     {
-        public static void Build(LevelBuilder level)
+        public static void Build(MaterialLibrary materials, MeshLibrary meshes)
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             // NewScene(Single) unloads unreferenced assets: reload configs so references are not stale.
             ConfigAssets configs = ConfigAssets.Ensure();
             SetupLighting();
-            level.Rebuild(scene);
+            LevelBuilder level = new LevelBuilder(configs.Layout, materials, meshes, configs.Profiles);
+            SurfaceCatalog surfaces = level.Rebuild(scene);
 
             // Load from disk: references returned by SaveAsPrefabAsset may be invalidated by asset reimport.
             GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetPaths.PlayerPrefab);
@@ -29,7 +33,6 @@ namespace FB.Editor.Building
 
             GameObject anchor = new GameObject(HoseIds.Anchor);
             PlaceHoseAnchor(anchor.transform, configs);
-            WaterSplash splashPrefab = AssetDatabase.LoadAssetAtPath<WaterSplash>(AssetPaths.SplashPrefab);
 
             GameObject contextObject = new GameObject("SceneContext");
             GameplayInstaller installer = contextObject.AddComponent<GameplayInstaller>();
@@ -37,10 +40,16 @@ namespace FB.Editor.Building
             EditorAssetUtility.SetReference(installer, "_playerConfig", configs.Player);
             EditorAssetUtility.SetReference(installer, "_roundConfig", configs.Round);
             EditorAssetUtility.SetReference(installer, "_hoseConfig", configs.Hose);
+            EditorAssetUtility.SetReference(installer, "_fireConfig", configs.Fire);
+            EditorAssetUtility.SetReference(installer, "_rulesConfig", configs.Rules);
             EditorAssetUtility.SetReference(installer, "_player", player.GetComponent<PlayerBody>());
             EditorAssetUtility.SetReference(installer, "_hoseView", player.GetComponent<HoseView>());
             EditorAssetUtility.SetReference(installer, "_hoseAnchor", anchor.transform);
-            EditorAssetUtility.SetReference(installer, "_splashPrefab", splashPrefab);
+            EditorAssetUtility.SetReference(installer, "_surfaces", surfaces);
+            SetPrefab<WaterSplash>(installer, "_splashPrefab", AssetPaths.SplashPrefab);
+            SetPrefab<FireVfx>(installer, "_fireVfxPrefab", AssetPaths.FireVfxPrefab);
+            SetPrefab<SteamPuff>(installer, "_steamPrefab", AssetPaths.SteamPrefab);
+            SetPrefab<SparkBurst>(installer, "_sparksPrefab", AssetPaths.SparksPrefab);
             SceneContext context = contextObject.AddComponent<SceneContext>();
             context.Installers = new MonoInstaller[] { installer };
 
@@ -48,6 +57,10 @@ namespace FB.Editor.Building
             EditorSceneManager.SaveScene(scene, AssetPaths.GameScene);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(AssetPaths.GameScene, true) };
         }
+
+        // Prefabs are loaded from disk: in-memory references may be stale after NewScene unloaded assets.
+        private static void SetPrefab<T>(Object installer, string field, string path) where T : Component =>
+            EditorAssetUtility.SetReference(installer, field, AssetDatabase.LoadAssetAtPath<T>(path));
 
         public static void PlacePlayer(Transform player, ConfigAssets configs)
         {

@@ -50,7 +50,26 @@ namespace FB.Editor
             return existing;
         }
 
-        public static void SetReference(Object target, string field, Object value)
+        public static void SetReference(Object target, string field, Object value) =>
+            Edit(target, field, property => property.objectReferenceValue = value);
+
+        public static void SetString(Object target, string field, string value) =>
+            Edit(target, field, property => property.stringValue = value);
+
+        public static void SetInt(Object target, string field, int value) =>
+            Edit(target, field, property => property.intValue = value);
+
+        public static void SetArray(Object target, string field, Object[] values) =>
+            Edit(target, field, property =>
+            {
+                property.arraySize = values.Length;
+                for (int i = 0; i < values.Length; i++)
+                {
+                    property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+                }
+            });
+
+        private static void Edit(Object target, string field, System.Action<SerializedProperty> edit)
         {
             SerializedObject serialized = new SerializedObject(target);
             SerializedProperty property = serialized.FindProperty(field);
@@ -60,7 +79,7 @@ namespace FB.Editor
                 return;
             }
 
-            property.objectReferenceValue = value;
+            edit(property);
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
     }

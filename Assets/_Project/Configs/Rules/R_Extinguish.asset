@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5262ce27f8cb5b142a30a0b0f93b59bb, type: 3}
+  m_Name: R_Extinguish
+  m_EditorClassIdentifier: FB.Game::FB.Game.Interactions.ExtinguishRule
+  _coolingPerWater: 0.6
+  _extinguishBelowIgnitionShare: 0.5

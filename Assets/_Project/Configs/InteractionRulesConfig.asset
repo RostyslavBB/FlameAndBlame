@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b748b4fd66708a49b630995822ab075, type: 3}
+  m_Name: InteractionRulesConfig
+  m_EditorClassIdentifier: FB.Game::FB.Game.Interactions.InteractionRulesConfig
+  _rules:
+  - {fileID: 11400000, guid: 423725281c897fe4ca9dae9a34156666, type: 2}
+  - {fileID: 11400000, guid: f986c89adad6d4c4eb8ff4862c8912a8, type: 2}
+  - {fileID: 11400000, guid: dafeb5470bc37c84ba69a6221475288b, type: 2}
+  - {fileID: 11400000, guid: 57abb0eee58982340be512a67f40ad54, type: 2}
+  - {fileID: 11400000, guid: d311034e2e1858f4e825b127efefce7c, type: 2}

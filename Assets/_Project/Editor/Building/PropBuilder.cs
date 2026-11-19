@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using FB.Game.Level;
+using FB.Game.Surfaces;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -10,11 +12,14 @@ namespace FB.Editor.Building
     {
         private readonly MaterialLibrary _materials;
         private readonly MeshLibrary _meshes;
+        private readonly IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> _profiles;
 
-        public PropBuilder(MaterialLibrary materials, MeshLibrary meshes)
+        public PropBuilder(MaterialLibrary materials, MeshLibrary meshes,
+            IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> profiles)
         {
             _materials = materials;
             _meshes = meshes;
+            _profiles = profiles;
         }
 
         public GameObject Build(PropDefinition prop, Transform parent)
@@ -42,7 +47,22 @@ namespace FB.Editor.Building
                 }
             }
 
+            if (prop.HasSurface)
+            {
+                AddSurface(prop, root);
+            }
+
             return root;
+        }
+
+        private void AddSurface(PropDefinition prop, GameObject root)
+        {
+            SurfaceEntity surface = root.AddComponent<SurfaceEntity>();
+            EditorAssetUtility.SetString(surface, "_displayName", prop.DisplayName);
+            EditorAssetUtility.SetReference(surface, "_profile", _profiles[prop.Surface]);
+            EditorAssetUtility.SetInt(surface, "_value", prop.Value);
+            EditorAssetUtility.SetArray(surface, "_renderers", root.GetComponentsInChildren<MeshRenderer>());
+            EditorAssetUtility.SetArray(surface, "_colliders", root.GetComponentsInChildren<Collider>());
         }
 
         private void BuildPart(PropDefinition prop, PropPart part, int index, Transform parent)

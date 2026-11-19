@@ -2,7 +2,9 @@ using FB.Editor.Building;
 using FB.Editor.Configs;
 using FB.Game.Config;
 using FB.Game.Hose;
+using FB.Game.Installers;
 using FB.Game.Player;
+using FB.Game.Surfaces;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -26,9 +28,9 @@ namespace FB.Editor
                 configs.Palette.Get(PaletteColor.Water));
 
             PlayerPrefabBuilder.Build(materials, meshes, water);
-            SplashPrefabBuilder.Build(water);
+            FxPrefabBuilder.BuildAll(water);
             ProjectContextBuilder.Build();
-            GameSceneBuilder.Build(new LevelBuilder(configs.Layout, materials, meshes));
+            GameSceneBuilder.Build(materials, meshes);
             AssetDatabase.SaveAssets();
             Debug.Log("[Build] Build All finished: configs, materials, meshes, textures, prefabs, Game.unity.");
         }
@@ -38,7 +40,7 @@ namespace FB.Editor
         {
             ConfigAssets configs = ConfigAssets.Ensure();
             Scene scene = EditorSceneManager.OpenScene(AssetPaths.GameScene, OpenSceneMode.Single);
-            CreateLevelBuilder(configs).Rebuild(scene);
+            SurfaceCatalog surfaces = CreateLevelBuilder(configs).Rebuild(scene);
             foreach (GameObject root in scene.GetRootGameObjects())
             {
                 if (root.TryGetComponent(out PlayerBody player))
@@ -49,6 +51,11 @@ namespace FB.Editor
                 if (root.name == HoseIds.Anchor)
                 {
                     GameSceneBuilder.PlaceHoseAnchor(root.transform, configs);
+                }
+
+                if (root.TryGetComponent(out GameplayInstaller installer))
+                {
+                    EditorAssetUtility.SetReference(installer, "_surfaces", surfaces);
                 }
             }
 
@@ -96,6 +103,6 @@ namespace FB.Editor
         }
 
         private static LevelBuilder CreateLevelBuilder(ConfigAssets configs) =>
-            new LevelBuilder(configs.Layout, new MaterialLibrary(configs.Palette), new MeshLibrary());
+            new LevelBuilder(configs.Layout, new MaterialLibrary(configs.Palette), new MeshLibrary(), configs.Profiles);
     }
 }

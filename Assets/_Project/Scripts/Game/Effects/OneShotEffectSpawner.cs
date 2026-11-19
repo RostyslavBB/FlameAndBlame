@@ -1,29 +1,28 @@
 using FB.Core.Pooling;
-using FB.Game.Config;
 using UnityEngine;
 using Zenject;
 
-namespace FB.Game.Hose
+namespace FB.Game.Effects
 {
-    /// <summary>Spawns pooled splashes with a rate limit and returns them to the pool when they expire.</summary>
-    public sealed class SplashSpawner : ITickable
+    /// <summary>Spawns pooled one-shot effects with a rate limit and returns them to the pool when they expire.</summary>
+    public sealed class OneShotEffectSpawner<T> : ITickable where T : OneShotEffect
     {
-        private readonly IPool<WaterSplash> _pool;
-        private readonly HoseConfig _config;
-        private readonly WaterSplash[] _active;
+        private readonly IPool<T> _pool;
+        private readonly EffectSpawnSettings _settings;
+        private readonly T[] _active;
         private readonly float[] _expireAt;
         private int _count;
         private float _nextSpawnTime;
 
-        public SplashSpawner(IPool<WaterSplash> pool, HoseConfig config)
+        public OneShotEffectSpawner(IPool<T> pool, EffectSpawnSettings settings)
         {
             _pool = pool;
-            _config = config;
-            _active = new WaterSplash[config.MaxActiveSplashes];
-            _expireAt = new float[config.MaxActiveSplashes];
+            _settings = settings;
+            _active = new T[settings.MaxActive];
+            _expireAt = new float[settings.MaxActive];
         }
 
-        public void TrySpawn(Vector3 point, Vector3 normal)
+        public void TrySpawn(Vector3 point, Vector3 direction)
         {
             float now = Time.time;
             if (now < _nextSpawnTime || _count >= _active.Length)
@@ -31,11 +30,11 @@ namespace FB.Game.Hose
                 return;
             }
 
-            _nextSpawnTime = now + _config.SplashCooldown;
-            WaterSplash splash = _pool.Spawn();
-            splash.Play(point, normal);
-            _active[_count] = splash;
-            _expireAt[_count] = now + _config.SplashLifetime;
+            _nextSpawnTime = now + _settings.Cooldown;
+            T effect = _pool.Spawn();
+            effect.Play(point, direction);
+            _active[_count] = effect;
+            _expireAt[_count] = now + _settings.Lifetime;
             _count++;
         }
 

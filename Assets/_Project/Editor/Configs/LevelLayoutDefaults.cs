@@ -13,7 +13,7 @@ namespace FB.Editor.Configs
     internal static class LevelLayoutDefaults
     {
         /// <summary>Bump when the defaults change: Build All regenerates layouts made from an older version.</summary>
-        public const int Version = 2;
+        public const int Version = 3;
 
         public static void Apply(LevelLayoutConfig config)
         {
@@ -50,7 +50,7 @@ namespace FB.Editor.Configs
             props.AddRange(HallProps.Create());
             props.AddRange(KitchenProps.Create());
             props.AddRange(LivingRoomProps.Create());
-            return props;
+            return PropSurfaces.Apply(props);
         }
     }
 }

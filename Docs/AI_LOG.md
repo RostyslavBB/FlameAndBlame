@@ -12,3 +12,9 @@
 - Editor: Build All adds the tap, first-person nozzle with a Shuriken jet (world collision, sendCollisionMessages), procedural droplet texture, transparent particle material, splash prefab, `Player` physics layer; added batch Zenject validation of the scene.
 - Decision: recoil uses a steep curve so only near-max pressure overpowers the player's capped braking — at max pressure the player is visibly pushed back.
 - Decision: particle hits are aggregated per collider per frame into one signal (bus stays quiet, no per-particle boxing); one water `Cause` per trigger press, so each spray is a separate blame chain.
+
+## S3 - Fire and statuses (Claude Code)
+- Generated: `Surface` model + passive `SurfaceEntity`/`SurfaceCatalog`, `StatusContainer` (each status keeps its Cause), `MaterialProfileConfig` x6, `ISurfaceActions` as the single mutation point, `FireSimulation` (10 Hz, heat/fuel/drying, neighbours cached with OverlapBox), `FireStarter` (pan ignites with Cause(Building, Ignite)), signals FireSpread / FireExtinguished / ItemRuined / SurfaceStatusChanged.
+- Strategy: `IInteractionRule` assets in `InteractionRulesConfig` - Extinguish, WaterCooling, WaterDamage (ShortCircuit for electronics, Drown for plants), NeighborIgnition (wet heats 4x slower).
+- Visuals: procedural 2x2 flame flipbook, pooled `FireVfx` (flames + smoke + rationed point lights, max 4), generic `OneShotEffectSpawner<T>` for splash/steam/sparks, property-block tint (wet darker, burned black).
+- Decision: rules never touch state directly - they call `ISurfaceActions`, which always derives a Cause and fires a signal, so blame (S4) and visuals cannot miss an effect.

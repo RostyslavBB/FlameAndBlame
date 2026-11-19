@@ -4906,5 +4906,5 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 203113018eaecee428f662d6a9c2264b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: FB.Game::FB.Game.Hose.WaterSplash
+  m_EditorClassIdentifier: FB.Game::FB.Game.Effects.WaterSplash
   _particles: {fileID: 151605175640601576}

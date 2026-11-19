@@ -1,6 +1,11 @@
+using System.Collections.Generic;
 using FB.Game.Config;
+using FB.Game.Fire;
+using FB.Game.Interactions;
 using FB.Game.Level;
+using FB.Game.Surfaces;
 using UnityEditor;
+using UnityEngine;
 
 namespace FB.Editor.Configs
 {
@@ -10,21 +15,18 @@ namespace FB.Editor.Configs
     /// </summary>
     internal sealed class ConfigAssets
     {
-        private ConfigAssets(PaletteConfig palette, PlayerConfig player, RoundConfig round, HoseConfig hose,
-            LevelLayoutConfig layout)
+        private ConfigAssets()
         {
-            Palette = palette;
-            Player = player;
-            Round = round;
-            Hose = hose;
-            Layout = layout;
         }
 
-        public PaletteConfig Palette { get; }
-        public PlayerConfig Player { get; }
-        public RoundConfig Round { get; }
-        public HoseConfig Hose { get; }
-        public LevelLayoutConfig Layout { get; }
+        public PaletteConfig Palette { get; private set; }
+        public PlayerConfig Player { get; private set; }
+        public RoundConfig Round { get; private set; }
+        public HoseConfig Hose { get; private set; }
+        public FireConfig Fire { get; private set; }
+        public InteractionRulesConfig Rules { get; private set; }
+        public LevelLayoutConfig Layout { get; private set; }
+        public IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> Profiles { get; private set; }
 
         public static ConfigAssets Ensure()
         {
@@ -39,13 +41,25 @@ namespace FB.Editor.Configs
                 EditorUtility.SetDirty(layout);
             }
 
-            ConfigAssets configs = new ConfigAssets(palette, Load<PlayerConfig>("PlayerConfig"),
-                Load<RoundConfig>("RoundConfig"), Load<HoseConfig>("HoseConfig"), layout);
+            InteractionRulesConfig rules = Load<InteractionRulesConfig>("InteractionRulesConfig");
+            FireDefaults.EnsureRules(rules);
+
+            ConfigAssets configs = new ConfigAssets
+            {
+                Palette = palette,
+                Player = Load<PlayerConfig>("PlayerConfig"),
+                Round = Load<RoundConfig>("RoundConfig"),
+                Hose = Load<HoseConfig>("HoseConfig"),
+                Fire = Load<FireConfig>("FireConfig"),
+                Rules = rules,
+                Layout = layout,
+                Profiles = FireDefaults.EnsureProfiles()
+            };
             AssetDatabase.SaveAssets();
             return configs;
         }
 
-        private static T Load<T>(string name) where T : UnityEngine.ScriptableObject =>
+        private static T Load<T>(string name) where T : ScriptableObject =>
             EditorAssetUtility.LoadOrCreate<T>($"{AssetPaths.Configs}/{name}.asset", out _);
     }
 }

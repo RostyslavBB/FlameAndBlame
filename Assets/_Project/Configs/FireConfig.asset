@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a3e0862fc1f45142bfbdf02abb87ce8, type: 3}
+  m_Name: FireConfig
+  m_EditorClassIdentifier: FB.Game::FB.Game.Fire.FireConfig
+  _tickRate: 10
+  _heatPerSecond: 0.28
+  _spreadRange: 1
+  _heatDecayPerSecond: 0.04
+  _burningRegrowPerSecond: 0.3
+  _maxHeatFactor: 2
+  _dryPerSecond: 0.05
+  _wetThreshold: 0.1
+  _waterSplashRadius: 0.6
+  _startSurfaceId: Pan
+  _maxFires: 20
+  _maxFireLights: 4
+  _fireLightIntensity: 2.2
+  _maxSteamPuffs: 6
+  _maxSparkBursts: 4
+  _oneShotLifetime: 1.5
+  _wetTint: 0.6
+  _charredTint: 0.15
+  _brokenTint: 0.5

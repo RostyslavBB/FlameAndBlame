@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FB.Game.Config;
+using FB.Game.Effects;
 using FB.Game.Signals;
 using UnityEngine;
 using Zenject;
@@ -18,12 +19,12 @@ namespace FB.Game.Hose
         private readonly HoseView _view;
         private readonly HoseConfig _config;
         private readonly IHoseFacade _hose;
-        private readonly SplashSpawner _splashes;
+        private readonly OneShotEffectSpawner<WaterSplash> _splashes;
         private readonly SignalBus _signalBus;
         private readonly List<ParticleCollisionEvent> _events = new List<ParticleCollisionEvent>(EventBufferSize);
 
         public WaterJetCollisionHandler(HoseView view, HoseConfig config, IHoseFacade hose,
-            SplashSpawner splashes, SignalBus signalBus)
+            OneShotEffectSpawner<WaterSplash> splashes, SignalBus signalBus)
         {
             _view = view;
             _config = config;

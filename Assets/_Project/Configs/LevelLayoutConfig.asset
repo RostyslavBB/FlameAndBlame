@@ -19,7 +19,7 @@ MonoBehaviour:
   _spawnPosition: {x: -7.2, y: 0, z: -1}
   _spawnYaw: 90
   _hoseAnchor: {x: -6.6, y: 0.85, z: 2.2}
-  _defaultsVersion: 2
+  _defaultsVersion: 3
   _rooms:
   - _name: Hall
     _min: {x: -8, y: -2.5}
@@ -84,6 +84,9 @@ MonoBehaviour:
       _euler: {x: 90, y: 0, z: 0}
       _color: 23
       _noCollider: 1
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: EntryDoor
     _position: {x: -7.9, y: 0, z: 1}
     _yaw: 0
@@ -102,6 +105,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 9
       _noCollider: 1
+    _surface: 1
+    _value: 300
+    _displayName: "\u0412\u0445\u0456\u0434\u043D\u0456 \u0434\u0432\u0435\u0440\u0456"
   - _id: Doormat
     _position: {x: -7.4, y: 0, z: 1}
     _yaw: 0
@@ -114,6 +120,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 19
       _noCollider: 1
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: ShoeRack
     _position: {x: -7.75, y: 0, z: -2}
     _yaw: 0
@@ -126,6 +135,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 5
       _noCollider: 0
+    _surface: 1
+    _value: 60
+    _displayName: "\u0412\u0437\u0443\u0442\u0442\u0454\u0432\u0430 \u043F\u043E\u043B\u0438\u0446\u044F"
   - _id: Fridge
     _position: {x: -5.5, y: 0, z: 2.05}
     _yaw: 0
@@ -156,6 +168,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 9
       _noCollider: 1
+    _surface: 5
+    _value: 900
+    _displayName: "\u0425\u043E\u043B\u043E\u0434\u0438\u043B\u044C\u043D\u0438\u043A"
   - _id: CabinetLeft
     _position: {x: -3.75, y: 0, z: 2.125}
     _yaw: 0
@@ -192,6 +207,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 9
       _noCollider: 1
+    _surface: 1
+    _value: 350
+    _displayName: "\u041A\u0443\u0445\u043E\u043D\u043D\u0430 \u0448\u0430\u0444\u043A\u0430"
   - _id: Stove
     _position: {x: -2, y: 0, z: 2.125}
     _yaw: 0
@@ -222,6 +240,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 10
       _noCollider: 1
+    _surface: 5
+    _value: 500
+    _displayName: "\u041F\u043B\u0438\u0442\u0430"
   - _id: Pan
     _position: {x: -2.18, y: 0.92, z: 2.04}
     _yaw: 0
@@ -240,6 +261,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 6
       _noCollider: 0
+    _surface: 6
+    _value: 25
+    _displayName: "\u0421\u043A\u043E\u0432\u043E\u0440\u0456\u0434\u043A\u0430"
   - _id: CabinetRight
     _position: {x: -0.95, y: 0, z: 2.125}
     _yaw: 0
@@ -270,6 +294,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 9
       _noCollider: 1
+    _surface: 1
+    _value: 250
+    _displayName: "\u0428\u0430\u0444\u043A\u0430 \u0431\u0456\u043B\u044F \u043F\u043B\u0438\u0442\u0438"
   - _id: UpperCabinetLeft
     _position: {x: -3.75, y: 0, z: 2.25}
     _yaw: 0
@@ -294,6 +321,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 9
       _noCollider: 1
+    _surface: 1
+    _value: 300
+    _displayName: "\u041D\u0430\u0432\u0456\u0441\u043D\u0430 \u0448\u0430\u0444\u043A\u0430"
   - _id: Hood
     _position: {x: -2, y: 0, z: 2.2}
     _yaw: 0
@@ -312,6 +342,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 9
       _noCollider: 0
+    _surface: 5
+    _value: 150
+    _displayName: "\u0412\u0438\u0442\u044F\u0436\u043A\u0430"
   - _id: UpperCabinetRight
     _position: {x: -0.95, y: 0, z: 2.25}
     _yaw: 0
@@ -330,6 +363,10 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 9
       _noCollider: 1
+    _surface: 1
+    _value: 200
+    _displayName: "\u041D\u0430\u0432\u0456\u0441\u043D\u0430 \u0448\u0430\u0444\u043A\u0430
+      \u043D\u0430\u0434 \u043F\u043B\u0438\u0442\u043E\u044E"
   - _id: KitchenTable
     _position: {x: -3.2, y: 0, z: -0.6}
     _yaw: 0
@@ -366,6 +403,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 6
       _noCollider: 0
+    _surface: 1
+    _value: 180
+    _displayName: "\u041A\u0443\u0445\u043E\u043D\u043D\u0438\u0439 \u0441\u0442\u0456\u043B"
   - _id: ChairSouth
     _position: {x: -3.2, y: 0, z: -1.45}
     _yaw: 180
@@ -408,6 +448,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 6
       _noCollider: 0
+    _surface: 1
+    _value: 60
+    _displayName: "\u0421\u0442\u0456\u043B\u0435\u0446\u044C"
   - _id: ChairNorth
     _position: {x: -3.2, y: 0, z: 0.25}
     _yaw: 0
@@ -450,6 +493,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 6
       _noCollider: 0
+    _surface: 1
+    _value: 60
+    _displayName: "\u0421\u0442\u0456\u043B\u0435\u0446\u044C"
   - _id: Plate1
     _position: {x: -3.5, y: 0.79, z: -0.6}
     _yaw: 0
@@ -462,6 +508,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 18
       _noCollider: 0
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: Plate2
     _position: {x: -2.85, y: 0.79, z: -0.4}
     _yaw: 0
@@ -474,6 +523,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 18
       _noCollider: 0
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: Mug
     _position: {x: -3, y: 0.79, z: -0.85}
     _yaw: 0
@@ -486,6 +538,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 19
       _noCollider: 0
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: TrashBin
     _position: {x: -5.6, y: 0, z: 1.2}
     _yaw: 0
@@ -498,6 +553,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 9
       _noCollider: 0
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: Window
     _position: {x: 2, y: 0, z: 2.41}
     _yaw: 0
@@ -522,6 +580,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 5
       _noCollider: 0
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: CurtainRod
     _position: {x: 2, y: 0, z: 2.33}
     _yaw: 0
@@ -534,6 +595,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 90}
       _color: 9
       _noCollider: 1
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: CurtainLeft
     _position: {x: 0.75, y: 0, z: 2.33}
     _yaw: 0
@@ -558,6 +622,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 13
       _noCollider: 0
+    _surface: 2
+    _value: 120
+    _displayName: "\u0428\u0442\u043E\u0440\u0430"
   - _id: CurtainRight
     _position: {x: 3.25, y: 0, z: 2.33}
     _yaw: 0
@@ -582,6 +649,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 13
       _noCollider: 0
+    _surface: 2
+    _value: 120
+    _displayName: "\u0428\u0442\u043E\u0440\u0430"
   - _id: Sofa
     _position: {x: 2, y: 0, z: 1.8}
     _yaw: 0
@@ -612,6 +682,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 11
       _noCollider: 0
+    _surface: 2
+    _value: 1200
+    _displayName: "\u0414\u0438\u0432\u0430\u043D"
   - _id: Cushion1
     _position: {x: 1.4, y: 0.5, z: 1.75}
     _yaw: 0
@@ -624,6 +697,9 @@ MonoBehaviour:
       _euler: {x: -15, y: 0, z: 0}
       _color: 12
       _noCollider: 0
+    _surface: 2
+    _value: 40
+    _displayName: "\u041F\u043E\u0434\u0443\u0448\u043A\u0430"
   - _id: Cushion2
     _position: {x: 2.6, y: 0.5, z: 1.75}
     _yaw: 0
@@ -636,6 +712,9 @@ MonoBehaviour:
       _euler: {x: -15, y: 0, z: 0}
       _color: 12
       _noCollider: 0
+    _surface: 2
+    _value: 40
+    _displayName: "\u041F\u043E\u0434\u0443\u0448\u043A\u0430"
   - _id: FloorLamp
     _position: {x: 3.95, y: 0, z: 2}
     _yaw: 0
@@ -666,6 +745,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 21
       _noCollider: 1
+    _surface: 2
+    _value: 150
+    _displayName: "\u0422\u043E\u0440\u0448\u0435\u0440"
   - _id: Rug
     _position: {x: 3.2, y: 0, z: -0.3}
     _yaw: 0
@@ -678,6 +760,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 17
       _noCollider: 1
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: CoffeeTable
     _position: {x: 3.2, y: 0, z: -0.3}
     _yaw: 0
@@ -714,6 +799,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 6
       _noCollider: 0
+    _surface: 1
+    _value: 220
+    _displayName: "\u0416\u0443\u0440\u043D\u0430\u043B\u044C\u043D\u0438\u0439 \u0441\u0442\u043E\u043B\u0438\u043A"
   - _id: CoffeeMug
     _position: {x: 3.4, y: 0.44, z: -0.25}
     _yaw: 0
@@ -726,6 +814,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 18
       _noCollider: 0
+    _surface: 0
+    _value: 0
+    _displayName: 
   - _id: TvStand
     _position: {x: 3.2, y: 0, z: -2.15}
     _yaw: 180
@@ -750,6 +841,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 5
       _noCollider: 1
+    _surface: 1
+    _value: 200
+    _displayName: "\u0422\u0443\u043C\u0431\u0430 \u043F\u0456\u0434 \u0422\u0412"
   - _id: TV
     _position: {x: 3.2, y: 0.5, z: -2.2}
     _yaw: 180
@@ -780,6 +874,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 19
       _noCollider: 1
+    _surface: 3
+    _value: 800
+    _displayName: "\u0422\u0435\u043B\u0435\u0432\u0456\u0437\u043E\u0440"
   - _id: PowerStrip
     _position: {x: 4.3, y: 0, z: -2.15}
     _yaw: 0
@@ -822,6 +919,9 @@ MonoBehaviour:
       _euler: {x: 0, y: -30, z: 0}
       _color: 10
       _noCollider: 1
+    _surface: 3
+    _value: 25
+    _displayName: "\u041F\u043E\u0434\u043E\u0432\u0436\u0443\u0432\u0430\u0447"
   - _id: Ficus
     _position: {x: 6.3, y: 0, z: -1.9}
     _yaw: 0
@@ -858,6 +958,9 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 15
       _noCollider: 0
+    _surface: 4
+    _value: 90
+    _displayName: "\u0424\u0456\u043A\u0443\u0441"
   - _id: Bookshelf
     _position: {x: 6.68, y: 0, z: 0.5}
     _yaw: 90
@@ -888,3 +991,6 @@ MonoBehaviour:
       _euler: {x: 0, y: 0, z: 0}
       _color: 12
       _noCollider: 1
+    _surface: 1
+    _value: 400
+    _displayName: "\u041A\u043D\u0438\u0436\u043A\u043E\u0432\u0430 \u0448\u0430\u0444\u0430"

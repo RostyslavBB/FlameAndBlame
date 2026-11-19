@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FB.Game.Surfaces;
 using UnityEngine;
 
 namespace FB.Game.Level
@@ -16,6 +17,11 @@ namespace FB.Game.Level
         [SerializeField] private bool _isDynamic;
         [SerializeField, Min(0.01f)] private float _mass = 1f;
         [SerializeField] private List<PropPart> _parts;
+
+        [Header("Gameplay surface (None = decoration)")]
+        [SerializeField] private MaterialKind _surface;
+        [SerializeField, Min(0)] private int _value;
+        [SerializeField] private string _displayName;
 
         public PropDefinition(string id, Vector3 position, float yaw, bool isDynamic, float mass,
             params PropPart[] parts)
@@ -35,5 +41,22 @@ namespace FB.Game.Level
         public bool IsDynamic => _isDynamic;
         public float Mass => _mass;
         public IReadOnlyList<PropPart> Parts => _parts;
+        public MaterialKind Surface => _surface;
+        public bool HasSurface => _surface != MaterialKind.None;
+
+        /// <summary>Price in $ (0 = material default).</summary>
+        public int Value => _value;
+
+        /// <summary>Name shown in the blame feed and the damage bill.</summary>
+        public string DisplayName => _displayName;
+
+        /// <summary>Marks the prop as a gameplay surface. Returns itself for compact layout tables.</summary>
+        public PropDefinition WithSurface(MaterialKind kind, int value, string displayName)
+        {
+            _surface = kind;
+            _value = value;
+            _displayName = displayName;
+            return this;
+        }
     }
 }
