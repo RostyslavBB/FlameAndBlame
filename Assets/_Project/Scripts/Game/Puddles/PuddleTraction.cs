@@ -1,17 +1,18 @@
 using FB.Game.Player;
+using UnityEngine;
 using Zenject;
 
 namespace FB.Game.Puddles
 {
-    /// <summary>Standing in a puddle makes the floor slippery (lower ground control for the player).</summary>
+    /// <summary>Standing in water makes the floor slippery, more so the deeper it is.</summary>
     public sealed class PuddleTraction : ITickable
     {
-        private readonly IPuddleField _puddles;
+        private readonly IPuddles _puddles;
         private readonly PlayerBody _player;
         private readonly IPlayerTraction _traction;
         private readonly PuddleConfig _config;
 
-        public PuddleTraction(IPuddleField puddles, PlayerBody player, IPlayerTraction traction, PuddleConfig config)
+        public PuddleTraction(IPuddles puddles, PlayerBody player, IPlayerTraction traction, PuddleConfig config)
         {
             _puddles = puddles;
             _player = player;
@@ -21,8 +22,8 @@ namespace FB.Game.Puddles
 
         public void Tick()
         {
-            bool inPuddle = _puddles.FindAt(_player.Rigidbody.position) != null;
-            _traction.GroundControl = inPuddle ? _config.SlipGroundControl : 1f;
+            float wetness = Mathf.Clamp01(_puddles.DepthAt(_player.Rigidbody.position) / _config.FullSlipDepth);
+            _traction.GroundControl = Mathf.Lerp(1f, _config.SlipGroundControl, wetness);
         }
     }
 }

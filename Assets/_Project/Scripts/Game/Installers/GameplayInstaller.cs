@@ -47,7 +47,6 @@ namespace FB.Game.Installers
         [SerializeField] private FireVfx _fireVfxPrefab;
         [SerializeField] private SteamPuff _steamPrefab;
         [SerializeField] private SparkBurst _sparksPrefab;
-        [SerializeField] private PuddleView _puddlePrefab;
         [SerializeField] private ElectricArc _arcPrefab;
 
         public override void InstallBindings()
@@ -127,6 +126,7 @@ namespace FB.Game.Installers
             BindEffect(_splashPrefab, new EffectSpawnSettings(_hoseConfig.MaxActiveSplashes, _hoseConfig.SplashLifetime,
                 _hoseConfig.SplashCooldown));
             Container.BindInterfacesTo<WaterJetCollisionHandler>().AsSingle();
+            Container.BindInterfacesTo<WaterStream>().AsSingle();
         }
 
         private void BindSurfaces()
@@ -153,9 +153,9 @@ namespace FB.Game.Installers
 
         private void BindPuddles()
         {
-            Container.BindComponentPool(_puddlePrefab, _puddleConfig.MaxPuddles);
-            Container.BindInterfacesTo<PuddleService>().AsSingle();
+            Container.BindInterfacesTo<PuddleSimulation>().AsSingle();
             Container.BindInterfacesTo<PuddleTraction>().AsSingle();
+            Container.BindInterfacesTo<PuddleSoaking>().AsSingle();
         }
 
         private void BindPower()

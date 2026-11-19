@@ -9,7 +9,7 @@ namespace FB.Game.Blame
         /// <summary>A cause triggered by one earlier cause (e.g. fire spreading from a burning object).</summary>
         Cause Create(ActorId instigator, CauseAction action, Cause parent);
 
-        /// <summary>A cause with two contributing causes (e.g. wet puddle + live power source).</summary>
+        /// <summary>A cause with two contributing causes (e.g. puddle water + live power source).</summary>
         Cause Create(ActorId instigator, CauseAction action, Cause first, Cause second);
     }
 }

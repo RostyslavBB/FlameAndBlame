@@ -8,26 +8,35 @@ using Zenject;
 namespace FB.Game.Power
 {
     /// <summary>
-    /// While power is on, puddles touching a live object (the power strip, or electronics killed by a short
-    /// circuit) become electrified, and so does every puddle connected to them (BFS over overlapping discs).
+    /// With the breaker on, every wet cell connected to the power strip (BFS over the water grid) is live:
+    /// only the puddle that actually touches the strip, and everything it has merged with, carries current.
+    /// A short-circuited appliance replaces the wiring as the blamed power source.
     /// </summary>
-    public sealed class ElectricityService : IInitializable, ITickable
+    public sealed class ElectricityService : IElectricity, IInitializable, ITickable
     {
-        private readonly IPuddleField _puddles;
+        private const float ContactMargin = 0.12f;
+
+        private readonly IPuddles _puddles;
         private readonly IPowerGrid _grid;
         private readonly SurfaceRegistry _surfaces;
         private readonly PowerConfig _config;
-        private readonly Queue<Puddle> _frontier = new Queue<Puddle>(32);
+        private readonly Queue<int> _frontier = new Queue<int>(1024);
         private Surface _powerSource;
         private float _accumulator;
 
-        public ElectricityService(IPuddleField puddles, IPowerGrid grid, SurfaceRegistry surfaces, PowerConfig config)
+        public ElectricityService(IPuddles puddles, IPowerGrid grid, SurfaceRegistry surfaces, PowerConfig config)
         {
             _puddles = puddles;
             _grid = grid;
             _surfaces = surfaces;
             _config = config;
         }
+
+        public bool IsLive { get; private set; }
+        public Cause PowerCause { get; private set; }
+
+        public bool IsElectrifiedAt(Vector3 world) =>
+            IsLive && _puddles.Grid.TryGetCell(world, out int index) && _puddles.Grid.Electrified[index];
 
         public void Initialize()
         {
@@ -47,73 +56,78 @@ namespace FB.Game.Power
             }
 
             _accumulator = 0f;
-            Recalculate();
-        }
-
-        private void Recalculate()
-        {
-            IReadOnlyList<Puddle> puddles = _puddles.Active;
-            for (int i = 0; i < puddles.Count; i++)
-            {
-                puddles[i].IsElectrified = false;
-            }
-
-            if (!_grid.IsOn)
+            WaterGrid water = _puddles.Grid;
+            System.Array.Clear(water.Electrified, 0, water.Electrified.Length);
+            IsLive = false;
+            PowerCause = null;
+            if (!_grid.IsOn || _powerSource == null)
             {
                 return;
             }
 
-            if (_powerSource != null)
-            {
-                Seed(_powerSource.Bounds, _grid.WiringCause, puddles);
-            }
-
-            IReadOnlyList<Surface> all = _surfaces.All;
-            for (int i = 0; i < all.Count; i++)
-            {
-                Cause ruin = all[i].Statuses.CauseOf(SurfaceStatus.Ruined);
-                if (all[i].IsRuined && ruin != null && ruin.Action == CauseAction.ShortCircuit)
-                {
-                    Seed(all[i].Bounds, ruin, puddles);
-                }
-            }
-
-            Spread(puddles);
+            SeedAround(water, _powerSource.Bounds);
+            IsLive = Spread(water);
+            PowerCause = IsLive ? ShortCircuitCause() ?? _grid.WiringCause : null;
         }
 
-        private void Seed(Bounds live, Cause cause, IReadOnlyList<Puddle> puddles)
+        private void SeedAround(WaterGrid water, Bounds source)
         {
-            for (int i = 0; i < puddles.Count; i++)
+            float wet = _config.WetDepth;
+            for (float x = source.min.x - ContactMargin; x <= source.max.x + ContactMargin; x += water.CellSize)
             {
-                Puddle puddle = puddles[i];
-                if (!puddle.IsElectrified && puddle.Touches(live, _config.ContactMargin))
+                for (float z = source.min.z - ContactMargin; z <= source.max.z + ContactMargin; z += water.CellSize)
                 {
-                    Electrify(puddle, cause);
-                }
-            }
-        }
-
-        private void Spread(IReadOnlyList<Puddle> puddles)
-        {
-            while (_frontier.Count > 0)
-            {
-                Puddle current = _frontier.Dequeue();
-                for (int i = 0; i < puddles.Count; i++)
-                {
-                    Puddle next = puddles[i];
-                    if (!next.IsElectrified && current.Overlaps(next))
+                    if (water.TryGetCell(new Vector3(x, 0f, z), out int index) && !water.Electrified[index] &&
+                        water.Depth[index] > wet)
                     {
-                        Electrify(next, current.PowerCause);
+                        water.Electrified[index] = true;
+                        _frontier.Enqueue(index);
                     }
                 }
             }
         }
 
-        private void Electrify(Puddle puddle, Cause cause)
+        private bool Spread(WaterGrid water)
         {
-            puddle.IsElectrified = true;
-            puddle.PowerCause = cause;
-            _frontier.Enqueue(puddle);
+            bool any = _frontier.Count > 0;
+            float wet = _config.WetDepth;
+            while (_frontier.Count > 0)
+            {
+                int index = _frontier.Dequeue();
+                int x = index % water.Width;
+                Visit(water, x > 0 ? index - 1 : -1, wet);
+                Visit(water, x < water.Width - 1 ? index + 1 : -1, wet);
+                Visit(water, index - water.Width, wet);
+                Visit(water, index + water.Width, wet);
+            }
+
+            return any;
+        }
+
+        private void Visit(WaterGrid water, int index, float wet)
+        {
+            if (index < 0 || index >= water.Count || water.Electrified[index] || water.Depth[index] <= wet)
+            {
+                return;
+            }
+
+            water.Electrified[index] = true;
+            _frontier.Enqueue(index);
+        }
+
+        private Cause ShortCircuitCause()
+        {
+            IReadOnlyList<Surface> all = _surfaces.All;
+            for (int i = 0; i < all.Count; i++)
+            {
+                Cause ruin = all[i].Statuses.CauseOf(SurfaceStatus.Ruined);
+                if (ruin != null && ruin.Action == CauseAction.ShortCircuit)
+                {
+                    return ruin;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -14,14 +14,16 @@ namespace FB.Game.Config
         [SerializeField, Min(0.1f)] private float _decayPerSecond = 3f;
 
         [Header("Jet")]
-        [SerializeField, Min(0f)] private float _maxEmissionRate = 220f;
+        [SerializeField, Min(0f)] private float _maxEmissionRate = 300f;
         [SerializeField, Min(0f)] private float _minJetSpeed = 5f;
         [SerializeField, Min(0f)] private float _maxJetSpeed = 17f;
         [SerializeField, Range(0f, 15f)] private float _spreadAngle = 2.5f;
-        [SerializeField, Min(16)] private int _maxParticles = 450;
+        [SerializeField, Min(16)] private int _maxParticles = 600;
         [SerializeField, Min(0.1f)] private float _particleLifetime = 1.4f;
         [SerializeField, Min(0f)] private float _particleGravity = 0.6f;
-        [SerializeField, Min(0.01f)] private float _particleSize = 0.12f;
+        [SerializeField, Min(0.01f)] private float _particleSize = 0.07f;
+        [Tooltip("Mist particles per second at full pressure (fire-hose spray around the jet).")]
+        [SerializeField, Min(0f)] private float _maxMistRate = 45f;
 
         [Header("Recoil")]
         [Tooltip("Share of max recoil (0..1) by pressure (0..1). Steep at the end: max pressure overpowers the legs.")]
@@ -61,6 +63,7 @@ namespace FB.Game.Config
         public float ParticleLifetime => _particleLifetime;
         public float ParticleGravity => _particleGravity;
         public float ParticleSize => _particleSize;
+        public float MaxMistRate => _maxMistRate;
         public AnimationCurve RecoilCurve => _recoilCurve;
         public float MaxRecoilForce => _maxRecoilForce;
         public float VerticalRecoilScale => _verticalRecoilScale;

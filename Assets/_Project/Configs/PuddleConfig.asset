@@ -9,18 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd7641a922e0a4a4495fbd00fee7cdbc, type: 3}
+  m_Script: {fileID: 11500000, guid: 5393b4b8c32d00c43bf9e589a135c84b, type: 3}
   m_Name: PuddleConfig
   m_EditorClassIdentifier: FB.Game::FB.Game.Puddles.PuddleConfig
-  _floorMaxHeight: 0.15
-  _minFloorNormalY: 0.7
-  _maxPuddles: 24
-  _radiusPerSqrtWater: 0.9
-  _minRadius: 0.25
-  _maxRadius: 1.2
-  _mergeDistance: 0.3
-  _dryPerSecond: 0.02
-  _minWater: 0.03
-  _slipGroundControl: 0.15
-  _waterColor: {r: 0.36, g: 0.72, b: 0.95, a: 1}
-  _electrifiedColor: {r: 0.75, g: 0.97, b: 1, a: 1}
+  _cellSize: 0.1
+  _simulationRate: 30
+  _volumePerWater: 0.004
+  _nonFloorShare: 0.85
+  _flowRate: 0.2
+  _filmThickness: 0.003
+  _evaporationPerSecond: 0.00003
+  _maxDisplayDepth: 0.015
+  _fullSlipDepth: 0.004
+  _slipGroundControl: 0.3
+  _soakInterval: 0.5
+  _soakPerSecond: 0.25
+  _maxRipples: 8
+  _rippleInterval: 0.12

@@ -61,6 +61,10 @@ namespace FB.Game.Hose
             shape.angle = _config.SpreadAngle;
             SetJet(0f);
             _particles.Play();
+            if (_view.Mist != null)
+            {
+                _view.Mist.Play();
+            }
         }
 
         public void Tick()
@@ -100,6 +104,12 @@ namespace FB.Game.Hose
             emission.rateOverTimeMultiplier = pressure > SprayThreshold ? _config.MaxEmissionRate * pressure : 0f;
             ParticleSystem.MainModule main = _particles.main;
             main.startSpeedMultiplier = Mathf.Lerp(_config.MinJetSpeed, _config.MaxJetSpeed, pressure);
+
+            if (_view.Mist != null)
+            {
+                ParticleSystem.EmissionModule mist = _view.Mist.emission;
+                mist.rateOverTimeMultiplier = pressure > SprayThreshold ? _config.MaxMistRate * pressure * pressure : 0f;
+            }
         }
     }
 }

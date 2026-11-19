@@ -23,6 +23,13 @@ namespace FB.Game.Level
         [SerializeField, Min(0)] private int _value;
         [SerializeField] private string _displayName;
 
+        [Header("Imported model (empty = procedural parts)")]
+        [Tooltip("Asset path of a CC0 model; when set, Parts are ignored.")]
+        [SerializeField] private string _model;
+        [Tooltip("Box the model is uniformly scaled to fit (m). Bottom-center sits on the prop origin.")]
+        [SerializeField] private Vector3 _modelFit;
+        [SerializeField] private List<ModelMaterial> _modelMaterials = new List<ModelMaterial>();
+
         public PropDefinition(string id, Vector3 position, float yaw, bool isDynamic, float mass,
             params PropPart[] parts)
         {
@@ -49,6 +56,20 @@ namespace FB.Game.Level
 
         /// <summary>Name shown in the blame feed and the damage bill.</summary>
         public string DisplayName => _displayName;
+
+        public string Model => _model;
+        public bool HasModel => !string.IsNullOrEmpty(_model);
+        public Vector3 ModelFit => _modelFit;
+        public IReadOnlyList<ModelMaterial> ModelMaterials => _modelMaterials;
+
+        /// <summary>Uses an imported model instead of procedural parts. Returns itself.</summary>
+        public PropDefinition WithModel(string model, Vector3 fit, params ModelMaterial[] materials)
+        {
+            _model = model;
+            _modelFit = fit;
+            _modelMaterials = new List<ModelMaterial>(materials);
+            return this;
+        }
 
         /// <summary>Marks the prop as a gameplay surface. Returns itself for compact layout tables.</summary>
         public PropDefinition WithSurface(MaterialKind kind, int value, string displayName)

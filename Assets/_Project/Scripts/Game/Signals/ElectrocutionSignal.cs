@@ -5,7 +5,7 @@ using UnityEngine;
 namespace FB.Game.Signals
 {
     /// <summary>
-    /// The player or an object got shocked by an electrified puddle.
+    /// The player or an object got shocked by a live puddle.
     /// Cause has two parents: the puddle (water) and the live power source.
     /// </summary>
     public readonly struct ElectrocutionSignal

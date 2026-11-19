@@ -55,6 +55,41 @@ namespace FB.Editor.Building
             return particles;
         }
 
+        /// <summary>Soft spray cloud around the jet; emission is driven by HoseController with the pressure.</summary>
+        public static ParticleSystem CreateMist(Transform parent, Material material)
+        {
+            ParticleSystem particles = CreateSystem("Mist", parent, material);
+            ParticleSystem.MainModule main = particles.main;
+            main.loop = true;
+            main.playOnAwake = true;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.35f, 0.7f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(5f, 11f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.12f, 0.3f);
+            main.startRotation = new ParticleSystem.MinMaxCurve(0f, 6.28f);
+            main.gravityModifier = 0.3f;
+            main.maxParticles = 80;
+
+            ParticleSystem.EmissionModule emission = particles.emission;
+            emission.rateOverTime = 0f;
+
+            ParticleSystem.ShapeModule shape = particles.shape;
+            shape.shapeType = ParticleSystemShapeType.Cone;
+            shape.angle = 9f;
+            shape.radius = 0.03f;
+
+            ParticleSystem.SizeOverLifetimeModule size = particles.sizeOverLifetime;
+            size.enabled = true;
+            size.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0.6f, 1f, 3f));
+
+            Gradient fade = new Gradient();
+            fade.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.22f, 0.2f), new GradientAlphaKey(0f, 1f) });
+            ParticleSystem.ColorOverLifetimeModule color = particles.colorOverLifetime;
+            color.enabled = true;
+            color.color = fade;
+            return particles;
+        }
+
         /// <summary>One-shot burst of droplets along local +Z (the surface normal).</summary>
         public static ParticleSystem CreateSplash(Transform parent, Material material)
         {
@@ -65,13 +100,13 @@ namespace FB.Editor.Building
             main.duration = 0.3f;
             main.startLifetime = new ParticleSystem.MinMaxCurve(0.3f, 0.55f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(1.5f, 3.5f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.1f);
-            main.maxParticles = 16;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.06f, 0.15f);
+            main.maxParticles = 24;
             main.gravityModifier = 1.5f;
 
             ParticleSystem.EmissionModule emission = particles.emission;
             emission.rateOverTime = 0f;
-            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 10) });
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 16) });
 
             ParticleSystem.ShapeModule shape = particles.shape;
             shape.shapeType = ParticleSystemShapeType.Cone;

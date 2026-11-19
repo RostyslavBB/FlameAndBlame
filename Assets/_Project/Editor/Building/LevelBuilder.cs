@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FB.Editor.Configs;
+using FB.Game.Puddles;
 using FB.Game.Level;
 using FB.Game.Power;
 using FB.Game.Surfaces;
@@ -64,9 +65,11 @@ namespace FB.Editor.Building
                 }
             }
 
+            PuddleSurfaceView puddles = PuddleSurfaceBuilder.Build(_layout, level.transform);
             LevelCatalog catalog = level.AddComponent<LevelCatalog>();
             EditorAssetUtility.SetArray(catalog, "_surfaces", surfaces.ToArray());
             EditorAssetUtility.SetReference(catalog, "_breaker", breaker);
+            EditorAssetUtility.SetReference(catalog, "_puddles", puddles);
             return catalog;
         }
 

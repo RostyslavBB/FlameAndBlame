@@ -29,7 +29,7 @@ flowchart LR
     Input --> Hose[HoseController<br/>IHoseFacade]
   end
   Hose -- WaterHitSignal --> SurfWater[SurfaceWaterHandler]
-  Hose -- WaterHitSignal --> Puddles[PuddleService]
+  Hose -- WaterHitSignal --> Puddles[PuddleSimulation<br/>water grid]
   SurfWater --> Rules[InteractionRuleRunner<br/>Strategy assets]
   FireSim[FireSimulation 10 Hz] --> Rules
   Rules --> Actions[ISurfaceActions]
@@ -38,6 +38,7 @@ flowchart LR
   Actions -- FireExtinguishedSignal --> FireVfx[FireVisualService]
   Actions -- SurfaceStatusChangedSignal --> Tint[SurfaceTintService]
   Puddles --> Elec[ElectricityService BFS]
+  Puddles --> Soak[PuddleSoaking] --> Rules
   Grid[PowerGrid + Breaker] --> Elec
   Elec --> Shock[ShockService]
   Shock -- ElectrocutionSignal --> Blame[BlameService]
@@ -54,7 +55,7 @@ flowchart LR
 | Signal | Fired by | Consumers |
 |---|---|---|
 | `GamePhaseChangedSignal` | `GameStateMachine` | `FireStarter`, presenters, `TimeScaleService` |
-| `WaterHitSignal` | `WaterJetCollisionHandler` (1 per hit collider per frame) | `SurfaceWaterHandler`, `PuddleService` |
+| `WaterHitSignal` | `WaterJetCollisionHandler` (1 per hit collider per frame) | `SurfaceWaterHandler`, `PuddleSimulation` |
 | `FireSpreadSignal` | `SurfaceActions` | `BlameService`, `FireVisualService` |
 | `FireExtinguishedSignal` | `SurfaceActions` | `FireVisualService` (steam) |
 | `ItemRuinedSignal` | `SurfaceActions` | `BlameService`, `FireVisualService` (sparks) |
@@ -75,10 +76,10 @@ flowchart LR
 ```
 
 - `Cause` is an immutable node `{Id, Action, Instigator, Parents}`; only `ICauseFactory` creates them.
-- Every effect carries a cause: water per trigger press, `Puddle` derived from the last water, fire spread with the
+- Every effect carries a cause: water per trigger press, `Puddle` (per grid cell) derived from the water that filled it, fire spread with the
   burning source as parent, shocks with **two** parents (puddle + live power source).
 - `CauseGraph.CollectRootShares` walks to the roots and splits weight equally between parents at every node:
-  the shock above is 50% the player, 50% the old wiring. If the puddle was electrified by a TV the player had
+  the shock above is 50% the player, 50% the old wiring. If the water was made live by a TV the player had
   short-circuited, the power cause itself leads back to the player, so the verdict is 100% "Ти".
 - `BlameLedger` adds $ and points per root actor; $ of the player = "firefighter damage", the rest = "fire damage".
 - `ChainNarrator` picks Ukrainian lines from `BlameTextConfig` (actor-aware, no repeats in a row).
@@ -91,7 +92,7 @@ flowchart LR
 | Dependency Injection | `ProjectInstaller`, `GameplayInstaller`, `UiInstaller` |
 | Observer | Zenject SignalBus, all signals above |
 | MVP | `*View` (passive MonoBehaviours) + `*Presenter` (plain C#) in `UI/`, `Debugging/` |
-| Object Pool | `ComponentPool<T>` over `MonoMemoryPool`: splashes, steam, sparks, fire, puddles, arcs, feed lines |
+| Object Pool | `ComponentPool<T>` over `MonoMemoryPool`: splashes, steam, sparks, fire, arcs, feed lines |
 | Factory | `CauseFactory`, editor builders |
 | State Machine | `StateMachine<T>` + `BriefingState` / `PlayingState` / `ReportState` |
 | Strategy | `IInteractionRule` assets (Extinguish, WaterCooling, WaterDamage x2, NeighborIgnition) |
@@ -100,18 +101,29 @@ flowchart LR
 
 ## Simulation
 
-- Central ticking: `FireSimulation` (fixed 10 Hz), `ElectricityService` (5 Hz), `PuddleService`, `ShockService` are
+- Central ticking: `FireSimulation` (fixed 10 Hz), `ElectricityService` (5 Hz), `PuddleSimulation`, `PuddleSoaking`, `ShockService` are
   plain C# `ITickable`s; no gameplay `Update()` on props.
 - Fire: heat / ignition / fuel per surface, neighbours cached once with `OverlapBoxNonAlloc`, wet surfaces heat 4x slower.
 - Hose: pressure curve, recoil curve against capped player braking (impulses really push), verlet rope with capsule
   segment collisions, leash force past the max length.
-- Electricity: live sources = power strip or short-circuited electronics; BFS over overlapping puddle discs.
+- Puddles: the floor is a shallow-water grid (`WaterGrid`, 10 cm cells, 30 Hz). Water lands where the jet hits (or
+  drips below), flows to lower neighbours, stops at the film thickness (natural puddle edges), merges, evaporates;
+  walls and static furniture are obstacles (found once with `OverlapBox`). Every cell remembers its Cause(Puddle).
+  `PuddleSoaking` passes puddle water to objects standing in it through the same interaction rules.
+- Electricity: BFS over wet cells from the power strip - only the puddle that touches the strip (and whatever it has
+  merged with) is live; a short-circuited appliance replaces the wiring as the blamed power source.
+- Water rendering: hand-written URP shaders - `FB/Puddle` (reads the grid texture: calm surface, organic edges,
+  meniscus highlight, reflection and glint, ring ripples and foam at impacts, electric veins on live cells) and
+  `FB/WaterStream` (aerated fire-hose jet on a LineRenderer traced along the ballistic arc, bubbles, ragged spray
+  edges) plus a mist particle cloud around the jet.
 
 ## Level and assets
 
 `Tools/Flame&Blame/Build All` generates everything from code and configs, idempotently: palette materials, low-poly
 meshes, textures (droplet, flame flipbook, UI sprites), TMP font with Cyrillic (static atlas), prefabs, and
 `Game.unity` from `LevelLayoutConfig` (rooms, walls with doorway cut-outs, props with surface data).
+Three props (sofa, TV, fridge) use CC0 models from the Kenney Furniture Kit: `ModelPropBuilder` fits them into the
+prop box, recolors their materials into the palette and adds a box collider; gameplay data stays identical.
 
 ## WebGL
 

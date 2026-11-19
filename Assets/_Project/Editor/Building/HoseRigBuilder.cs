@@ -37,10 +37,14 @@ namespace FB.Editor.Building
             attach.localPosition = new Vector3(0f, -0.02f, -0.22f);
 
             ParticleSystem jetParticles = WaterParticleFactory.CreateJet(tip, waterMaterial);
+            Material mistMaterial = ParticleMaterialFactory.Create(AssetPaths.MistMaterial, TextureLibrary.SoftCircle(),
+                new Color(0.92f, 0.97f, 1f, 1f));
+            ParticleSystem mist = WaterParticleFactory.CreateMist(tip, mistMaterial);
             WaterJet jet = jetParticles.gameObject.AddComponent<WaterJet>();
             EditorAssetUtility.SetReference(jet, "_particles", jetParticles);
 
             LineRenderer line = CreateLine(player.transform, materials.Get(PaletteColor.Hose));
+            LineRenderer stream = CreateStream(player.transform);
             CapsuleCollider probe = line.gameObject.AddComponent<CapsuleCollider>();
             probe.isTrigger = true;
             probe.direction = 2;
@@ -52,7 +56,27 @@ namespace FB.Editor.Building
             EditorAssetUtility.SetReference(view, "_hoseAttach", attach);
             EditorAssetUtility.SetReference(view, "_ropeProbe", probe);
             EditorAssetUtility.SetReference(view, "_jet", jet);
+            EditorAssetUtility.SetReference(view, "_mist", mist);
             EditorAssetUtility.SetReference(view, "_line", line);
+            EditorAssetUtility.SetReference(view, "_stream", stream);
+        }
+
+        private static LineRenderer CreateStream(Transform parent)
+        {
+            GameObject go = new GameObject("WaterStream");
+            go.transform.SetParent(parent, false);
+            LineRenderer stream = go.AddComponent<LineRenderer>();
+            stream.useWorldSpace = true;
+            stream.sharedMaterial = PuddleSurfaceBuilder.ShaderMaterial(AssetPaths.StreamMaterial, "FB/WaterStream");
+            stream.textureMode = LineTextureMode.Stretch;
+            stream.alignment = LineAlignment.View;
+            stream.numCornerVertices = 2;
+            stream.numCapVertices = 3;
+            stream.shadowCastingMode = ShadowCastingMode.Off;
+            stream.receiveShadows = false;
+            stream.positionCount = 0;
+            stream.enabled = false;
+            return stream;
         }
 
         private static LineRenderer CreateLine(Transform parent, Material material)

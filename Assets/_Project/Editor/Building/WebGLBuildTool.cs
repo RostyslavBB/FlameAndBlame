@@ -84,6 +84,21 @@ namespace FB.Editor.Building
             }
 
             DisableShadowsForWebGL();
+            EnsureDepthTexture();
+        }
+
+        /// <summary>The water shader reads scene depth (thickness, foam), so every URP asset renders a depth texture.</summary>
+        public static void EnsureDepthTexture()
+        {
+            foreach (string guid in AssetDatabase.FindAssets("t:UniversalRenderPipelineAsset"))
+            {
+                UniversalRenderPipelineAsset asset = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(
+                    AssetDatabase.GUIDToAssetPath(guid));
+                asset.supportsCameraDepthTexture = true;
+                EditorUtility.SetDirty(asset);
+            }
+
+            AssetDatabase.SaveAssets();
         }
 
         /// <summary>

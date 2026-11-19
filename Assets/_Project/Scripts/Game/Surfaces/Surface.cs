@@ -11,6 +11,7 @@ namespace FB.Game.Surfaces
     {
         private readonly SurfaceEntity _entity;
         private readonly List<SurfaceNeighbor> _neighbors = new List<SurfaceNeighbor>();
+        private readonly List<TintSlot> _tintSlots = new List<TintSlot>();
 
         public Surface(int id, SurfaceEntity entity)
         {
@@ -18,7 +19,6 @@ namespace FB.Game.Surfaces
             _entity = entity;
             Profile = entity.Profile;
             Fuel = Profile.BurnSeconds;
-            BaseColors = new Color[entity.Renderers.Length];
         }
 
         public int Id { get; }
@@ -31,8 +31,8 @@ namespace FB.Game.Surfaces
         public SurfaceEntity Entity => _entity;
         public IReadOnlyList<SurfaceNeighbor> Neighbors => _neighbors;
 
-        /// <summary>Original material colors, used to tint wet/charred states.</summary>
-        public Color[] BaseColors { get; }
+        /// <summary>Original material colors per slot, used to tint wet/charred states.</summary>
+        public IReadOnlyList<TintSlot> TintSlots => _tintSlots;
 
         public float Heat { get; internal set; }
         public float Fuel { get; internal set; }
@@ -57,6 +57,8 @@ namespace FB.Game.Surfaces
         }
 
         internal void AddNeighbor(SurfaceNeighbor neighbor) => _neighbors.Add(neighbor);
+
+        internal void AddTintSlot(TintSlot slot) => _tintSlots.Add(slot);
 
         public override string ToString() => DisplayName;
     }

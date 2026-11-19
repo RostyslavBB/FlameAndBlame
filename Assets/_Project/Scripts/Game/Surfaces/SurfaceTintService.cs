@@ -38,18 +38,17 @@ namespace FB.Game.Surfaces
         {
             Surface surface = _registry.All[signal.Surface.Id];
             float tint = TintOf(surface);
-            MeshRenderer[] renderers = surface.Entity.Renderers;
-            for (int i = 0; i < renderers.Length; i++)
+            foreach (TintSlot slot in surface.TintSlots)
             {
                 if (Mathf.Approximately(tint, 1f))
                 {
-                    renderers[i].SetPropertyBlock(null);
+                    slot.Renderer.SetPropertyBlock(null, slot.MaterialIndex);
                     continue;
                 }
 
-                Color color = surface.BaseColors[i];
+                Color color = slot.BaseColor;
                 _block.SetColor(BaseColorId, new Color(color.r * tint, color.g * tint, color.b * tint, color.a));
-                renderers[i].SetPropertyBlock(_block);
+                slot.Renderer.SetPropertyBlock(_block, slot.MaterialIndex);
             }
         }
 

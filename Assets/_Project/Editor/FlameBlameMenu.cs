@@ -24,12 +24,13 @@ namespace FB.Editor
             ConfigAssets configs = ConfigAssets.Ensure();
             MaterialLibrary materials = new MaterialLibrary(configs.Palette);
             MeshLibrary meshes = new MeshLibrary();
-            Material water = WaterParticleFactory.CreateMaterial(TextureLibrary.Droplet(),
-                configs.Palette.Get(PaletteColor.Water));
+            // Aerated fire-hose water: white-blue droplets rather than clear blue.
+            Material water = WaterParticleFactory.CreateMaterial(TextureLibrary.Droplet(), new Color(0.9f, 0.97f, 1f, 0.9f));
 
             PlayerPrefabBuilder.Build(materials, meshes, water);
             FxPrefabBuilder.BuildAll(water);
-            PowerPrefabBuilder.Build(materials, meshes);
+            PowerPrefabBuilder.Build(materials);
+            WebGLBuildTool.EnsureDepthTexture();
             ProjectContextBuilder.Build();
             GameSceneBuilder.Build(materials, meshes);
             AssetDatabase.SaveAssets();

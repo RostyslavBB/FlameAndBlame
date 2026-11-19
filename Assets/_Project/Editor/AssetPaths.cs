@@ -14,7 +14,10 @@ namespace FB.Editor
         public const string SteamPrefab = Prefabs + "/SteamPuff.prefab";
         public const string SparksPrefab = Prefabs + "/SparkBurst.prefab";
         public const string FireVfxPrefab = Prefabs + "/FireVfx.prefab";
-        public const string PuddlePrefab = Prefabs + "/Puddle.prefab";
+        public const string PuddleMaterial = Materials + "/M_PuddleWater.mat";
+        public const string PuddleMesh = Meshes + "/PuddleGrid.asset";
+        public const string MistMaterial = Materials + "/M_Mist.mat";
+        public const string StreamMaterial = Materials + "/M_WaterStream.mat";
         public const string ArcPrefab = Prefabs + "/ElectricArc.prefab";
         public const string FeedEntryPrefab = Prefabs + "/FeedEntry.prefab";
         public const string Fonts = Root + "/Fonts";

@@ -8,7 +8,6 @@ using FB.Game.Installers;
 using FB.Game.Level;
 using FB.Game.Player;
 using FB.Game.Power;
-using FB.Game.Puddles;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -60,7 +59,6 @@ namespace FB.Editor.Building
             SetPrefab<FireVfx>(installer, "_fireVfxPrefab", AssetPaths.FireVfxPrefab);
             SetPrefab<SteamPuff>(installer, "_steamPrefab", AssetPaths.SteamPrefab);
             SetPrefab<SparkBurst>(installer, "_sparksPrefab", AssetPaths.SparksPrefab);
-            SetPrefab<PuddleView>(installer, "_puddlePrefab", AssetPaths.PuddlePrefab);
             SetPrefab<ElectricArc>(installer, "_arcPrefab", AssetPaths.ArcPrefab);
             SceneContext context = contextObject.AddComponent<SceneContext>();
             UiInstaller ui = UiSceneBuilder.Build(contextObject, configs.Ui);

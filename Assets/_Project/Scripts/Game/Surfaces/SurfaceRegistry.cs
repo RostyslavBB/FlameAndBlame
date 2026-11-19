@@ -41,10 +41,16 @@ namespace FB.Game.Surfaces
                     _byCollider[collider] = surface;
                 }
 
-                MeshRenderer[] renderers = entities[i].Renderers;
-                for (int r = 0; r < renderers.Length; r++)
+                foreach (MeshRenderer renderer in entities[i].Renderers)
                 {
-                    surface.BaseColors[r] = renderers[r].sharedMaterial.GetColor(BaseColorId);
+                    Material[] materials = renderer.sharedMaterials;
+                    for (int m = 0; m < materials.Length; m++)
+                    {
+                        if (materials[m] != null && materials[m].HasProperty(BaseColorId))
+                        {
+                            surface.AddTintSlot(new TintSlot(renderer, m, materials[m].GetColor(BaseColorId)));
+                        }
+                    }
                 }
             }
 

@@ -13,6 +13,7 @@ namespace FB.Editor.Building
         private readonly MaterialLibrary _materials;
         private readonly MeshLibrary _meshes;
         private readonly IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> _profiles;
+        private readonly ModelPropBuilder _models;
 
         public PropBuilder(MaterialLibrary materials, MeshLibrary meshes,
             IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> profiles)
@@ -20,18 +21,27 @@ namespace FB.Editor.Building
             _materials = materials;
             _meshes = meshes;
             _profiles = profiles;
+            _models = new ModelPropBuilder(materials);
         }
 
         public GameObject Build(PropDefinition prop, Transform parent)
         {
             GameObject root = new GameObject(prop.Id);
+            if (prop.HasModel)
+            {
+                _models.Build(prop, root.transform);
+            }
+            else
+            {
+                for (int i = 0; i < prop.Parts.Count; i++)
+                {
+                    BuildPart(prop, prop.Parts[i], i, root.transform);
+                }
+            }
+
+            // Built at the origin (model fitting relies on it), placed afterwards.
             root.transform.SetParent(parent, false);
             root.transform.SetPositionAndRotation(prop.Position, Quaternion.Euler(0f, prop.Yaw, 0f));
-
-            for (int i = 0; i < prop.Parts.Count; i++)
-            {
-                BuildPart(prop, prop.Parts[i], i, root.transform);
-            }
 
             if (prop.IsDynamic)
             {
