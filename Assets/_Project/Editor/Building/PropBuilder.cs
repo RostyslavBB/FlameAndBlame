@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FB.Game.Audio;
 using FB.Game.Level;
 using FB.Game.Surfaces;
 using UnityEditor;
@@ -48,6 +49,8 @@ namespace FB.Editor.Building
                 Rigidbody body = root.AddComponent<Rigidbody>();
                 body.mass = prop.Mass;
                 body.angularDamping = 0.5f;
+                // Loose props report their hits so they can be heard (ImpactSounds).
+                EditorAssetUtility.SetReference(root.AddComponent<ImpactSensor>(), "_body", body);
             }
             else
             {

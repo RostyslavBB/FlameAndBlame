@@ -1,3 +1,4 @@
+using FB.Game.Audio;
 using FB.Game.Flow;
 using FB.Game.Hose;
 using FB.Game.Power;
@@ -27,6 +28,7 @@ namespace FB.Game.UI
         private readonly IPowerGrid _power;
         private readonly IGameFlow _flow;
         private readonly UiConfig _config;
+        private readonly IAudioService _audio;
         private string _shownHint;
         private float _hintAlpha;
         private float _hintTime;
@@ -36,7 +38,7 @@ namespace FB.Game.UI
         private float _powerTipStart;
 
         public HudGaugesPresenter(HudView view, IHoseFacade hose, IBreakerInteraction breaker, IPowerGrid power,
-            IGameFlow flow, UiConfig config)
+            IGameFlow flow, UiConfig config, IAudioService audio)
         {
             _view = view;
             _hose = hose;
@@ -44,6 +46,7 @@ namespace FB.Game.UI
             _power = power;
             _flow = flow;
             _config = config;
+            _audio = audio;
         }
 
         public void Initialize()
@@ -120,6 +123,7 @@ namespace FB.Game.UI
             {
                 _view.SetHint(hint);
                 _hintTime = 0f;
+                _audio.PlayUi(SoundId.Pop, 0.5f);
             }
 
             _shownHint = hint;

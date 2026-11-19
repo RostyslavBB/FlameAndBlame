@@ -19,6 +19,11 @@ namespace FB.Editor.Building
         private const float SkirtingDepth = 0.015f;
         private const float CasingWidth = 0.08f;
         private const float CasingDepth = 0.025f;
+        // Anti z-fighting: no two faces may share a plane. Wall ends stop just short of the face of the wall they
+        // meet, door casings reach a few millimeters into the opening, and skirting tops differ per wall.
+        private const float JunctionInset = 0.01f;
+        private const float CasingOverlap = 0.006f;
+        private const float SkirtingStep = 0.0015f;
 
         private readonly LevelLayoutConfig _layout;
         private readonly MaterialLibrary _materials;
@@ -78,38 +83,42 @@ namespace FB.Editor.Building
             }
 
             openings.Sort((a, b) => a.x.CompareTo(b.x));
-            float cursor = -thickness * 0.5f;
+            float end = thickness * 0.5f - JunctionInset;
+            float cursor = -end;
             int piece = 0;
             foreach (Vector3 opening in openings)
             {
                 Segment(wall, direction, cursor, opening.x, 0f, height, thickness, PaletteColor.Wall,
                     $"Wall_{index}_{piece++}", parent);
-                Skirting(wall, direction, cursor, opening.x, $"Skirting_{index}_{piece}", parent);
+                Skirting(wall, direction, cursor, opening.x, index, $"Skirting_{index}_{piece}", parent);
                 Segment(wall, direction, opening.x, opening.y, opening.z, height, thickness, PaletteColor.Wall,
                     $"Lintel_{index}_{piece++}", parent);
                 Casing(wall, direction, opening, $"Casing_{index}_{piece}", parent);
                 cursor = opening.y;
             }
 
-            Segment(wall, direction, cursor, length + thickness * 0.5f, 0f, height, thickness, PaletteColor.Wall,
+            Segment(wall, direction, cursor, length + end, 0f, height, thickness, PaletteColor.Wall,
                 $"Wall_{index}_{piece}", parent);
-            Skirting(wall, direction, cursor, length + thickness * 0.5f, $"Skirting_{index}_end", parent);
+            Skirting(wall, direction, cursor, length + end, index, $"Skirting_{index}_end", parent);
         }
 
-        private void Skirting(WallDefinition wall, Vector2 direction, float from, float to, string name, Transform parent)
+        private void Skirting(WallDefinition wall, Vector2 direction, float from, float to, int wallIndex, string name,
+            Transform parent)
         {
-            Segment(wall, direction, from, to, 0f, SkirtingHeight, _layout.WallThickness + SkirtingDepth * 2f,
+            float height = SkirtingHeight + wallIndex % 3 * SkirtingStep;
+            Segment(wall, direction, from, to, 0f, height, _layout.WallThickness + SkirtingDepth * 2f,
                 PaletteColor.Trim, name, parent);
         }
 
         private void Casing(WallDefinition wall, Vector2 direction, Vector3 opening, string name, Transform parent)
         {
             float depth = _layout.WallThickness + CasingDepth * 2f;
-            Segment(wall, direction, opening.x - CasingWidth, opening.x, 0f, opening.z, depth, PaletteColor.Trim,
+            float inner = opening.z - CasingOverlap;
+            Segment(wall, direction, opening.x - CasingWidth, opening.x + CasingOverlap, 0f, inner, depth, PaletteColor.Trim,
                 name + "_A", parent);
-            Segment(wall, direction, opening.y, opening.y + CasingWidth, 0f, opening.z, depth, PaletteColor.Trim,
+            Segment(wall, direction, opening.y - CasingOverlap, opening.y + CasingWidth, 0f, inner, depth, PaletteColor.Trim,
                 name + "_B", parent);
-            Segment(wall, direction, opening.x - CasingWidth, opening.y + CasingWidth, opening.z,
+            Segment(wall, direction, opening.x - CasingWidth, opening.y + CasingWidth, inner,
                 opening.z + CasingWidth, depth, PaletteColor.Trim, name + "_Top", parent);
         }
 

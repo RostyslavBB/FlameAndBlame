@@ -29,6 +29,7 @@ namespace FB.Editor
         public const string ArcPrefab = Prefabs + "/ElectricArc.prefab";
         public const string FeedEntryPrefab = Prefabs + "/FeedEntry.prefab";
         public const string Fonts = Root + "/Fonts";
+        public const string Audio = Root + "/Audio";
         public const string WaterParticleMaterial = Materials + "/M_WaterParticle.mat";
 
         public const string GameScene = Scenes + "/Game.unity";

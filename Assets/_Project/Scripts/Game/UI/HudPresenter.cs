@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using FB.Game.Audio;
 using FB.Game.Blame;
 using FB.Game.Flow;
 using FB.Game.Signals;
@@ -24,6 +25,7 @@ namespace FB.Game.UI
         private readonly IGameFlow _flow;
         private readonly SignalBus _signalBus;
         private readonly UiConfig _config;
+        private readonly IAudioService _audio;
         private readonly UiPulse _tick = new UiPulse(0.4f);
         private readonly UiPulse _damagePunch = new UiPulse(0.5f);
         private readonly CancellationTokenSource _lifetime = new CancellationTokenSource();
@@ -33,7 +35,7 @@ namespace FB.Game.UI
         private int _targetDamage;
 
         public HudPresenter(HudView view, IRoundClock clock, IBlameService blame, IGameFlow flow, SignalBus signalBus,
-            UiConfig config)
+            UiConfig config, IAudioService audio)
         {
             _view = view;
             _clock = clock;
@@ -41,6 +43,7 @@ namespace FB.Game.UI
             _flow = flow;
             _signalBus = signalBus;
             _config = config;
+            _audio = audio;
         }
 
         public void Initialize()
@@ -82,6 +85,7 @@ namespace FB.Game.UI
                 if (warning)
                 {
                     _tick.Trigger();
+                    _audio.PlayUi(SoundId.Tick, 0.6f, seconds <= _config.TimerPanicSeconds ? 1.3f : 1f);
                 }
             }
 

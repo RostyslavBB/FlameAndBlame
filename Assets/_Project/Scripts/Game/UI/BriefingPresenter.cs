@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using FB.Game.Audio;
 using FB.Game.Config;
 using FB.Game.Flow;
 using FB.Game.Signals;
@@ -25,6 +26,7 @@ namespace FB.Game.UI
         private readonly UiConfig _config;
         private readonly IGameFlow _flow;
         private readonly SignalBus _signalBus;
+        private readonly IAudioService _audio;
         private readonly CancellationTokenSource _lifetime = new CancellationTokenSource();
         private float _elapsed;
         private bool _shown;
@@ -32,7 +34,7 @@ namespace FB.Game.UI
         private readonly UiPulse _secondPunch = new UiPulse(0.35f);
 
         public BriefingPresenter(BriefingView view, RoundConfig round, IBriefingClock clock, UiConfig config,
-            IGameFlow flow, SignalBus signalBus)
+            IGameFlow flow, SignalBus signalBus, IAudioService audio)
         {
             _view = view;
             _round = round;
@@ -40,6 +42,7 @@ namespace FB.Game.UI
             _config = config;
             _flow = flow;
             _signalBus = signalBus;
+            _audio = audio;
         }
 
         public void Initialize()
@@ -80,6 +83,7 @@ namespace FB.Game.UI
             {
                 _shownSeconds = seconds;
                 _view.SetCountdownLabel(CountdownPrefix + seconds);
+                _audio.PlayUi(SoundId.Tick, 0.7f, seconds == 1 ? 1.5f : 1f);
                 _secondPunch.Trigger();
             }
 
@@ -109,6 +113,7 @@ namespace FB.Game.UI
             _view.SetAlpha(1f);
             _view.SetVisibleCharacters(0);
             _view.SetTitleScale(0f);
+            _audio.PlayUi(SoundId.Whoosh, 0.7f);
             try
             {
                 await UiTween.Run(_config.BriefingIntroSeconds, t =>

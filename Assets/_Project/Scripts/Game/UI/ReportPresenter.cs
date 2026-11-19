@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using FB.Game.Audio;
 using FB.Game.Blame;
 using FB.Game.Flow;
 using FB.Game.Signals;
@@ -30,13 +31,14 @@ namespace FB.Game.UI
         private readonly ISceneRestarter _restarter;
         private readonly SignalBus _signalBus;
         private readonly UiConfig _config;
+        private readonly IAudioService _audio;
         private readonly CancellationTokenSource _lifetime = new CancellationTokenSource();
         private string _fire;
         private string _firefighter;
         private string _total;
 
         public ReportPresenter(ReportView view, IBlameService blame, ReportVerdict verdict, BlameChainBuilder chain,
-            ISceneRestarter restarter, SignalBus signalBus, UiConfig config)
+            ISceneRestarter restarter, SignalBus signalBus, UiConfig config, IAudioService audio)
         {
             _view = view;
             _blame = blame;
@@ -45,6 +47,7 @@ namespace FB.Game.UI
             _restarter = restarter;
             _signalBus = signalBus;
             _config = config;
+            _audio = audio;
         }
 
         public void Initialize()
@@ -76,6 +79,7 @@ namespace FB.Game.UI
             Reset();
             try
             {
+                _audio.PlayUi(SoundId.Whoosh);
                 await UiTween.Run(_config.ReportFadeSeconds * 2f, t =>
                 {
                     _view.SetAlpha(Mathf.Clamp01(t * 2f));
@@ -90,6 +94,7 @@ namespace FB.Game.UI
                 await UiTween.Run(countSeconds, t => ShowDamage(_fire, Count(ledger.FirefighterDamage, t), _total), token);
                 await RevealRow(2, token);
                 await UiTween.Run(countSeconds, t => ShowDamage(_fire, _firefighter, Count(ledger.TotalDamage, t)), token);
+                _audio.PlayUi(SoundId.FeedLine, 1f, 0.85f);
                 await UiTween.Run(0.35f, t => _view.SetTotalScale(1f + UiTween.Punch(t) * 0.35f), token);
 
                 _view.SetChains(_verdict.TopChains(ledger, 3));
@@ -105,6 +110,7 @@ namespace FB.Game.UI
                 await UiTween.Run(0.5f, t => _view.SetVerdictScale(UiTween.EaseOutElastic(t)), token);
                 await UiTween.Run(_config.StampSeconds, t =>
                     _view.SetStamp(Mathf.Lerp(3f, 1f, UiTween.EaseInCubic(t)), t, result.Color, result.StampLabel), token);
+                _audio.PlayUi(SoundId.Stamp);
                 await Shake(token);
                 await PopRestart(token);
             }
@@ -131,10 +137,16 @@ namespace FB.Game.UI
             _view.SetRestart(0f, false);
         }
 
-        private UniTask RevealRow(int index, CancellationToken token) =>
-            index < _view.RowCount
-                ? UiTween.Run(RowRevealSeconds, t => _view.SetRow(index, UiTween.EaseOutBack(t)), token)
-                : UniTask.CompletedTask;
+        private UniTask RevealRow(int index, CancellationToken token)
+        {
+            if (index >= _view.RowCount)
+            {
+                return UniTask.CompletedTask;
+            }
+
+            _audio.PlayUi(SoundId.Pop, 0.6f, 1f + index * 0.08f);
+            return UiTween.Run(RowRevealSeconds, t => _view.SetRow(index, UiTween.EaseOutBack(t)), token);
+        }
 
         /// <summary>The most expensive event as cards with arrows, popping in one after another.</summary>
         private async UniTask RevealChain(IBlameLedger ledger, CancellationToken token)
@@ -154,6 +166,7 @@ namespace FB.Game.UI
             for (int i = 0; i < _links.Count; i++)
             {
                 int index = i;
+                _audio.PlayUi(SoundId.Pop, 0.7f, 1f + i * 0.1f);
                 await UiTween.Run(LinkPopSeconds, t =>
                     _view.SetLinkReveal(index, UiTween.EaseOutBack(t), Mathf.InverseLerp(0.5f, 1f, t)), token);
             }
@@ -172,6 +185,7 @@ namespace FB.Game.UI
         private async UniTask PopRestart(CancellationToken token)
         {
             _view.SetRestart(0f, true);
+            _audio.PlayUi(SoundId.Pop, 0.8f, 1.3f);
             await UiTween.Run(0.35f, t => _view.SetRestart(UiTween.EaseOutBack(t), true), token);
             await UiTween.Loop(time => _view.SetRestart(1f + Mathf.Sin(time * 4f) * 0.04f, true), token);
         }

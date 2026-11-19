@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using FB.Core.Pooling;
+using FB.Game.Audio;
 using FB.Game.Flow;
 using FB.Game.Signals;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace FB.Game.UI
         private readonly IPool<FeedEntryView> _pool;
         private readonly SignalBus _signalBus;
         private readonly UiConfig _config;
+        private readonly IAudioService _audio;
         private const float FlyInPixels = 460f;
         private const float CountSeconds = 0.45f;
         private const int TopSeverity = 3;
@@ -28,12 +30,14 @@ namespace FB.Game.UI
         private readonly List<Line> _lines = new List<Line>();
         private float _nextLineTime;
 
-        public FeedPresenter(FeedView view, IPool<FeedEntryView> pool, SignalBus signalBus, UiConfig config)
+        public FeedPresenter(FeedView view, IPool<FeedEntryView> pool, SignalBus signalBus, UiConfig config,
+            IAudioService audio)
         {
             _view = view;
             _pool = pool;
             _signalBus = signalBus;
             _config = config;
+            _audio = audio;
         }
 
         public void Initialize()
@@ -80,6 +84,7 @@ namespace FB.Game.UI
 
             Line line = new Line(entry, new CancellationTokenSource());
             _lines.Add(line);
+            _audio.PlayUi(SoundId.FeedLine, 0.8f, 0.9f + signal.Severity * 0.08f);
             Animate(line, signal.Severity, signal.Damage).Forget();
         }
 

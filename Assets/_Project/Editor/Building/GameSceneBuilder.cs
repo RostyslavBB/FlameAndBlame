@@ -1,3 +1,4 @@
+using FB.Editor.Audio;
 using FB.Editor.Configs;
 using FB.Editor.Ui;
 using FB.Game.Civilian;
@@ -31,6 +32,7 @@ namespace FB.Editor.Building
             LevelBuilder level = new LevelBuilder(configs.Layout, materials, meshes, configs.Profiles);
             LevelCatalog levelCatalog = level.Rebuild(scene);
             CivilianView civilian = CivilianBuilder.Build(scene, materials, configs.Layout, levelCatalog.gameObject);
+            FB.Game.Audio.AudioRig audioRig = AudioAssetsBuilder.BuildRig(scene);
 
             // Load from disk: references returned by SaveAsPrefabAsset may be invalidated by asset reimport.
             GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetPaths.PlayerPrefab);
@@ -56,6 +58,8 @@ namespace FB.Editor.Building
             EditorAssetUtility.SetReference(installer, "_juiceConfig", configs.Juice);
             EditorAssetUtility.SetReference(installer, "_civilianConfig", configs.Civilian);
             EditorAssetUtility.SetReference(installer, "_civilian", civilian);
+            EditorAssetUtility.SetReference(installer, "_audioConfig", configs.Audio);
+            EditorAssetUtility.SetReference(installer, "_audioRig", audioRig);
             EditorAssetUtility.SetReference(installer, "_player", player.GetComponent<PlayerBody>());
             EditorAssetUtility.SetReference(installer, "_hoseView", player.GetComponent<HoseView>());
             EditorAssetUtility.SetReference(installer, "_hoseAnchor", anchor.transform);

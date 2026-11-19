@@ -1,4 +1,5 @@
 using FB.Core.Pooling;
+using FB.Game.Audio;
 using FB.Game.Blame;
 using FB.Game.CameraFx;
 using FB.Game.Civilian;
@@ -39,6 +40,8 @@ namespace FB.Game.Installers
         [SerializeField] private BlameTextConfig _blameTextConfig;
         [SerializeField] private JuiceConfig _juiceConfig;
         [SerializeField] private CivilianConfig _civilianConfig;
+        [SerializeField] private AudioConfig _audioConfig;
+        [SerializeField] private AudioRig _audioRig;
 
         [Header("Scene")]
         [SerializeField] private PlayerBody _player;
@@ -69,6 +72,7 @@ namespace FB.Game.Installers
             Container.BindInterfacesTo<RoomLightsController>().AsSingle();
             Container.BindInterfacesTo<ClockController>().AsSingle();
             BindPower();
+            BindAudio();
             BindCivilian();
             BindDebug();
             BindFlow();
@@ -180,6 +184,15 @@ namespace FB.Game.Installers
             Container.BindComponentPool(_arcPrefab, _powerConfig.MaxArcs);
             Container.BindInterfacesAndSelfTo<ArcSpawner>().AsSingle();
             Container.BindInterfacesTo<ShockService>().AsSingle();
+        }
+
+        private void BindAudio()
+        {
+            Container.BindInstance(_audioConfig);
+            Container.BindInstance(_audioRig);
+            Container.BindInterfacesTo<AudioService>().AsSingle();
+            Container.BindInterfacesTo<ImpactSounds>().AsSingle();
+            Container.BindInterfacesTo<GameSoundEvents>().AsSingle();
         }
 
         private void BindCivilian()

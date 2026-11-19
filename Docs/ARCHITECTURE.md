@@ -163,6 +163,17 @@ prop box, recolors their materials into the palette and adds a box collider; gam
 - Ambient light is generated at build time (`Lightmapping.Bake` with GI off) so the player build has the same
   ambient probe as the editor.
 
+## Audio
+
+- All sounds are synthesized offline by `Tools/Flame&Blame/Build All` (`Editor/Audio`: seeded noise, RBJ biquads,
+  envelopes) into WAVs in `Audio/`; no third-party audio.
+- `AudioConfig` is the mixing table (variants, volume, random pitch, anti-spam cooldown, 2D/3D per `SoundId`).
+- `AudioService` plays on a fixed pool of 12 pre-built `AudioSource`s (`AudioRig`), stealing the oldest voice.
+- `GameSoundEvents` is an Observer: fire spread, extinguish, shocks, short circuits and neighbour incidents each get a
+  sound; it also drives the hose loop (volume/pitch = pressure) and the fire loop (on the nearest fire, louder with
+  more fires). `ImpactSensor` (passive collision bridge on loose props) feeds `ImpactSounds` (speed -> volume,
+  mass -> pitch). The neighbour has no voice on purpose (user decision); his shocks and ignition use the zap and whoomph. UI presenters add ticks, pops, whooshes, cash and the stamp.
+
 ## The neighbour (NPC)
 
 - `CivilianBrain` (plain C#, ticked centrally) owns a `StateMachine<CivilianState>`: **Wander** between room waypoints,

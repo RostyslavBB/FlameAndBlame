@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FB.Game.Audio;
 using FB.Game.Blame;
 using FB.Game.CameraFx;
 using FB.Game.Civilian;
@@ -40,6 +41,7 @@ namespace FB.Editor.Configs
         public UiConfig Ui { get; private set; }
         public JuiceConfig Juice { get; private set; }
         public CivilianConfig Civilian { get; private set; }
+        public AudioConfig Audio { get; private set; }
         public LevelLayoutConfig Layout { get; private set; }
         public IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> Profiles { get; private set; }
 
@@ -79,6 +81,7 @@ namespace FB.Editor.Configs
                 Ui = Load<UiConfig>("UiConfig"),
                 Juice = Load<JuiceConfig>("JuiceConfig"),
                 Civilian = Load<CivilianConfig>("CivilianConfig"),
+                Audio = Load<AudioConfig>("AudioConfig"),
                 Layout = layout,
                 Profiles = FireDefaults.EnsureProfiles()
             };

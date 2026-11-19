@@ -1,3 +1,4 @@
+using FB.Editor.Audio;
 using FB.Editor.Building;
 using FB.Editor.Configs;
 using FB.Game.Config;
@@ -23,6 +24,7 @@ namespace FB.Editor
             LayerSetup.Ensure();
             ConfigAssets configs = ConfigAssets.Ensure();
             MaterialLibrary materials = new MaterialLibrary(configs.Palette);
+            AudioAssetsBuilder.BuildConfig(configs.Audio);
             materials.ApplyShellTextures();
             MeshLibrary meshes = new MeshLibrary();
             // Aerated fire-hose water: white-blue droplets rather than clear blue.
