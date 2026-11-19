@@ -8,6 +8,9 @@ namespace FB.Game.Blame
         FireSpread,
         Burn,
         ShortCircuit,
-        Drown
+        Drown,
+        Puddle,
+        FaultyWiring,
+        Electrocution
     }
 }

@@ -1,10 +1,13 @@
 using FB.Editor.Configs;
+using FB.Game.Debugging;
 using FB.Game.Effects;
 using FB.Game.Fire;
 using FB.Game.Hose;
 using FB.Game.Installers;
+using FB.Game.Level;
 using FB.Game.Player;
-using FB.Game.Surfaces;
+using FB.Game.Power;
+using FB.Game.Puddles;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -24,7 +27,7 @@ namespace FB.Editor.Building
             ConfigAssets configs = ConfigAssets.Ensure();
             SetupLighting();
             LevelBuilder level = new LevelBuilder(configs.Layout, materials, meshes, configs.Profiles);
-            SurfaceCatalog surfaces = level.Rebuild(scene);
+            LevelCatalog levelCatalog = level.Rebuild(scene);
 
             // Load from disk: references returned by SaveAsPrefabAsset may be invalidated by asset reimport.
             GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetPaths.PlayerPrefab);
@@ -42,14 +45,21 @@ namespace FB.Editor.Building
             EditorAssetUtility.SetReference(installer, "_hoseConfig", configs.Hose);
             EditorAssetUtility.SetReference(installer, "_fireConfig", configs.Fire);
             EditorAssetUtility.SetReference(installer, "_rulesConfig", configs.Rules);
+            EditorAssetUtility.SetReference(installer, "_puddleConfig", configs.Puddles);
+            EditorAssetUtility.SetReference(installer, "_powerConfig", configs.Power);
+            EditorAssetUtility.SetReference(installer, "_actorsConfig", configs.Actors);
+            EditorAssetUtility.SetReference(installer, "_blameTextConfig", configs.BlameTexts);
             EditorAssetUtility.SetReference(installer, "_player", player.GetComponent<PlayerBody>());
             EditorAssetUtility.SetReference(installer, "_hoseView", player.GetComponent<HoseView>());
             EditorAssetUtility.SetReference(installer, "_hoseAnchor", anchor.transform);
-            EditorAssetUtility.SetReference(installer, "_surfaces", surfaces);
+            EditorAssetUtility.SetReference(installer, "_level", levelCatalog);
+            EditorAssetUtility.SetReference(installer, "_debugView", new GameObject("BlameDebug").AddComponent<BlameDebugView>());
             SetPrefab<WaterSplash>(installer, "_splashPrefab", AssetPaths.SplashPrefab);
             SetPrefab<FireVfx>(installer, "_fireVfxPrefab", AssetPaths.FireVfxPrefab);
             SetPrefab<SteamPuff>(installer, "_steamPrefab", AssetPaths.SteamPrefab);
             SetPrefab<SparkBurst>(installer, "_sparksPrefab", AssetPaths.SparksPrefab);
+            SetPrefab<PuddleView>(installer, "_puddlePrefab", AssetPaths.PuddlePrefab);
+            SetPrefab<ElectricArc>(installer, "_arcPrefab", AssetPaths.ArcPrefab);
             SceneContext context = contextObject.AddComponent<SceneContext>();
             context.Installers = new MonoInstaller[] { installer };
 

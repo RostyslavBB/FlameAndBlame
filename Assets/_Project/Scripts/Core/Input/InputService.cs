@@ -16,6 +16,7 @@ namespace FB.Core.Input
         private InputAction _interact;
         private InputAction _restart;
         private InputAction _cancel;
+        private InputAction _debug;
 
         public Vector2 Move => _move.ReadValue<Vector2>();
         public Vector2 Look => _look.ReadValue<Vector2>();
@@ -25,6 +26,7 @@ namespace FB.Core.Input
         public bool InteractPressed => _interact.WasPressedThisFrame();
         public bool RestartPressed => _restart.WasPressedThisFrame();
         public bool CancelPressed => _cancel.WasPressedThisFrame();
+        public bool DebugPressed => _debug.WasPressedThisFrame();
 
         public void Initialize()
         {
@@ -43,6 +45,7 @@ namespace FB.Core.Input
             _interact = AddButton("Interact", "<Keyboard>/e", "<Gamepad>/buttonWest");
             _restart = AddButton("Restart", "<Keyboard>/r", "<Gamepad>/start");
             _cancel = AddButton("Cancel", "<Keyboard>/escape", "<Gamepad>/select");
+            _debug = AddButton("Debug", "<Keyboard>/f1", "<Keyboard>/backquote");
 
             _map.Enable();
         }

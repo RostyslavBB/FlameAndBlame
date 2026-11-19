@@ -18,3 +18,9 @@
 - Strategy: `IInteractionRule` assets in `InteractionRulesConfig` - Extinguish, WaterCooling, WaterDamage (ShortCircuit for electronics, Drown for plants), NeighborIgnition (wet heats 4x slower).
 - Visuals: procedural 2x2 flame flipbook, pooled `FireVfx` (flames + smoke + rationed point lights, max 4), generic `OneShotEffectSpawner<T>` for splash/steam/sparks, property-block tint (wet darker, burned black).
 - Decision: rules never touch state directly - they call `ISurfaceActions`, which always derives a Cause and fires a signal, so blame (S4) and visuals cannot miss an effect.
+
+## S4 - Puddles, electricity, Blame (Claude Code)
+- Generated: `PuddleService` (pooled discs, merge/grow/dry, Cause(Puddle) derived from the last water), slip via `IPlayerTraction`; `PowerGrid` + breaker (E), `ElectricityService` (live = power strip or short-circuited electronics, BFS over overlapping puddles), `ShockService` (impulse, shake, pooled jitter arcs, `ElectrocutionSignal` with 2 parent causes).
+- Blame (pure C# core): `ActorRegistry`, `CauseGraph` (DAG, weight split equally between parents up to the roots), `BlameLedger` ($ and points per actor, fire vs firefighter damage, records), `BlameService` (observer of ruin/spread/shock), `ChainNarrator` + `BlameTextConfig` (26 Ukrainian lines, actor-aware, no repeats in a row), `CauseFormatter`, `BlameEventSignal`.
+- Debug: F1 / backquote IMGUI overlay (passive view + presenter) with the last chain and per-actor totals; every blame event is also logged to the console.
+- Decision: blame is computed only from the Cause graph, never from event types - any new system that passes causes correctly is blamed correctly for free.

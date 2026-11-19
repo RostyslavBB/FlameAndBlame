@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using FB.Game.Blame;
 using FB.Game.Config;
 using FB.Game.Fire;
 using FB.Game.Interactions;
 using FB.Game.Level;
+using FB.Game.Power;
+using FB.Game.Puddles;
 using FB.Game.Surfaces;
 using UnityEditor;
 using UnityEngine;
@@ -25,6 +28,10 @@ namespace FB.Editor.Configs
         public HoseConfig Hose { get; private set; }
         public FireConfig Fire { get; private set; }
         public InteractionRulesConfig Rules { get; private set; }
+        public PuddleConfig Puddles { get; private set; }
+        public PowerConfig Power { get; private set; }
+        public ActorRegistryConfig Actors { get; private set; }
+        public BlameTextConfig BlameTexts { get; private set; }
         public LevelLayoutConfig Layout { get; private set; }
         public IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> Profiles { get; private set; }
 
@@ -43,6 +50,10 @@ namespace FB.Editor.Configs
 
             InteractionRulesConfig rules = Load<InteractionRulesConfig>("InteractionRulesConfig");
             FireDefaults.EnsureRules(rules);
+            ActorRegistryConfig actors = Load<ActorRegistryConfig>("ActorRegistryConfig");
+            BlameDefaults.EnsureActors(actors);
+            BlameTextConfig texts = Load<BlameTextConfig>("BlameTextConfig");
+            BlameDefaults.EnsureTexts(texts);
 
             ConfigAssets configs = new ConfigAssets
             {
@@ -52,6 +63,10 @@ namespace FB.Editor.Configs
                 Hose = Load<HoseConfig>("HoseConfig"),
                 Fire = Load<FireConfig>("FireConfig"),
                 Rules = rules,
+                Puddles = Load<PuddleConfig>("PuddleConfig"),
+                Power = Load<PowerConfig>("PowerConfig"),
+                Actors = actors,
+                BlameTexts = texts,
                 Layout = layout,
                 Profiles = FireDefaults.EnsureProfiles()
             };

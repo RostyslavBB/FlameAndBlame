@@ -17,5 +17,8 @@ namespace FB.Core.Input
         bool InteractPressed { get; }
         bool RestartPressed { get; }
         bool CancelPressed { get; }
+
+        /// <summary>F1 or backquote (F1 opens browser help in some browsers).</summary>
+        bool DebugPressed { get; }
     }
 }

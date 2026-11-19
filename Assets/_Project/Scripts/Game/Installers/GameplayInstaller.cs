@@ -2,12 +2,16 @@ using FB.Core.Pooling;
 using FB.Game.Blame;
 using FB.Game.CameraFx;
 using FB.Game.Config;
+using FB.Game.Debugging;
 using FB.Game.Effects;
 using FB.Game.Fire;
 using FB.Game.Flow;
 using FB.Game.Hose;
 using FB.Game.Interactions;
+using FB.Game.Level;
 using FB.Game.Player;
+using FB.Game.Power;
+using FB.Game.Puddles;
 using FB.Game.Signals;
 using FB.Game.Surfaces;
 using UnityEngine;
@@ -25,18 +29,25 @@ namespace FB.Game.Installers
         [SerializeField] private HoseConfig _hoseConfig;
         [SerializeField] private FireConfig _fireConfig;
         [SerializeField] private InteractionRulesConfig _rulesConfig;
+        [SerializeField] private PuddleConfig _puddleConfig;
+        [SerializeField] private PowerConfig _powerConfig;
+        [SerializeField] private ActorRegistryConfig _actorsConfig;
+        [SerializeField] private BlameTextConfig _blameTextConfig;
 
         [Header("Scene")]
         [SerializeField] private PlayerBody _player;
         [SerializeField] private HoseView _hoseView;
         [SerializeField] private Transform _hoseAnchor;
-        [SerializeField] private SurfaceCatalog _surfaces;
+        [SerializeField] private LevelCatalog _level;
+        [SerializeField] private BlameDebugView _debugView;
 
         [Header("Prefabs")]
         [SerializeField] private WaterSplash _splashPrefab;
         [SerializeField] private FireVfx _fireVfxPrefab;
         [SerializeField] private SteamPuff _steamPrefab;
         [SerializeField] private SparkBurst _sparksPrefab;
+        [SerializeField] private PuddleView _puddlePrefab;
+        [SerializeField] private ElectricArc _arcPrefab;
 
         public override void InstallBindings()
         {
@@ -47,6 +58,9 @@ namespace FB.Game.Installers
             BindHose();
             BindSurfaces();
             BindFire();
+            BindPuddles();
+            BindPower();
+            BindDebug();
             BindFlow();
         }
 
@@ -58,6 +72,10 @@ namespace FB.Game.Installers
             Container.BindInstance(_hoseConfig);
             Container.BindInstance(_fireConfig);
             Container.BindInstance(_rulesConfig);
+            Container.BindInstance(_puddleConfig);
+            Container.BindInstance(_powerConfig);
+            Container.BindInstance(_actorsConfig);
+            Container.BindInstance(_blameTextConfig);
         }
 
         private void DeclareSignals()
@@ -68,11 +86,19 @@ namespace FB.Game.Installers
             Container.DeclareSignal<FireExtinguishedSignal>().OptionalSubscriber();
             Container.DeclareSignal<ItemRuinedSignal>().OptionalSubscriber();
             Container.DeclareSignal<SurfaceStatusChangedSignal>().OptionalSubscriber();
+            Container.DeclareSignal<ElectrocutionSignal>().OptionalSubscriber();
+            Container.DeclareSignal<BlameEventSignal>().OptionalSubscriber();
         }
 
         private void BindBlame()
         {
             Container.Bind<ICauseFactory>().To<CauseFactory>().AsSingle();
+            Container.Bind<IActorRegistry>().To<ActorRegistry>().AsSingle();
+            Container.Bind<CauseGraph>().AsSingle();
+            Container.Bind<BlameLedger>().AsSingle();
+            Container.Bind<ChainNarrator>().AsSingle();
+            Container.Bind<CauseFormatter>().AsSingle();
+            Container.BindInterfacesTo<BlameService>().AsSingle();
         }
 
         private void BindPlayer()
@@ -100,7 +126,7 @@ namespace FB.Game.Installers
 
         private void BindSurfaces()
         {
-            Container.BindInstance(_surfaces);
+            Container.BindInstance(_level);
             Container.BindInterfacesAndSelfTo<SurfaceRegistry>().AsSingle();
             Container.BindInitializableExecutionOrder<SurfaceRegistry>(-100);
             Container.Bind<ISurfaceActions>().To<SurfaceActions>().AsSingle();
@@ -118,6 +144,29 @@ namespace FB.Game.Installers
             float lifetime = _fireConfig.OneShotLifetime;
             BindEffect(_steamPrefab, new EffectSpawnSettings(_fireConfig.MaxSteamPuffs, lifetime, 0.1f));
             BindEffect(_sparksPrefab, new EffectSpawnSettings(_fireConfig.MaxSparkBursts, lifetime, 0.1f));
+        }
+
+        private void BindPuddles()
+        {
+            Container.BindComponentPool(_puddlePrefab, _puddleConfig.MaxPuddles);
+            Container.BindInterfacesTo<PuddleService>().AsSingle();
+            Container.BindInterfacesTo<PuddleTraction>().AsSingle();
+        }
+
+        private void BindPower()
+        {
+            Container.BindInterfacesTo<PowerGrid>().AsSingle();
+            Container.BindInterfacesAndSelfTo<BreakerController>().AsSingle();
+            Container.BindInterfacesTo<ElectricityService>().AsSingle();
+            Container.BindComponentPool(_arcPrefab, _powerConfig.MaxArcs);
+            Container.BindInterfacesAndSelfTo<ArcSpawner>().AsSingle();
+            Container.BindInterfacesTo<ShockService>().AsSingle();
+        }
+
+        private void BindDebug()
+        {
+            Container.BindInstance(_debugView);
+            Container.BindInterfacesTo<BlameDebugPresenter>().AsSingle();
         }
 
         private void BindEffect<T>(T prefab, EffectSpawnSettings settings) where T : OneShotEffect

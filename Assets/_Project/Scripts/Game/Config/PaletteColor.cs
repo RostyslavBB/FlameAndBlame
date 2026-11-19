@@ -27,6 +27,8 @@ namespace FB.Game.Config
         Bulb,
         Player,
         Hose,
-        Water
+        Water,
+        Puddle,
+        Electric
     }
 }

@@ -4,7 +4,7 @@ using FB.Game.Config;
 using FB.Game.Hose;
 using FB.Game.Installers;
 using FB.Game.Player;
-using FB.Game.Surfaces;
+using FB.Game.Level;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -29,6 +29,7 @@ namespace FB.Editor
 
             PlayerPrefabBuilder.Build(materials, meshes, water);
             FxPrefabBuilder.BuildAll(water);
+            PowerPrefabBuilder.Build(materials, meshes);
             ProjectContextBuilder.Build();
             GameSceneBuilder.Build(materials, meshes);
             AssetDatabase.SaveAssets();
@@ -40,7 +41,7 @@ namespace FB.Editor
         {
             ConfigAssets configs = ConfigAssets.Ensure();
             Scene scene = EditorSceneManager.OpenScene(AssetPaths.GameScene, OpenSceneMode.Single);
-            SurfaceCatalog surfaces = CreateLevelBuilder(configs).Rebuild(scene);
+            LevelCatalog levelCatalog = CreateLevelBuilder(configs).Rebuild(scene);
             foreach (GameObject root in scene.GetRootGameObjects())
             {
                 if (root.TryGetComponent(out PlayerBody player))
@@ -55,7 +56,7 @@ namespace FB.Editor
 
                 if (root.TryGetComponent(out GameplayInstaller installer))
                 {
-                    EditorAssetUtility.SetReference(installer, "_surfaces", surfaces);
+                    EditorAssetUtility.SetReference(installer, "_level", levelCatalog);
                 }
             }
 

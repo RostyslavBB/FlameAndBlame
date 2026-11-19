@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using FB.Editor.Configs;
 using FB.Game.Level;
+using FB.Game.Power;
 using FB.Game.Surfaces;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +11,7 @@ namespace FB.Editor.Building
 {
     /// <summary>
     /// Idempotent level generation: removes the previous "Level" root and rebuilds it from the layout.
-    /// The root gets a SurfaceCatalog listing every gameplay surface.
+    /// The root gets a LevelCatalog listing every gameplay surface and the breaker.
     /// </summary>
     internal sealed class LevelBuilder
     {
@@ -26,7 +29,7 @@ namespace FB.Editor.Building
             _props = new PropBuilder(materials, meshes, profiles);
         }
 
-        public SurfaceCatalog Rebuild(Scene scene)
+        public LevelCatalog Rebuild(Scene scene)
         {
             foreach (GameObject root in scene.GetRootGameObjects())
             {
@@ -46,17 +49,39 @@ namespace FB.Editor.Building
             Transform props = new GameObject("Props").transform;
             props.SetParent(level.transform, false);
             List<SurfaceEntity> surfaces = new List<SurfaceEntity>();
+            BreakerView breaker = null;
             foreach (PropDefinition prop in _layout.Props)
             {
-                if (_props.Build(prop, props).TryGetComponent(out SurfaceEntity surface))
+                GameObject built = _props.Build(prop, props);
+                if (built.TryGetComponent(out SurfaceEntity surface))
                 {
                     surfaces.Add(surface);
                 }
+
+                if (prop.Id == HallProps.BreakerId)
+                {
+                    breaker = CreateBreaker(built);
+                }
             }
 
-            SurfaceCatalog catalog = level.AddComponent<SurfaceCatalog>();
-            EditorAssetUtility.SetArray(catalog, "_entities", surfaces.ToArray());
+            LevelCatalog catalog = level.AddComponent<LevelCatalog>();
+            EditorAssetUtility.SetArray(catalog, "_surfaces", surfaces.ToArray());
+            EditorAssetUtility.SetReference(catalog, "_breaker", breaker);
             return catalog;
+        }
+
+        // The lever moves at runtime, so the breaker must not be static-batched.
+        private static BreakerView CreateBreaker(GameObject root)
+        {
+            foreach (Transform child in root.GetComponentsInChildren<Transform>())
+            {
+                GameObjectUtility.SetStaticEditorFlags(child.gameObject, 0);
+            }
+
+            BreakerView view = root.AddComponent<BreakerView>();
+            EditorAssetUtility.SetReference(view, "_lever", root.transform.GetChild(1));
+            EditorAssetUtility.SetReference(view, "_lamp", root.transform.GetChild(2).GetComponent<MeshRenderer>());
+            return view;
         }
     }
 }

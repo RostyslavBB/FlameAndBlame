@@ -15,8 +15,17 @@ namespace FB.Editor.Configs
         /// <summary>Spout of the tap, where the hose starts.</summary>
         public static readonly Vector3 HoseAnchor = new Vector3(TapX, 0.85f, TapZ - 0.2f);
 
+        /// <summary>Prop id of the breaker; its parts 1 (lever) and 2 (lamp) are animated by BreakerView.</summary>
+        public const string BreakerId = "Breaker";
+
         public static IEnumerable<PropDefinition> Create()
         {
+            yield return Static(BreakerId, -6.6f, 0f, -2.4f, 180f,
+                Box(0f, 1.45f, 0f, 0.36f, 0.46f, 0.06f, C.Metal),
+                Box(0f, 1.45f, -0.07f, 0.06f, 0.2f, 0.06f, C.Black),
+                Ball(0.12f, 1.63f, -0.04f, 0.06f, 0.06f, 0.06f, C.Bulb, true),
+                Box(0f, 1.2f, -0.035f, 0.3f, 0.04f, 0.01f, C.Accent, true));
+
             yield return Static("Tap", TapX, 0f, TapZ, 0f,
                 Box(0f, 0.9f, 0f, 0.28f, 0.34f, 0.04f, C.Metal),
                 Cyl(0f, 0.85f, -0.1f, 0.07f, 0.2f, 0.07f, C.Metal, true, new Vector3(90f, 0f, 0f)),

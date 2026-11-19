@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FB.Game.Fire;
+using FB.Game.Level;
 using UnityEngine;
 using Zenject;
 
@@ -14,13 +15,13 @@ namespace FB.Game.Surfaces
         private const int OverlapBufferSize = 32;
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
-        private readonly SurfaceCatalog _catalog;
+        private readonly LevelCatalog _catalog;
         private readonly FireConfig _config;
         private readonly List<Surface> _surfaces = new List<Surface>();
         private readonly Dictionary<Collider, Surface> _byCollider = new Dictionary<Collider, Surface>();
         private readonly Collider[] _overlaps = new Collider[OverlapBufferSize];
 
-        public SurfaceRegistry(SurfaceCatalog catalog, FireConfig config)
+        public SurfaceRegistry(LevelCatalog catalog, FireConfig config)
         {
             _catalog = catalog;
             _config = config;
@@ -30,7 +31,7 @@ namespace FB.Game.Surfaces
 
         public void Initialize()
         {
-            SurfaceEntity[] entities = _catalog.Entities;
+            SurfaceEntity[] entities = _catalog.Surfaces;
             for (int i = 0; i < entities.Length; i++)
             {
                 Surface surface = new Surface(i, entities[i]);
