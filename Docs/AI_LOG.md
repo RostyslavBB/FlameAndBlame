@@ -24,3 +24,10 @@
 - Blame (pure C# core): `ActorRegistry`, `CauseGraph` (DAG, weight split equally between parents up to the roots), `BlameLedger` ($ and points per actor, fire vs firefighter damage, records), `BlameService` (observer of ruin/spread/shock), `ChainNarrator` + `BlameTextConfig` (26 Ukrainian lines, actor-aware, no repeats in a row), `CauseFormatter`, `BlameEventSignal`.
 - Debug: F1 / backquote IMGUI overlay (passive view + presenter) with the last chain and per-actor totals; every blame event is also logged to the console.
 - Decision: blame is computed only from the Cause graph, never from event types - any new system that passes causes correctly is blamed correctly for free.
+
+## S5 - UI, round, juice, build (Claude Code)
+- Generated: round flow with `IPlayerControl` lock (briefing/report), end on timer or "all fires out", shared `ISceneRestarter`; MVP UI - passive Briefing/Hud/Feed/FeedEntry/Report views + plain C# presenters in a separate `UiInstaller`; UniTask tweens on unscaled time with CancellationTokens per presenter/feed line; `TimeScaleService` (hit-stop + slow-mo), `FovKick`.
+- Editor: TMP Essentials import + static SDF font with Cyrillic, procedural PNG sprites (rounded panel, circle, stamp), canvas/EventSystem (Input System UI module) and pooled feed-line prefab built from code; Windows fallback build.
+- Verification: headless runs of the Windows player confirmed Briefing -> Playing -> Report and the full fire chain with blame lines and no exceptions; the run exposed gendered verbs in the feed lines, which were rewritten to neutral phrasing.
+- Docs: ARCHITECTURE.md (systems + signals Mermaid, blame model, patterns), SUBMISSION.md (AI / feature texts, 5-minute video plan, itch.io guide).
+- WebGL: the first browser test showed only particles and UI - console had `GL_INVALID_OPERATION ... sampler type (shadow)` on every Lit draw. `Apply WebGL Settings` now disables shadows in the URP asset of the WebGL quality level (found via QualitySettings per-platform defaults); the rebuilt 18 MB build plays Briefing -> Playing in the browser with no GL errors.

@@ -33,6 +33,7 @@ namespace FB.Game.Installers
         [SerializeField] private PowerConfig _powerConfig;
         [SerializeField] private ActorRegistryConfig _actorsConfig;
         [SerializeField] private BlameTextConfig _blameTextConfig;
+        [SerializeField] private JuiceConfig _juiceConfig;
 
         [Header("Scene")]
         [SerializeField] private PlayerBody _player;
@@ -76,6 +77,7 @@ namespace FB.Game.Installers
             Container.BindInstance(_powerConfig);
             Container.BindInstance(_actorsConfig);
             Container.BindInstance(_blameTextConfig);
+            Container.BindInstance(_juiceConfig);
         }
 
         private void DeclareSignals()
@@ -109,6 +111,9 @@ namespace FB.Game.Installers
             Container.BindInterfacesTo<PlayerMovement>().AsSingle();
             Container.BindInterfacesTo<PlayerLook>().AsSingle();
             Container.BindInterfacesTo<CameraShaker>().AsSingle();
+            Container.Bind<IPlayerControl>().To<PlayerControl>().AsSingle();
+            Container.BindInterfacesTo<FovKick>().AsSingle();
+            Container.BindInterfacesTo<TimeScaleService>().AsSingle();
         }
 
         private void BindHose()
@@ -182,6 +187,7 @@ namespace FB.Game.Installers
             Container.Bind<IGameState>().To<PlayingState>().AsSingle();
             Container.Bind<IGameState>().To<ReportState>().AsSingle();
             Container.BindInterfacesAndSelfTo<GameStateMachine>().AsSingle();
+            Container.Bind<ISceneRestarter>().To<SceneRestarter>().AsSingle();
             Container.BindInterfacesTo<RestartController>().AsSingle();
         }
     }

@@ -16,6 +16,8 @@ namespace FB.Editor
         public const string FireVfxPrefab = Prefabs + "/FireVfx.prefab";
         public const string PuddlePrefab = Prefabs + "/Puddle.prefab";
         public const string ArcPrefab = Prefabs + "/ElectricArc.prefab";
+        public const string FeedEntryPrefab = Prefabs + "/FeedEntry.prefab";
+        public const string Fonts = Root + "/Fonts";
         public const string WaterParticleMaterial = Materials + "/M_WaterParticle.mat";
 
         public const string GameScene = Scenes + "/Game.unity";
@@ -24,5 +26,6 @@ namespace FB.Editor
         public const string LightingSettings = Configs + "/GameLighting.lighting";
         public const string PlayerPhysicsMaterial = Materials + "/PM_Player.asset";
         public const string WebGLBuildFolder = "Builds/WebGL";
+        public const string WindowsBuildExe = "Builds/Windows/FlameAndBlame.exe";
     }
 }

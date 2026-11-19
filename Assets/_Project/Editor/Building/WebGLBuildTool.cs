@@ -29,19 +29,27 @@ namespace FB.Editor.Building
         public static bool Build()
         {
             ApplySettings();
+            return BuildPlayer(BuildTarget.WebGL, BuildTargetGroup.WebGL, AssetPaths.WebGLBuildFolder);
+        }
+
+        /// <summary>Windows fallback build (also used for headless smoke tests of the runtime).</summary>
+        public static bool BuildWindows() =>
+            BuildPlayer(BuildTarget.StandaloneWindows64, BuildTargetGroup.Standalone, AssetPaths.WindowsBuildExe);
+
+        private static bool BuildPlayer(BuildTarget target, BuildTargetGroup group, string location)
+        {
             BuildPlayerOptions options = new BuildPlayerOptions
             {
                 scenes = new[] { AssetPaths.GameScene },
-                locationPathName = AssetPaths.WebGLBuildFolder,
-                target = BuildTarget.WebGL,
-                targetGroup = BuildTargetGroup.WebGL,
+                locationPathName = location,
+                target = target,
+                targetGroup = group,
                 options = BuildOptions.None
             };
 
-            BuildReport report = BuildPipeline.BuildPlayer(options);
-            BuildSummary summary = report.summary;
-            Debug.Log($"[Build] WebGL: {summary.result}, {summary.totalSize / (1024 * 1024)} MB, " +
-                      $"{summary.totalErrors} errors, {summary.totalTime.TotalSeconds:F0}s → {AssetPaths.WebGLBuildFolder}");
+            BuildSummary summary = BuildPipeline.BuildPlayer(options).summary;
+            Debug.Log($"[Build] {target}: {summary.result}, {summary.totalSize / (1024 * 1024)} MB, " +
+                      $"{summary.totalErrors} errors, {summary.totalTime.TotalSeconds:F0}s -> {location}");
             return summary.result == BuildResult.Succeeded;
         }
 
@@ -74,6 +82,44 @@ namespace FB.Editor.Building
                 asset.shadowCascadeCount = 1;
                 EditorUtility.SetDirty(asset);
             }
+
+            DisableShadowsForWebGL();
+        }
+
+        /// <summary>
+        /// URP 17 on WebGL2 binds a shadow texture to a comparison sampler with a mismatching format
+        /// (GL_INVALID_OPERATION), which drops every Lit draw call. The WebGL quality level renders without shadows.
+        /// </summary>
+        private static void DisableShadowsForWebGL()
+        {
+            int level = WebGLQualityLevel();
+            if (!(QualitySettings.GetRenderPipelineAssetAt(level) is UniversalRenderPipelineAsset asset))
+            {
+                Debug.LogWarning("[Build] WebGL quality level has no URP asset; shadows left unchanged.");
+                return;
+            }
+
+            SerializedObject serialized = new SerializedObject(asset);
+            serialized.FindProperty("m_MainLightShadowsSupported").boolValue = false;
+            serialized.FindProperty("m_AdditionalLightShadowsSupported").boolValue = false;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            Debug.Log($"[Build] Shadows disabled in '{asset.name}' (WebGL quality level {level}).");
+        }
+
+        private static int WebGLQualityLevel()
+        {
+            Object qualitySettings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/QualitySettings.asset")[0];
+            SerializedProperty defaults = new SerializedObject(qualitySettings).FindProperty("m_PerPlatformDefaultQuality");
+            for (int i = 0; i < defaults.arraySize; i++)
+            {
+                SerializedProperty entry = defaults.GetArrayElementAtIndex(i);
+                if (entry.FindPropertyRelative("first").stringValue == "WebGL")
+                {
+                    return entry.FindPropertyRelative("second").intValue;
+                }
+            }
+
+            return QualitySettings.GetQualityLevel();
         }
     }
 }

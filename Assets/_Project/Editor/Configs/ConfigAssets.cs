@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FB.Game.Blame;
+using FB.Game.CameraFx;
 using FB.Game.Config;
 using FB.Game.Fire;
 using FB.Game.Interactions;
@@ -7,6 +8,7 @@ using FB.Game.Level;
 using FB.Game.Power;
 using FB.Game.Puddles;
 using FB.Game.Surfaces;
+using FB.Game.UI;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,6 +34,8 @@ namespace FB.Editor.Configs
         public PowerConfig Power { get; private set; }
         public ActorRegistryConfig Actors { get; private set; }
         public BlameTextConfig BlameTexts { get; private set; }
+        public UiConfig Ui { get; private set; }
+        public JuiceConfig Juice { get; private set; }
         public LevelLayoutConfig Layout { get; private set; }
         public IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> Profiles { get; private set; }
 
@@ -67,6 +71,8 @@ namespace FB.Editor.Configs
                 Power = Load<PowerConfig>("PowerConfig"),
                 Actors = actors,
                 BlameTexts = texts,
+                Ui = Load<UiConfig>("UiConfig"),
+                Juice = Load<JuiceConfig>("JuiceConfig"),
                 Layout = layout,
                 Profiles = FireDefaults.EnsureProfiles()
             };

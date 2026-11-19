@@ -6,7 +6,7 @@ using Zenject;
 namespace FB.Game.Power
 {
     /// <summary>E near the breaker toggles the apartment power.</summary>
-    public sealed class BreakerController : IInitializable, ITickable
+    public sealed class BreakerController : IBreakerInteraction, IInitializable, ITickable
     {
         private readonly IInputService _input;
         private readonly IPowerGrid _grid;

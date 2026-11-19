@@ -1,4 +1,5 @@
 using FB.Editor.Configs;
+using FB.Editor.Ui;
 using FB.Game.Debugging;
 using FB.Game.Effects;
 using FB.Game.Fire;
@@ -49,6 +50,7 @@ namespace FB.Editor.Building
             EditorAssetUtility.SetReference(installer, "_powerConfig", configs.Power);
             EditorAssetUtility.SetReference(installer, "_actorsConfig", configs.Actors);
             EditorAssetUtility.SetReference(installer, "_blameTextConfig", configs.BlameTexts);
+            EditorAssetUtility.SetReference(installer, "_juiceConfig", configs.Juice);
             EditorAssetUtility.SetReference(installer, "_player", player.GetComponent<PlayerBody>());
             EditorAssetUtility.SetReference(installer, "_hoseView", player.GetComponent<HoseView>());
             EditorAssetUtility.SetReference(installer, "_hoseAnchor", anchor.transform);
@@ -61,7 +63,8 @@ namespace FB.Editor.Building
             SetPrefab<PuddleView>(installer, "_puddlePrefab", AssetPaths.PuddlePrefab);
             SetPrefab<ElectricArc>(installer, "_arcPrefab", AssetPaths.ArcPrefab);
             SceneContext context = contextObject.AddComponent<SceneContext>();
-            context.Installers = new MonoInstaller[] { installer };
+            UiInstaller ui = UiSceneBuilder.Build(contextObject, configs.Ui);
+            context.Installers = new MonoInstaller[] { installer, ui };
 
             EditorAssetUtility.EnsureFolder(AssetPaths.Scenes);
             EditorSceneManager.SaveScene(scene, AssetPaths.GameScene);

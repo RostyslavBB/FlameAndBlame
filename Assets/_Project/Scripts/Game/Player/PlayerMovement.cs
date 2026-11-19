@@ -17,22 +17,24 @@ namespace FB.Game.Player
         private readonly IInputService _input;
         private readonly IPlayerTraction _traction;
         private readonly PlayerGroundProbe _ground;
+        private readonly IPlayerControl _control;
         private bool _jumpQueued;
 
         public PlayerMovement(PlayerBody body, PlayerConfig config, IInputService input,
-            IPlayerTraction traction, PlayerGroundProbe ground)
+            IPlayerTraction traction, PlayerGroundProbe ground, IPlayerControl control)
         {
             _body = body;
             _config = config;
             _input = input;
             _traction = traction;
             _ground = ground;
+            _control = control;
         }
 
         public void Tick()
         {
             // Input is sampled per frame, physics runs at a fixed rate: buffer the press until the next step.
-            _jumpQueued |= _input.JumpPressed;
+            _jumpQueued |= _control.Enabled && _input.JumpPressed;
         }
 
         public void FixedTick()
@@ -68,7 +70,7 @@ namespace FB.Game.Player
 
         private Vector3 WishedDirection()
         {
-            Vector2 move = Vector2.ClampMagnitude(_input.Move, 1f);
+            Vector2 move = _control.Enabled ? Vector2.ClampMagnitude(_input.Move, 1f) : Vector2.zero;
             Transform pivot = _body.CameraPivot;
             Vector3 forward = Vector3.ProjectOnPlane(pivot.forward, Vector3.up).normalized;
             Vector3 right = Vector3.ProjectOnPlane(pivot.right, Vector3.up).normalized;

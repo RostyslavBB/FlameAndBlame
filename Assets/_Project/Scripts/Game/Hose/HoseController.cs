@@ -24,11 +24,13 @@ namespace FB.Game.Hose
         private readonly ICauseFactory _causes;
         private readonly IKnockbackReceiver _knockback;
         private readonly ICameraShake _shake;
+        private readonly IPlayerControl _control;
         private ParticleSystem _particles;
         private bool _wasTriggered;
 
         public HoseController(HoseView view, HoseConfig config, HosePressure pressure, IInputService input,
-            ICursorService cursor, ICauseFactory causes, IKnockbackReceiver knockback, ICameraShake shake)
+            ICursorService cursor, ICauseFactory causes, IKnockbackReceiver knockback, ICameraShake shake,
+            IPlayerControl control)
         {
             _view = view;
             _config = config;
@@ -38,6 +40,7 @@ namespace FB.Game.Hose
             _causes = causes;
             _knockback = knockback;
             _shake = shake;
+            _control = control;
         }
 
         public float Pressure => _pressure.Value;
@@ -62,7 +65,7 @@ namespace FB.Game.Hose
 
         public void Tick()
         {
-            bool triggered = _input.FireHeld && _cursor.IsLocked;
+            bool triggered = _control.Enabled && _input.FireHeld && _cursor.IsLocked;
             if (triggered && !_wasTriggered)
             {
                 CurrentCause = _causes.Create(ActorId.Player, CauseAction.HoseSpray);

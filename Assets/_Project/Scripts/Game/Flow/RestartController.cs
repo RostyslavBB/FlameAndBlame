@@ -1,31 +1,26 @@
 using FB.Core.Input;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace FB.Game.Flow
 {
-    /// <summary>R reloads the scene. The SceneContext is destroyed with it, so scene-level subscriptions are disposed.</summary>
+    /// <summary>R restarts the round at any moment.</summary>
     public sealed class RestartController : ITickable
     {
         private readonly IInputService _input;
-        private readonly ZenjectSceneLoader _sceneLoader;
-        private bool _isLoading;
+        private readonly ISceneRestarter _restarter;
 
-        public RestartController(IInputService input, ZenjectSceneLoader sceneLoader)
+        public RestartController(IInputService input, ISceneRestarter restarter)
         {
             _input = input;
-            _sceneLoader = sceneLoader;
+            _restarter = restarter;
         }
 
         public void Tick()
         {
-            if (_isLoading || !_input.RestartPressed)
+            if (_input.RestartPressed)
             {
-                return;
+                _restarter.Restart();
             }
-
-            _isLoading = true;
-            _sceneLoader.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }

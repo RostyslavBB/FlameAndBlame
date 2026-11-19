@@ -7,7 +7,7 @@ using Zenject;
 namespace FB.Game.Flow
 {
     /// <summary>Round flow: Briefing → Playing → Report. Announces every phase change through the SignalBus.</summary>
-    public sealed class GameStateMachine : IGameStateSwitcher, IInitializable, ITickable
+    public sealed class GameStateMachine : IGameStateSwitcher, IGameFlow, IInitializable, ITickable
     {
         private readonly StateMachine<IGameState> _machine;
         private readonly SignalBus _signalBus;

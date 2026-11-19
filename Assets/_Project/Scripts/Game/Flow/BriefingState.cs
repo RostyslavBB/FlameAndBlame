@@ -1,6 +1,7 @@
 using FB.Core.Input;
 using FB.Core.StateMachine;
 using FB.Game.Config;
+using FB.Game.Player;
 using Zenject;
 
 namespace FB.Game.Flow
@@ -10,13 +11,16 @@ namespace FB.Game.Flow
     {
         private readonly RoundConfig _config;
         private readonly ICursorService _cursor;
+        private readonly IPlayerControl _control;
         private readonly LazyInject<IGameStateSwitcher> _switcher;
         private float _elapsed;
 
-        public BriefingState(RoundConfig config, ICursorService cursor, LazyInject<IGameStateSwitcher> switcher)
+        public BriefingState(RoundConfig config, ICursorService cursor, IPlayerControl control,
+            LazyInject<IGameStateSwitcher> switcher)
         {
             _config = config;
             _cursor = cursor;
+            _control = control;
             _switcher = switcher;
         }
 
@@ -26,6 +30,7 @@ namespace FB.Game.Flow
         {
             _elapsed = 0f;
             _cursor.LockAllowed = true;
+            _control.Enabled = false;
         }
 
         public void Tick(float deltaTime)

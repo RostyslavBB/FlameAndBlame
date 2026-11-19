@@ -5,4 +5,5 @@
   <assembly fullname="UniTask" preserve="all" />
   <assembly fullname="FB.Core" preserve="all" />
   <assembly fullname="FB.Game" preserve="all" />
+  <assembly fullname="Unity.TextMeshPro" preserve="all" />
 </linker>

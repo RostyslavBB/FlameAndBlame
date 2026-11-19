@@ -14,20 +14,23 @@ namespace FB.Game.Player
         private readonly PlayerConfig _config;
         private readonly IInputService _input;
         private readonly ICursorService _cursor;
+        private readonly IPlayerControl _control;
         private float _yaw;
         private float _pitch;
 
-        public PlayerLook(PlayerBody body, PlayerConfig config, IInputService input, ICursorService cursor)
+        public PlayerLook(PlayerBody body, PlayerConfig config, IInputService input, ICursorService cursor,
+            IPlayerControl control)
         {
             _body = body;
             _config = config;
             _input = input;
             _cursor = cursor;
+            _control = control;
         }
 
         public void Tick()
         {
-            if (!_cursor.IsLocked)
+            if (!_cursor.IsLocked || !_control.Enabled)
             {
                 return;
             }

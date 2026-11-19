@@ -6,6 +6,8 @@
         "FB.Game",
         "Zenject",
         "Zenject-Editor",
+        "Unity.InputSystem",
+        "UnityEngine.UI",
         "UniTask",
         "Unity.TextMeshPro",
         "Unity.RenderPipelines.Universal.Runtime",

@@ -80,6 +80,9 @@ namespace FB.Editor
         [MenuItem(Menu + "Build WebGL", priority = 21)]
         public static void BuildWebGL() => WebGLBuildTool.Build();
 
+        [MenuItem(Menu + "Build Windows (fallback)", priority = 22)]
+        public static void BuildWindows() => WebGLBuildTool.BuildWindows();
+
         /// <summary>Batch mode: Build All. An exception makes Unity exit with code 1.</summary>
         public static void BatchBuildAll()
         {
@@ -95,6 +98,12 @@ namespace FB.Editor
             Zenject.Internal.ZenUnityEditorUtil.ValidateCurrentSceneSetup();
             Debug.Log("[Build] Zenject validation: OK");
             EditorApplication.Exit(0);
+        }
+
+        /// <summary>Batch mode: Windows build, exit code 1 on failure.</summary>
+        public static void BatchBuildWindows()
+        {
+            EditorApplication.Exit(WebGLBuildTool.BuildWindows() ? 0 : 1);
         }
 
         /// <summary>Batch mode: WebGL build, exit code 1 on failure.</summary>
