@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: FireConfig
   m_EditorClassIdentifier: FB.Game::FB.Game.Fire.FireConfig
   _tickRate: 10
-  _heatPerSecond: 0.28
-  _spreadRange: 1
+  _heatPerSecond: 0.55
+  _spreadRange: 1.4
   _heatDecayPerSecond: 0.04
-  _burningRegrowPerSecond: 0.3
+  _burningRegrowPerSecond: 0.45
   _maxHeatFactor: 2
   _dryPerSecond: 0.05
   _wetThreshold: 0.1
   _waterSplashRadius: 0.6
   _startSurfaceId: Pan
-  _maxFires: 20
+  _maxFires: 30
   _maxFireLights: 4
   _fireLightIntensity: 2.2
   _maxSteamPuffs: 6

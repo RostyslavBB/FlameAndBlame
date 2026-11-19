@@ -16,7 +16,7 @@ show senior-level architecture.
 - UniTask (Cysharp) via OpenUPM — no coroutines in gameplay code
 - New Input System — actions are defined **in code** (InputService), no .inputactions assets
 - ScriptableObject configs for every tunable number and every interaction rule
-- Exception (decided by the user): a few complex silhouettes use **CC0 models from Kenney Furniture Kit**
+- Exception (decided by the user): furniture with complex silhouettes uses **CC0 models from Kenney Furniture Kit**
   (`Assets/_Project/Models/Kenney`, license included), recolored into the palette via `PropModels` / `LevelLayoutConfig`.
   Do not add other third-party assets without asking.
 - No paid assets. All other visuals are **procedural**: primitives, generated meshes, palette materials,

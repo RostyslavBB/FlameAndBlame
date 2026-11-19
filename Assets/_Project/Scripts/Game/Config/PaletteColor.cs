@@ -29,6 +29,11 @@ namespace FB.Game.Config
         Hose,
         Water,
         Puddle,
-        Electric
+        Electric,
+        FloorBath,
+        FloorBedroom,
+        Trim,
+        TvScreen,
+        LampGlow
     }
 }

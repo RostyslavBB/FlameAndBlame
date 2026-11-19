@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using FB.Editor.Configs;
 using FB.Game.Puddles;
+using FB.Game.Smoke;
+using FB.Game.Environment;
 using FB.Game.Level;
 using FB.Game.Power;
 using FB.Game.Surfaces;
@@ -21,13 +23,15 @@ namespace FB.Editor.Building
         private readonly LevelLayoutConfig _layout;
         private readonly ShellBuilder _shell;
         private readonly PropBuilder _props;
+        private readonly EnvironmentBuilder _environment;
 
         public LevelBuilder(LevelLayoutConfig layout, MaterialLibrary materials, MeshLibrary meshes,
             IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> profiles)
         {
             _layout = layout;
-            _shell = new ShellBuilder(layout, materials, meshes);
+            _shell = new ShellBuilder(layout, materials);
             _props = new PropBuilder(materials, meshes, profiles);
+            _environment = new EnvironmentBuilder(materials, meshes);
         }
 
         public LevelCatalog Rebuild(Scene scene)
@@ -66,10 +70,18 @@ namespace FB.Editor.Building
             }
 
             PuddleSurfaceView puddles = PuddleSurfaceBuilder.Build(_layout, level.transform);
+            SmokeView smoke = SmokeBuilder.Build(_layout, level.transform);
+            RoomLightsView lights = _environment.BuildLights(level.transform, props);
+            ClockView clock = _environment.BuildClock(level.transform);
+            _environment.BuildDust(level.transform, _layout.Rooms, ParticleMaterialFactory.Create(
+                AssetPaths.Materials + "/M_Dust.mat", TextureLibrary.SoftCircle(), new Color(1f, 0.95f, 0.82f, 0.6f), true));
             LevelCatalog catalog = level.AddComponent<LevelCatalog>();
             EditorAssetUtility.SetArray(catalog, "_surfaces", surfaces.ToArray());
             EditorAssetUtility.SetReference(catalog, "_breaker", breaker);
             EditorAssetUtility.SetReference(catalog, "_puddles", puddles);
+            EditorAssetUtility.SetReference(catalog, "_smoke", smoke);
+            EditorAssetUtility.SetReference(catalog, "_lights", lights);
+            EditorAssetUtility.SetReference(catalog, "_clock", clock);
             return catalog;
         }
 

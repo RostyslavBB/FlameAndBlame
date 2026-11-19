@@ -20,17 +20,19 @@ namespace FB.Game.Fire
         private readonly OneShotEffectSpawner<SteamPuff> _steam;
         private readonly OneShotEffectSpawner<SparkBurst> _sparks;
         private readonly FireConfig _config;
+        private readonly SurfaceRegistry _surfaces;
         private readonly Dictionary<ISurface, FireVfx> _active;
         private int _lightsInUse;
 
         public FireVisualService(SignalBus signalBus, IPool<FireVfx> pool, OneShotEffectSpawner<SteamPuff> steam,
-            OneShotEffectSpawner<SparkBurst> sparks, FireConfig config)
+            OneShotEffectSpawner<SparkBurst> sparks, FireConfig config, SurfaceRegistry surfaces)
         {
             _signalBus = signalBus;
             _pool = pool;
             _steam = steam;
             _sparks = sparks;
             _config = config;
+            _surfaces = surfaces;
             _active = new Dictionary<ISurface, FireVfx>(config.MaxFires);
         }
 
@@ -53,6 +55,11 @@ namespace FB.Game.Fire
             float time = Time.time * 9f;
             foreach (KeyValuePair<ISurface, FireVfx> pair in _active)
             {
+                // Fire grows with the heat of what burns: small when it just caught, raging at full heat.
+                Surface surface = _surfaces.All[pair.Key.Id];
+                float heat = Mathf.Clamp01(surface.Heat / (surface.Profile.IgnitionHeat * _config.MaxHeatFactor));
+                pair.Value.SetIntensity(Mathf.Lerp(0.35f, 1.2f, heat));
+
                 if (pair.Value.HasLight)
                 {
                     float flicker = 0.75f + 0.5f * Mathf.PerlinNoise(time, pair.Key.Id * 1.37f);

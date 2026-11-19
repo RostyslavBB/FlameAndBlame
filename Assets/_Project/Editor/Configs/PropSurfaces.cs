@@ -36,7 +36,25 @@ namespace FB.Editor.Configs
                 ["TV"] = (MaterialKind.Electronics, 800, "Телевізор"),
                 ["PowerStrip"] = (MaterialKind.Electronics, 25, "Подовжувач"),
                 ["Ficus"] = (MaterialKind.Plant, 90, "Фікус"),
-                ["Bookshelf"] = (MaterialKind.Wood, 400, "Книжкова шафа")
+                ["Bookshelf"] = (MaterialKind.Wood, 400, "Книжкова шафа"),
+
+                ["Bed"] = (MaterialKind.Fabric, 900, "Ліжко"),
+                ["NightstandLeft"] = (MaterialKind.Wood, 80, "Тумбочка"),
+                ["NightstandRight"] = (MaterialKind.Wood, 80, "Тумбочка"),
+                ["NightLamp"] = (MaterialKind.Fabric, 50, "Нічник"),
+                ["Wardrobe"] = (MaterialKind.Wood, 600, "Шафа"),
+                ["Desk"] = (MaterialKind.Wood, 250, "Письмовий стіл"),
+                ["Laptop"] = (MaterialKind.Electronics, 1100, "Ноутбук"),
+                ["DeskChair"] = (MaterialKind.Fabric, 120, "Крісло"),
+
+                ["Bathtub"] = (MaterialKind.Metal, 700, "Ванна"),
+                ["Toilet"] = (MaterialKind.Metal, 350, "Унітаз"),
+                ["BathSink"] = (MaterialKind.Metal, 200, "Раковина"),
+                ["WashingMachine"] = (MaterialKind.Electronics, 650, "Пральна машина"),
+
+                ["CoatRack"] = (MaterialKind.Wood, 90, "Вішак"),
+                ["Radio"] = (MaterialKind.Electronics, 90, "Радіо"),
+                ["PlantPot"] = (MaterialKind.Plant, 25, "Вазон")
             };
 
         public static IEnumerable<PropDefinition> Apply(IEnumerable<PropDefinition> props)

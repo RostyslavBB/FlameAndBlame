@@ -16,6 +16,10 @@ namespace FB.Editor
         public const string FireVfxPrefab = Prefabs + "/FireVfx.prefab";
         public const string PuddleMaterial = Materials + "/M_PuddleWater.mat";
         public const string PuddleMesh = Meshes + "/PuddleGrid.asset";
+        public const string SmokeMesh = Meshes + "/SmokeLayers.asset";
+        public const string SmokeMaterial = Materials + "/M_SmokeLayer.mat";
+        public const string MainPostProcess = Configs + "/PostProcess_Main.asset";
+        public const string SmokePostProcess = Configs + "/PostProcess_Smoke.asset";
         public const string MistMaterial = Materials + "/M_Mist.mat";
         public const string StreamMaterial = Materials + "/M_WaterStream.mat";
         public const string ArcPrefab = Prefabs + "/ElectricArc.prefab";

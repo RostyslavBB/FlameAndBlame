@@ -2,6 +2,7 @@ using FB.Game.Common;
 using FB.Game.Player;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace FB.Editor.Building
 {
@@ -41,6 +42,9 @@ namespace FB.Editor.Building
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = new Color(0.62f, 0.82f, 0.95f);
             cameraObject.AddComponent<AudioListener>();
+            UniversalAdditionalCameraData cameraData = camera.GetUniversalAdditionalCameraData();
+            cameraData.renderPostProcessing = true;
+            cameraData.antialiasing = AntialiasingMode.FastApproximateAntialiasing;
 
             PlayerBody player = root.AddComponent<PlayerBody>();
             EditorAssetUtility.SetReference(player, "_rigidbody", body);

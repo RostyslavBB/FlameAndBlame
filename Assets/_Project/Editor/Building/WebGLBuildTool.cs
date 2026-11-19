@@ -95,6 +95,10 @@ namespace FB.Editor.Building
                 UniversalRenderPipelineAsset asset = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(
                     AssetDatabase.GUIDToAssetPath(guid));
                 asset.supportsCameraDepthTexture = true;
+                // Room lamps (4) + fire lights (4) may light the same object.
+                SerializedObject serialized = new SerializedObject(asset);
+                serialized.FindProperty("m_AdditionalLightsPerObjectLimit").intValue = 8;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(asset);
             }
 

@@ -26,6 +26,7 @@ namespace FB.Editor.Building
             // NewScene(Single) unloads unreferenced assets: reload configs so references are not stale.
             ConfigAssets configs = ConfigAssets.Ensure();
             SetupLighting();
+            PostProcessBuilder.CreateVolume("PostProcessing", PostProcessBuilder.MainProfile(), 0f, 1f);
             LevelBuilder level = new LevelBuilder(configs.Layout, materials, meshes, configs.Profiles);
             LevelCatalog levelCatalog = level.Rebuild(scene);
 
@@ -46,6 +47,7 @@ namespace FB.Editor.Building
             EditorAssetUtility.SetReference(installer, "_fireConfig", configs.Fire);
             EditorAssetUtility.SetReference(installer, "_rulesConfig", configs.Rules);
             EditorAssetUtility.SetReference(installer, "_puddleConfig", configs.Puddles);
+            EditorAssetUtility.SetReference(installer, "_smokeConfig", configs.Smoke);
             EditorAssetUtility.SetReference(installer, "_powerConfig", configs.Power);
             EditorAssetUtility.SetReference(installer, "_actorsConfig", configs.Actors);
             EditorAssetUtility.SetReference(installer, "_blameTextConfig", configs.BlameTexts);
@@ -66,6 +68,10 @@ namespace FB.Editor.Building
 
             EditorAssetUtility.EnsureFolder(AssetPaths.Scenes);
             EditorSceneManager.SaveScene(scene, AssetPaths.GameScene);
+            // "Generate Lighting" with GI off: stores the ambient probe + reflection in LightingData, otherwise
+            // player builds (WebGL) have no ambient light and walls facing away from the sun turn black.
+            Lightmapping.Bake();
+            EditorSceneManager.SaveScene(scene);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(AssetPaths.GameScene, true) };
         }
 
@@ -97,7 +103,10 @@ namespace FB.Editor.Building
             Lightmapping.lightingSettings = settings;
 
             RenderSettings.skybox = null;
-            RenderSettings.fog = false;
+            // Fog on (density 0) so its shader variants are kept in the build: SmokeService drives the density.
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogDensity = 0f;
             RenderSettings.ambientMode = AmbientMode.Trilight;
             RenderSettings.ambientSkyColor = new Color(0.78f, 0.74f, 0.70f);
             RenderSettings.ambientEquatorColor = new Color(0.62f, 0.55f, 0.50f);

@@ -50,6 +50,11 @@ namespace FB.Editor.Configs
             yield return Entry(PaletteColor.Water, "#7FD4FF", unlit: true);
             yield return Entry(PaletteColor.Puddle, "#5CB8F2");
             yield return Entry(PaletteColor.Electric, "#9FE8FF", unlit: true);
+            yield return Entry(PaletteColor.FloorBath, "#E8F1F5");
+            yield return Entry(PaletteColor.FloorBedroom, "#D7A77C");
+            yield return Entry(PaletteColor.Trim, "#FAF6EC");
+            yield return Entry(PaletteColor.TvScreen, "#5C8DE0", unlit: true);
+            yield return Entry(PaletteColor.LampGlow, "#FFF1C9", unlit: true);
         }
 
         private static PaletteEntry Entry(PaletteColor id, string hex, bool unlit = false)

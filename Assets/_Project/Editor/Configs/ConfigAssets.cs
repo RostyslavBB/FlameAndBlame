@@ -7,6 +7,7 @@ using FB.Game.Interactions;
 using FB.Game.Level;
 using FB.Game.Power;
 using FB.Game.Puddles;
+using FB.Game.Smoke;
 using FB.Game.Surfaces;
 using FB.Game.UI;
 using UnityEditor;
@@ -31,6 +32,7 @@ namespace FB.Editor.Configs
         public FireConfig Fire { get; private set; }
         public InteractionRulesConfig Rules { get; private set; }
         public PuddleConfig Puddles { get; private set; }
+        public SmokeConfig Smoke { get; private set; }
         public PowerConfig Power { get; private set; }
         public ActorRegistryConfig Actors { get; private set; }
         public BlameTextConfig BlameTexts { get; private set; }
@@ -68,6 +70,7 @@ namespace FB.Editor.Configs
                 Fire = Load<FireConfig>("FireConfig"),
                 Rules = rules,
                 Puddles = Load<PuddleConfig>("PuddleConfig"),
+                Smoke = Load<SmokeConfig>("SmokeConfig"),
                 Power = Load<PowerConfig>("PowerConfig"),
                 Actors = actors,
                 BlameTexts = texts,

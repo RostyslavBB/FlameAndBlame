@@ -8,12 +8,12 @@ namespace FB.Game.Fire
         [Header("Simulation")]
         [SerializeField, Range(1f, 30f)] private float _tickRate = 10f;
         [Tooltip("Heat per second a burning surface gives to a neighbour at falloff 1.")]
-        [SerializeField, Min(0f)] private float _heatPerSecond = 0.28f;
+        [SerializeField, Min(0f)] private float _heatPerSecond = 0.55f;
         [Tooltip("Max gap (m) between bounds for heat to travel.")]
-        [SerializeField, Min(0.1f)] private float _spreadRange = 1f;
+        [SerializeField, Min(0.1f)] private float _spreadRange = 1.4f;
         [SerializeField, Min(0f)] private float _heatDecayPerSecond = 0.04f;
         [Tooltip("Burning surfaces regain heat (re-flare) while not watered.")]
-        [SerializeField, Min(0f)] private float _burningRegrowPerSecond = 0.3f;
+        [SerializeField, Min(0f)] private float _burningRegrowPerSecond = 0.45f;
         [Tooltip("Max heat of a burning surface, as a multiple of its ignition heat.")]
         [SerializeField, Min(1f)] private float _maxHeatFactor = 2f;
 
@@ -29,7 +29,7 @@ namespace FB.Game.Fire
         [SerializeField] private string _startSurfaceId = "Pan";
 
         [Header("Visuals")]
-        [SerializeField, Min(1)] private int _maxFires = 20;
+        [SerializeField, Min(1)] private int _maxFires = 30;
         [SerializeField, Range(0, 8)] private int _maxFireLights = 4;
         [SerializeField, Min(0f)] private float _fireLightIntensity = 2.2f;
         [SerializeField, Min(1)] private int _maxSteamPuffs = 6;

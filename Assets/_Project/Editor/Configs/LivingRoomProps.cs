@@ -70,7 +70,7 @@ namespace FB.Editor.Configs
                 Box(-0.62f, 0.01f, -0.02f, 0.8f, 0.02f, 0.02f, C.Black, true),
                 Box(0.4f, 0.01f, 0.1f, 0.4f, 0.02f, 0.02f, C.Black, true, new Vector3(0f, -30f, 0f)));
 
-            yield return Static("Ficus", 6.3f, 0f, -1.9f, 0f,
+            yield return Static("Ficus", 0.65f, 0f, -1.95f, 0f,
                 Cone(0f, 0.25f, 0f, 0.5f, 0.5f, 0.5f, C.Pot, false, new Vector3(180f, 0f, 0f)),
                 Cyl(0f, 0.75f, 0f, 0.07f, 0.6f, 0.07f, C.WoodDark),
                 Ball(0f, 1.3f, 0f, 0.8f, 0.7f, 0.8f, C.Plant),

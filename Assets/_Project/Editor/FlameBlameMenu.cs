@@ -23,6 +23,7 @@ namespace FB.Editor
             LayerSetup.Ensure();
             ConfigAssets configs = ConfigAssets.Ensure();
             MaterialLibrary materials = new MaterialLibrary(configs.Palette);
+            materials.ApplyShellTextures();
             MeshLibrary meshes = new MeshLibrary();
             // Aerated fire-hose water: white-blue droplets rather than clear blue.
             Material water = WaterParticleFactory.CreateMaterial(TextureLibrary.Droplet(), new Color(0.9f, 0.97f, 1f, 0.9f));
@@ -113,7 +114,14 @@ namespace FB.Editor
             EditorApplication.Exit(WebGLBuildTool.Build() ? 0 : 1);
         }
 
+        private static MaterialLibrary ShellMaterials(ConfigAssets configs)
+        {
+            MaterialLibrary materials = new MaterialLibrary(configs.Palette);
+            materials.ApplyShellTextures();
+            return materials;
+        }
+
         private static LevelBuilder CreateLevelBuilder(ConfigAssets configs) =>
-            new LevelBuilder(configs.Layout, new MaterialLibrary(configs.Palette), new MeshLibrary(), configs.Profiles);
+            new LevelBuilder(configs.Layout, ShellMaterials(configs), new MeshLibrary(), configs.Profiles);
     }
 }

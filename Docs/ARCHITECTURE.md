@@ -122,7 +122,8 @@ flowchart LR
 `Tools/Flame&Blame/Build All` generates everything from code and configs, idempotently: palette materials, low-poly
 meshes, textures (droplet, flame flipbook, UI sprites), TMP font with Cyrillic (static atlas), prefabs, and
 `Game.unity` from `LevelLayoutConfig` (rooms, walls with doorway cut-outs, props with surface data).
-Three props (sofa, TV, fridge) use CC0 models from the Kenney Furniture Kit: `ModelPropBuilder` fits them into the
+Furniture with complex silhouettes (sofa, TV, fridge, bed, wardrobe, bathroom, lamps...) uses CC0 models from the
+Kenney Furniture Kit: `ModelPropBuilder` fits them into the
 prop box, recolors their materials into the palette and adds a box collider; gameplay data stays identical.
 
 ## WebGL
@@ -134,3 +135,19 @@ prop box, recolors their materials into the palette and adds a box collider; gam
 - Shadows are off in the WebGL quality level (`Apply WebGL Settings`): URP 17 on WebGL2 bound a shadow texture to a
   comparison sampler with a mismatching format (`GL_INVALID_OPERATION`) and every Lit draw call was dropped.
   The Windows build keeps shadows.
+
+## Look and atmosphere
+
+- Shell: every floor/wall piece is a box mesh with UVs in meters (`BoxMeshFactory`), so the procedural parquet,
+  ceramic/stone tiles and striped wallpaper (`SurfaceTextures`, 512 px = 1 m) keep their real scale; skirting boards
+  and door casings are generated with the walls. Five rooms: hall, kitchen, living room, bathroom, bedroom.
+- Fire: layered pooled VFX (base glow, 4x4 animated flame flipbook, additive HDR core, turbulent embers, thick smoke);
+  `FireVisualService` scales each fire with the heat of what burns, so fires grow from a flicker to a blaze.
+- Smoke: `SmokeService` accumulates smoke from burning objects; `FB/SmokeLayer` (stacked swirling planes with soft
+  depth intersections) lowers from the ceiling, fog density rises and a "smoke" post-processing volume fades in.
+- Post-processing (code-generated `VolumeProfile`s): ACES tonemapping, bloom (fire, glowing shades), color grading,
+  white balance, vignette; FXAA on the camera. Shadows stay off in the WebGL quality level (see WebGL).
+- Life: ceiling lamps with real lights and glowing shades, TV/laptop screens - all switched off by the breaker
+  (`RoomLightsController`); a kitchen clock showing real time (`ClockController`); dust drifting in every room.
+- Ambient light is generated at build time (`Lightmapping.Bake` with GI off) so the player build has the same
+  ambient probe as the editor.

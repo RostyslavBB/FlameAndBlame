@@ -12,23 +12,23 @@ namespace FB.Editor.Building
             main.loop = true;
             main.playOnAwake = false;
             main.startLifetime = new ParticleSystem.MinMaxCurve(0.5f, 0.9f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(0.6f, 1.2f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.35f, 0.6f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f, 1.6f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.45f, 0.8f);
             main.startRotation = new ParticleSystem.MinMaxCurve(-0.25f, 0.25f);
             main.gravityModifier = -0.3f;
-            main.maxParticles = 80;
+            main.maxParticles = 160;
 
-            Emission(particles, 30f);
+            Emission(particles, 40f);
             BoxShape(particles);
             Shrink(particles, 1f, 0.2f);
             Fade(particles, Color.white, 1f);
 
             ParticleSystem.TextureSheetAnimationModule sheet = particles.textureSheetAnimation;
             sheet.enabled = true;
-            sheet.numTilesX = 2;
-            sheet.numTilesY = 2;
-            sheet.startFrame = new ParticleSystem.MinMaxCurve(0f, 3.99f);
-            sheet.frameOverTime = new ParticleSystem.MinMaxCurve(0f);
+            sheet.numTilesX = 4;
+            sheet.numTilesY = 4;
+            sheet.frameOverTime = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0f, 1f, 1f));
+            sheet.cycleCount = 1;
             return particles;
         }
 
@@ -38,16 +38,78 @@ namespace FB.Editor.Building
             ParticleSystem.MainModule main = particles.main;
             main.loop = true;
             main.playOnAwake = false;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(1.5f, 2.5f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(0.5f, 1f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.4f, 0.8f);
-            main.gravityModifier = -0.1f;
-            main.maxParticles = 40;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(2.5f, 4f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.6f, 1.2f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.6f, 1.1f);
+            main.startRotation = new ParticleSystem.MinMaxCurve(0f, 6.28f);
+            main.gravityModifier = -0.12f;
+            main.maxParticles = 70;
 
-            Emission(particles, 8f);
+            Emission(particles, 12f);
             BoxShape(particles);
             Shrink(particles, 1f, 2.2f);
-            Fade(particles, new Color(0.22f, 0.2f, 0.2f), 0.55f);
+            Fade(particles, new Color(0.16f, 0.15f, 0.15f), 0.7f);
+            return particles;
+        }
+
+        /// <summary>Bright additive core inside the flames (HDR color, blooms with post-processing).</summary>
+        public static ParticleSystem Core(Transform parent, Material material)
+        {
+            ParticleSystem particles = Flames(parent, material);
+            particles.name = "FlameCore";
+            ParticleSystem.MainModule main = particles.main;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.35f, 0.6f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.2f, 0.38f);
+            main.maxParticles = 50;
+            Emission(particles, 22f);
+            Fade(particles, new Color(1f, 0.85f, 0.45f), 0.9f);
+            return particles;
+        }
+
+        /// <summary>Large soft additive glow hugging the base of the fire.</summary>
+        public static ParticleSystem Glow(Transform parent, Material material)
+        {
+            ParticleSystem particles = WaterParticleFactory.CreateSystem("Glow", parent, material);
+            ParticleSystem.MainModule main = particles.main;
+            main.loop = true;
+            main.playOnAwake = false;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.6f, 1f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.05f, 0.2f);
+            main.startSize = new ParticleSystem.MinMaxCurve(1f, 1.6f);
+            main.maxParticles = 12;
+            Emission(particles, 6f);
+            BoxShape(particles);
+            Fade(particles, new Color(1f, 0.45f, 0.12f), 0.35f);
+            return particles;
+        }
+
+        /// <summary>Hot embers drifting up with turbulence.</summary>
+        public static ParticleSystem Embers(Transform parent, Material material)
+        {
+            ParticleSystem particles = WaterParticleFactory.CreateSystem("Embers", parent, material);
+            ParticleSystem.MainModule main = particles.main;
+            main.loop = true;
+            main.playOnAwake = false;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(1f, 2f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.6f, 1.6f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.025f, 0.05f);
+            main.startColor = new Color(1f, 0.6f, 0.2f);
+            main.gravityModifier = -0.15f;
+            main.maxParticles = 40;
+            Emission(particles, 10f);
+            BoxShape(particles);
+
+            ParticleSystem.NoiseModule noise = particles.noise;
+            noise.enabled = true;
+            noise.strength = 0.6f;
+            noise.frequency = 0.8f;
+            noise.quality = ParticleSystemNoiseQuality.Low;
+
+            Fade(particles, Color.white, 1f);
+            ParticleSystemRenderer renderer = particles.GetComponent<ParticleSystemRenderer>();
+            renderer.renderMode = ParticleSystemRenderMode.Stretch;
+            renderer.velocityScale = 0.06f;
+            renderer.lengthScale = 1.5f;
             return particles;
         }
 
