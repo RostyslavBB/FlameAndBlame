@@ -37,6 +37,7 @@ namespace FB.Editor.Configs
                 ["PowerStrip"] = (MaterialKind.Electronics, 25, "Подовжувач"),
                 ["Ficus"] = (MaterialKind.Plant, 90, "Фікус"),
                 ["Bookshelf"] = (MaterialKind.Wood, 400, "Книжкова шафа"),
+                ["BedroomBookshelf"] = (MaterialKind.Wood, 400, "Шафа з книжками"),
 
                 ["Bed"] = (MaterialKind.Fabric, 900, "Ліжко"),
                 ["NightstandLeft"] = (MaterialKind.Wood, 80, "Тумбочка"),

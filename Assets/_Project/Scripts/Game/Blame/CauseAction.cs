@@ -11,6 +11,8 @@ namespace FB.Game.Blame
         Drown,
         Puddle,
         FaultyWiring,
-        Electrocution
+        Electrocution,
+        KnockOver,
+        Soak
     }
 }

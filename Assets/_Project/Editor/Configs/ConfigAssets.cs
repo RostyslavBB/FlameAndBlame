@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FB.Game.Blame;
 using FB.Game.CameraFx;
+using FB.Game.Civilian;
 using FB.Game.Config;
 using FB.Game.Fire;
 using FB.Game.Interactions;
@@ -38,6 +39,7 @@ namespace FB.Editor.Configs
         public BlameTextConfig BlameTexts { get; private set; }
         public UiConfig Ui { get; private set; }
         public JuiceConfig Juice { get; private set; }
+        public CivilianConfig Civilian { get; private set; }
         public LevelLayoutConfig Layout { get; private set; }
         public IReadOnlyDictionary<MaterialKind, MaterialProfileConfig> Profiles { get; private set; }
 
@@ -76,6 +78,7 @@ namespace FB.Editor.Configs
                 BlameTexts = texts,
                 Ui = Load<UiConfig>("UiConfig"),
                 Juice = Load<JuiceConfig>("JuiceConfig"),
+                Civilian = Load<CivilianConfig>("CivilianConfig"),
                 Layout = layout,
                 Profiles = FireDefaults.EnsureProfiles()
             };

@@ -34,6 +34,14 @@ namespace FB.Game.Config
         FloorBedroom,
         Trim,
         TvScreen,
-        LampGlow
+        LampGlow,
+        Skin,
+        Hoodie,
+        Jeans,
+        Hair,
+        BookA,
+        BookB,
+        BookC,
+        BookD
     }
 }

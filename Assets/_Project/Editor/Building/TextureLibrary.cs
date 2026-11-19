@@ -59,7 +59,7 @@ namespace FB.Editor.Building
         /// </summary>
         public static Texture2D FlameFlipbook()
         {
-            const int tile = 64;
+            const int tile = 128;
             Texture2D texture = NewTexture("T_FlameFlipbook", tile * 4);
             for (int frame = 0; frame < 16; frame++)
             {
@@ -79,18 +79,25 @@ namespace FB.Editor.Building
             return EditorAssetUtility.SaveOrReplace(texture, AssetPaths.Textures + "/T_FlameFlipbook.asset");
         }
 
+        /// <summary>
+        /// Toon flame: a teardrop with wavy licking edges, painted in three hard color bands (red rim, orange,
+        /// yellow heart) like a cartoon, instead of a soft gradient.
+        /// </summary>
         private static Color FlamePixel(float u, float v, float seed)
         {
-            // Height flickers over the frames so the animation breathes.
-            v = Mathf.Clamp01(v / (0.82f + 0.18f * Mathf.Sin(seed * 2.3f)));
-            float width = 0.42f * Mathf.Pow(1f - v, 0.7f) * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(v / 0.2f)) + 0.01f;
-            float wobble = (Mathf.PerlinNoise(v * 3f + seed, seed * 7f) - 0.5f) * 0.3f * v;
-            float inside = 1f - Mathf.Abs(u - 0.5f + wobble) / width;
-            float alpha = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(inside / 0.25f));
-            float core = Mathf.Clamp01(inside * 1.6f - v * 0.6f);
-            Color rim = new Color(1f, 0.35f, 0.08f);
-            Color heart = new Color(1f, 0.95f, 0.6f);
-            Color color = Color.Lerp(rim, heart, core);
+            float top = 0.86f + 0.14f * Mathf.Sin(seed * 2.3f);
+            v = Mathf.Clamp01(v / top);
+            float body = Mathf.Pow(1f - v, 0.85f) * Mathf.Sqrt(Mathf.Clamp01(v / 0.18f));
+            float licks = 1f + 0.22f * Mathf.Sin(v * 14f - seed * 3.1f) * v;
+            float width = 0.46f * body * licks + 0.004f;
+            float sway = (Mathf.PerlinNoise(v * 2.2f + seed, seed * 5f) - 0.5f) * 0.35f * v * v;
+            float inside = 1f - Mathf.Abs(u - 0.5f + sway) / width;
+            float alpha = Mathf.Clamp01(inside * 40f);
+
+            float heat = inside - v * 0.55f;
+            Color color = heat > 0.42f ? new Color(1f, 0.93f, 0.42f)
+                : heat > 0.12f ? new Color(1f, 0.6f, 0.1f)
+                : new Color(0.95f, 0.28f, 0.06f);
             color.a = alpha;
             return color;
         }

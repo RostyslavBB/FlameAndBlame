@@ -44,7 +44,7 @@ namespace FB.Editor.Building
                 light.transform.SetParent(root, false);
                 light.transform.position = lamp.position + Vector3.down * 0.1f;
                 light.type = LightType.Point;
-                light.color = new Color(1f, 0.92f, 0.8f);
+                light.color = new Color(1f, 0.78f, 0.55f);
                 light.range = 5.5f;
                 light.intensity = 1.2f;
                 light.shadows = LightShadows.None;

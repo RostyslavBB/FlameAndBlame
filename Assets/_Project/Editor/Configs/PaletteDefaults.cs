@@ -55,6 +55,14 @@ namespace FB.Editor.Configs
             yield return Entry(PaletteColor.Trim, "#FAF6EC");
             yield return Entry(PaletteColor.TvScreen, "#5C8DE0", unlit: true);
             yield return Entry(PaletteColor.LampGlow, "#FFF1C9", unlit: true);
+            yield return Entry(PaletteColor.Skin, "#F5C6A0");
+            yield return Entry(PaletteColor.Hoodie, "#E2403F");
+            yield return Entry(PaletteColor.Jeans, "#3E64B5");
+            yield return Entry(PaletteColor.Hair, "#4B2E22");
+            yield return Entry(PaletteColor.BookA, "#C8473A");
+            yield return Entry(PaletteColor.BookB, "#2F7F7A");
+            yield return Entry(PaletteColor.BookC, "#E8B54A");
+            yield return Entry(PaletteColor.BookD, "#4A5FA8");
         }
 
         private static PaletteEntry Entry(PaletteColor id, string hex, bool unlit = false)

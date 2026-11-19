@@ -43,6 +43,7 @@ namespace FB.Game.Blame
             _signalBus.Subscribe<ItemRuinedSignal>(OnItemRuined);
             _signalBus.Subscribe<FireSpreadSignal>(OnFireSpread);
             _signalBus.Subscribe<ElectrocutionSignal>(OnElectrocution);
+            _signalBus.Subscribe<CivilianIncidentSignal>(OnCivilianIncident);
         }
 
         public void Dispose()
@@ -50,6 +51,7 @@ namespace FB.Game.Blame
             _signalBus.Unsubscribe<ItemRuinedSignal>(OnItemRuined);
             _signalBus.Unsubscribe<FireSpreadSignal>(OnFireSpread);
             _signalBus.Unsubscribe<ElectrocutionSignal>(OnElectrocution);
+            _signalBus.Unsubscribe<CivilianIncidentSignal>(OnCivilianIncident);
         }
 
         private void OnItemRuined(ItemRuinedSignal signal)
@@ -74,6 +76,24 @@ namespace FB.Game.Blame
             NarrativeEvent kind = signal.IsPlayer ? NarrativeEvent.ShockPlayer : NarrativeEvent.ShockObject;
             string victim = signal.IsPlayer ? PlayerVictim : signal.Surface.DisplayName;
             Record(kind, signal.Cause, signal.Damage, victim, null, victim);
+        }
+
+        private void OnCivilianIncident(CivilianIncidentSignal signal)
+        {
+            string neighbour = _actors.NameOf(ActorId.Civilian);
+            switch (signal.Incident)
+            {
+                case CivilianIncident.KnockedItem:
+                    Record(NarrativeEvent.CivilianKnock, signal.Cause, signal.Damage, signal.Item.DisplayName, null,
+                        null);
+                    break;
+                case CivilianIncident.Soaked:
+                    Record(NarrativeEvent.CivilianSoaked, signal.Cause, signal.Damage, neighbour, null, neighbour);
+                    break;
+                default:
+                    Record(NarrativeEvent.CivilianShocked, signal.Cause, signal.Damage, neighbour, null, neighbour);
+                    break;
+            }
         }
 
         private void Record(NarrativeEvent kind, Cause cause, int damage, string item, string source, string victim)
@@ -118,6 +138,8 @@ namespace FB.Game.Blame
             switch (kind)
             {
                 case NarrativeEvent.ShockPlayer: return 3;
+                case NarrativeEvent.CivilianSoaked:
+                case NarrativeEvent.CivilianShocked: return Math.Max(2, byDamage);
                 case NarrativeEvent.FireStart:
                 case NarrativeEvent.ShortCircuit:
                 case NarrativeEvent.Drowned: return Math.Max(2, byDamage);

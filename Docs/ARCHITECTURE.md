@@ -49,6 +49,10 @@ flowchart LR
   Blame -- BlameEventSignal --> TimeFx[TimeScaleService]
   Flow[GameStateMachine] -- GamePhaseChangedSignal --> UI[Briefing / HUD / Report presenters]
   Flow -- GamePhaseChangedSignal --> Starter[FireStarter]
+  Hose -- WaterHitSignal --> Npc[CivilianBrain<br/>Wander / Panic / Knocked]
+  Elec --> Npc
+  Npc -- CivilianIncidentSignal --> Blame
+  Shock -- ElectrocutionSignal --> ShockUi[ShockOverlayPresenter]
   Ledger --> Report[ReportPresenter]
 ```
 
@@ -60,8 +64,9 @@ flowchart LR
 | `FireExtinguishedSignal` | `SurfaceActions` | `FireVisualService` (steam) |
 | `ItemRuinedSignal` | `SurfaceActions` | `BlameService`, `FireVisualService` (sparks) |
 | `SurfaceStatusChangedSignal` | `SurfaceActions` | `SurfaceTintService` |
-| `ElectrocutionSignal` | `ShockService` | `BlameService` |
+| `ElectrocutionSignal` | `ShockService` | `BlameService`, `ShockOverlayPresenter` |
 | `BlameEventSignal` | `BlameService` | `FeedPresenter`, `TimeScaleService`, debug overlay |
+| `CivilianIncidentSignal` | `CivilianChaos`, `CivilianBrain` | `BlameService` |
 
 All signals are immutable `readonly struct`s in `Scripts/Game/Signals`.
 
@@ -94,7 +99,7 @@ flowchart LR
 | MVP | `*View` (passive MonoBehaviours) + `*Presenter` (plain C#) in `UI/`, `Debugging/` |
 | Object Pool | `ComponentPool<T>` over `MonoMemoryPool`: splashes, steam, sparks, fire, arcs, feed lines |
 | Factory | `CauseFactory`, editor builders |
-| State Machine | `StateMachine<T>` + `BriefingState` / `PlayingState` / `ReportState` |
+| State Machine | `StateMachine<T>` + `BriefingState` / `PlayingState` / `ReportState`; neighbour AI `CivilianWanderState` / `CivilianPanicState` / `CivilianKnockedState` |
 | Strategy | `IInteractionRule` assets (Extinguish, WaterCooling, WaterDamage x2, NeighborIgnition) |
 | Facade | `IHoseFacade`, `ISurfaceActions` (single mutation point for surfaces) |
 | Data-driven | ScriptableObject configs for every number, rule, text, color and the level layout |
@@ -145,9 +150,27 @@ prop box, recolors their materials into the palette and adds a box collider; gam
   `FireVisualService` scales each fire with the heat of what burns, so fires grow from a flicker to a blaze.
 - Smoke: `SmokeService` accumulates smoke from burning objects; `FB/SmokeLayer` (stacked swirling planes with soft
   depth intersections) lowers from the ceiling, fog density rises and a "smoke" post-processing volume fades in.
-- Post-processing (code-generated `VolumeProfile`s): ACES tonemapping, bloom (fire, glowing shades), color grading,
-  white balance, vignette; FXAA on the camera. Shadows stay off in the WebGL quality level (see WebGL).
+- Post-processing (code-generated `VolumeProfile`s): warm "evening fire" grade - ACES, orange-tinted bloom, warm white
+  balance and color filter, brown shadows (shadows/midtones/highlights), warm vignette; FXAA on the camera. A third
+  "shock" profile (chromatic aberration, lens distortion, cold flash) is driven by `ShockOverlayPresenter` together
+  with on-screen lightning bolts when the player is electrocuted.
+- Toon fire: the flame flipbook is painted in three hard color bands with wavy licking edges. Shadows stay off in the WebGL quality level (see WebGL).
 - Life: ceiling lamps with real lights and glowing shades, TV/laptop screens - all switched off by the breaker
   (`RoomLightsController`); a kitchen clock showing real time (`ClockController`); dust drifting in every room.
 - Ambient light is generated at build time (`Lightmapping.Bake` with GI off) so the player build has the same
   ambient probe as the editor.
+
+## The neighbour (NPC)
+
+- `CivilianBrain` (plain C#, ticked centrally) owns a `StateMachine<CivilianState>`: **Wander** between room waypoints,
+  **Panic** (runs screaming away from the nearest fire, arms flailing) and **Knocked** (on the floor with spiral eyes,
+  then panics again). States share a `CivilianBody` context and switch through `ICivilianStates`.
+- `CivilianChaos` flings any loose gameplay item he runs into and reports it as `Cause(Сусід: KnockOver)`, so he is
+  a fourth actor in the verdict. Hose water knocks him down (`Cause(Ти: Soak)` with the spray as parent); a live
+  puddle shocks him (two parents: puddle + power source), exactly like the player's shock.
+- Navigation: the nav mesh is baked by `CivilianBuilder` with the core `NavMeshBuilder` API (loose props ignored so he
+  runs through them), saved as an asset and added at runtime; no extra package code at runtime.
+- The character is original: primitives in palette colors (big head, red hoodie, jeans, sneakers) and a
+  procedural `CivilianAnimator` (limb swing by speed, panic flailing, screaming mouth, fall) - no animator controller.
+- Fires: `FireStarter` lights one random candidate per room on a schedule (`FireConfig.Outbreaks`), and the round
+  cannot end as "all clear" while outbreaks are pending (`IFireOutbreaks`).

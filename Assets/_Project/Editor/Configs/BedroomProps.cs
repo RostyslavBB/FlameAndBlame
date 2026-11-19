@@ -18,6 +18,7 @@ namespace FB.Editor.Configs
             yield return Static("Desk", 6.62f, 0f, -4.7f, 90f);
             yield return Static("Laptop", 6.68f, 0.76f, -4.7f, 90f);
             yield return Dynamic("DeskChair", 6.0f, 0f, -4.7f, -90f, 5f);
+            yield return Static("BedroomBookshelf", 3.2f, 0f, -2.78f, 0f, BookshelfParts.Create(21));
 
             yield return Static("BedroomRug", 4f, 0f, -4.3f, 0f,
                 Box(0f, 0.01f, 0f, 2.4f, 0.02f, 1.5f, C.Cushion, true),

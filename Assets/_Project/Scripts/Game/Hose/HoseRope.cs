@@ -37,7 +37,7 @@ namespace FB.Game.Hose
             int count = _config.RopePoints;
             _points = new Vector3[count];
             _previous = new Vector3[count];
-            _segmentLength = _config.MaxLength / (count - 1);
+            _segmentLength = _config.MaxLength * _config.RopeSlack / (count - 1);
             if (_view.RopeProbe != null)
             {
                 _collision = new HoseRopeCollision(_view.RopeProbe, _config.RopeWidth, _segmentLength);

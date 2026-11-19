@@ -11,14 +11,14 @@ namespace FB.Editor.Building
             ParticleSystem.MainModule main = particles.main;
             main.loop = true;
             main.playOnAwake = false;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(0.5f, 0.9f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.6f, 1f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.8f, 1.6f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.45f, 0.8f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.65f, 1.15f);
             main.startRotation = new ParticleSystem.MinMaxCurve(-0.25f, 0.25f);
             main.gravityModifier = -0.3f;
             main.maxParticles = 160;
 
-            Emission(particles, 40f);
+            Emission(particles, 30f);
             BoxShape(particles);
             Shrink(particles, 1f, 0.2f);
             Fade(particles, Color.white, 1f);

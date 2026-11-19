@@ -10,31 +10,52 @@ namespace FB.Editor.Configs
     /// <summary>Default actors and feed lines. Filled only into empty configs, so writers' edits survive Build All.</summary>
     internal static class BlameDefaults
     {
+        /// <summary>Adds actors that are missing (new enum values), keeping edited names and colors.</summary>
         public static void EnsureActors(ActorRegistryConfig config)
         {
-            if (config.Actors.Count > 0)
+            List<ActorEntry> actors = new List<ActorEntry>(config.Actors);
+            int before = actors.Count;
+            foreach (ActorEntry entry in DefaultActors())
             {
-                return;
+                if (!actors.Exists(existing => existing.Id == entry.Id))
+                {
+                    actors.Add(entry);
+                }
             }
 
-            config.EditorSetActors(new[]
+            if (actors.Count != before)
             {
-                new ActorEntry(ActorId.Player, "Ти", Hex("#FF8C1A")),
-                new ActorEntry(ActorId.Building, "Стара проводка", Hex("#9B7FE0")),
-                new ActorEntry(ActorId.Fire, "Вогонь", Hex("#E63946"))
-            });
-            EditorUtility.SetDirty(config);
+                config.EditorSetActors(actors);
+                EditorUtility.SetDirty(config);
+            }
         }
 
+        /// <summary>Adds default lines only for events that have none yet, keeping writers' edits.</summary>
         public static void EnsureTexts(BlameTextConfig config)
         {
-            if (config.Templates.Count > 0)
+            List<BlameTemplate> templates = new List<BlameTemplate>(config.Templates);
+            List<BlameTemplate> existing = new List<BlameTemplate>(templates);
+            foreach (BlameTemplate template in Templates())
             {
-                return;
+                if (!existing.Exists(line => line.Event == template.Event))
+                {
+                    templates.Add(template);
+                }
             }
 
-            config.EditorSetTemplates(Templates());
-            EditorUtility.SetDirty(config);
+            if (templates.Count != existing.Count)
+            {
+                config.EditorSetTemplates(templates);
+                EditorUtility.SetDirty(config);
+            }
+        }
+
+        private static IEnumerable<ActorEntry> DefaultActors()
+        {
+            yield return new ActorEntry(ActorId.Player, "Ти", Hex("#FF8C1A"));
+            yield return new ActorEntry(ActorId.Building, "Стара проводка", Hex("#9B7FE0"));
+            yield return new ActorEntry(ActorId.Fire, "Вогонь", Hex("#E63946"));
+            yield return new ActorEntry(ActorId.Civilian, "Сусід", Hex("#3FA7D6"));
         }
 
         private static IEnumerable<BlameTemplate> Templates()
@@ -72,6 +93,19 @@ namespace FB.Editor.Configs
             yield return T(E.ShockObject, F.Any, "Струм підкинув «{I}».");
             yield return T(E.ShockObject, F.Any, "Заряд бадьорості для «{I}».");
             yield return T(E.ShockObject, F.Any, "«{I}» танцює. Музики немає, струм є.");
+
+            yield return T(E.CivilianKnock, F.Any, "{A} у паніці. «{I}» летить на підлогу.");
+            yield return T(E.CivilianKnock, F.Any, "Евакуація по-сусідськи: «{I}» перекинуто.");
+            yield return T(E.CivilianKnock, F.Any, "{A} рятується. «{I}» — ні.");
+            yield return T(E.CivilianKnock, F.Any, "{A} бігає колами. Під ноги потрапило «{I}».");
+
+            yield return T(E.CivilianSoaked, F.Any, "Ти збив сусіда з ніг струменем. Рятуєш не тих.");
+            yield return T(E.CivilianSoaked, F.Any, "Сусід отримав водні процедури з брандспойта.");
+            yield return T(E.CivilianSoaked, F.Any, "Струмінь у сусіда. Він тобі це пригадає.");
+
+            yield return T(E.CivilianShocked, F.Any, "Сусіда вдарило струмом. Зачіска тепер сміливіша.");
+            yield return T(E.CivilianShocked, F.Any, "Сусід став у калюжу під напругою. Танцює.");
+            yield return T(E.CivilianShocked, F.Any, "Мокра підлога + сусід = феєрверк. Дякуємо: {A}.");
         }
 
         private static BlameTemplate T(E narrativeEvent, F filter, string text) =>

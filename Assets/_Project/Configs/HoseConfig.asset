@@ -91,12 +91,12 @@ MonoBehaviour:
   _maxRecoilForce: 3900
   _verticalRecoilScale: 0.4
   _shakePerSecond: 1.4
-  _maxLength: 13
+  _maxLength: 18
   _leashStiffness: 2500
-  _ropePoints: 50
+  _ropePoints: 60
   _ropeWidth: 0.1
   _ropeDamping: 0.97
-  _ropeIterations: 14
+  _ropeIterations: 16
   _waterPerParticle: 0.02
   _pushPerParticle: 0.02
   _maxActiveSplashes: 12

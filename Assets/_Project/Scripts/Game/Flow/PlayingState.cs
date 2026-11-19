@@ -12,16 +12,19 @@ namespace FB.Game.Flow
         private readonly RoundConfig _config;
         private readonly RoundClock _clock;
         private readonly IFireStatus _fire;
+        private readonly IFireOutbreaks _outbreaks;
         private readonly IPlayerControl _control;
         private readonly LazyInject<IGameStateSwitcher> _switcher;
         private float _allClearTime;
 
-        public PlayingState(RoundConfig config, RoundClock clock, IFireStatus fire, IPlayerControl control,
+        public PlayingState(RoundConfig config, RoundClock clock, IFireStatus fire, IFireOutbreaks outbreaks,
+            IPlayerControl control,
             LazyInject<IGameStateSwitcher> switcher)
         {
             _config = config;
             _clock = clock;
             _fire = fire;
+            _outbreaks = outbreaks;
             _control = control;
             _switcher = switcher;
         }
@@ -38,7 +41,7 @@ namespace FB.Game.Flow
         public void Tick(float deltaTime)
         {
             _clock.Advance(deltaTime);
-            bool allClear = _fire.HasStarted && _fire.BurningCount == 0;
+            bool allClear = _fire.HasStarted && _fire.BurningCount == 0 && !_outbreaks.HasPending;
             _allClearTime = allClear ? _allClearTime + deltaTime : 0f;
 
             if (_clock.IsOver || _allClearTime >= _config.AllClearDelay)

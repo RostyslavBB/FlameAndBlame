@@ -77,11 +77,7 @@ namespace FB.Editor.Configs
                 Ball(0.2f, 1.65f, 0.1f, 0.55f, 0.5f, 0.55f, C.Plant),
                 Ball(-0.2f, 1.1f, -0.15f, 0.5f, 0.45f, 0.5f, C.Plant));
 
-            yield return Static("Bookshelf", 6.68f, 0f, 0.5f, 90f,
-                Box(0f, 1f, 0f, 1.2f, 2f, 0.4f, C.Wood),
-                Box(-0.3f, 1.35f, -0.08f, 0.4f, 0.3f, 0.25f, C.Accent, true),
-                Box(0.25f, 0.8f, -0.08f, 0.5f, 0.3f, 0.25f, C.Curtain, true),
-                Box(-0.2f, 1.75f, -0.08f, 0.5f, 0.3f, 0.25f, C.Cushion, true));
+            yield return Static("Bookshelf", 6.68f, 0f, 0.5f, 90f, BookshelfParts.Create(7));
         }
 
         private static PropDefinition Curtain(string id, float x) =>

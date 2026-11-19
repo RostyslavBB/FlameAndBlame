@@ -20,6 +20,10 @@ namespace FB.Editor
         public const string SmokeMaterial = Materials + "/M_SmokeLayer.mat";
         public const string MainPostProcess = Configs + "/PostProcess_Main.asset";
         public const string SmokePostProcess = Configs + "/PostProcess_Smoke.asset";
+        public const string ShockPostProcess = Configs + "/PostProcess_Shock.asset";
+        public const string CivilianNavMesh = Scenes + "/Game_NavMesh.asset";
+        public const string SpiralTexture = Textures + "/T_DizzySpiral.asset";
+        public const string SpiralMaterial = Materials + "/M_DizzySpiral.mat";
         public const string MistMaterial = Materials + "/M_Mist.mat";
         public const string StreamMaterial = Materials + "/M_WaterStream.mat";
         public const string ArcPrefab = Prefabs + "/ElectricArc.prefab";

@@ -13,6 +13,7 @@ namespace FB.Game.Installers
         [SerializeField] private HudView _hud;
         [SerializeField] private FeedView _feed;
         [SerializeField] private ReportView _report;
+        [SerializeField] private ShockOverlayView _shock;
         [SerializeField] private FeedEntryView _feedEntryPrefab;
 
         public override void InstallBindings()
@@ -22,6 +23,7 @@ namespace FB.Game.Installers
             Container.BindInstance(_hud);
             Container.BindInstance(_feed);
             Container.BindInstance(_report);
+            Container.BindInstance(_shock);
             Container.BindComponentPool(_feedEntryPrefab, _config.FeedMaxEntries + 1);
 
             Container.BindInterfacesTo<BriefingPresenter>().AsSingle();
@@ -29,6 +31,7 @@ namespace FB.Game.Installers
             Container.BindInterfacesTo<FeedPresenter>().AsSingle();
             Container.Bind<ReportVerdict>().AsSingle();
             Container.BindInterfacesTo<ReportPresenter>().AsSingle();
+            Container.BindInterfacesTo<ShockOverlayPresenter>().AsSingle();
         }
     }
 }

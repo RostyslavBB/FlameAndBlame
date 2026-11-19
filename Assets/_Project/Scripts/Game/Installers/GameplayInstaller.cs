@@ -1,6 +1,7 @@
 using FB.Core.Pooling;
 using FB.Game.Blame;
 using FB.Game.CameraFx;
+using FB.Game.Civilian;
 using FB.Game.Config;
 using FB.Game.Debugging;
 using FB.Game.Effects;
@@ -37,6 +38,7 @@ namespace FB.Game.Installers
         [SerializeField] private ActorRegistryConfig _actorsConfig;
         [SerializeField] private BlameTextConfig _blameTextConfig;
         [SerializeField] private JuiceConfig _juiceConfig;
+        [SerializeField] private CivilianConfig _civilianConfig;
 
         [Header("Scene")]
         [SerializeField] private PlayerBody _player;
@@ -44,6 +46,7 @@ namespace FB.Game.Installers
         [SerializeField] private Transform _hoseAnchor;
         [SerializeField] private LevelCatalog _level;
         [SerializeField] private BlameDebugView _debugView;
+        [SerializeField] private CivilianView _civilian;
 
         [Header("Prefabs")]
         [SerializeField] private WaterSplash _splashPrefab;
@@ -66,6 +69,7 @@ namespace FB.Game.Installers
             Container.BindInterfacesTo<RoomLightsController>().AsSingle();
             Container.BindInterfacesTo<ClockController>().AsSingle();
             BindPower();
+            BindCivilian();
             BindDebug();
             BindFlow();
         }
@@ -84,6 +88,7 @@ namespace FB.Game.Installers
             Container.BindInstance(_actorsConfig);
             Container.BindInstance(_blameTextConfig);
             Container.BindInstance(_juiceConfig);
+            Container.BindInstance(_civilianConfig);
         }
 
         private void DeclareSignals()
@@ -96,6 +101,7 @@ namespace FB.Game.Installers
             Container.DeclareSignal<SurfaceStatusChangedSignal>().OptionalSubscriber();
             Container.DeclareSignal<ElectrocutionSignal>().OptionalSubscriber();
             Container.DeclareSignal<BlameEventSignal>().OptionalSubscriber();
+            Container.DeclareSignal<CivilianIncidentSignal>().OptionalSubscriber();
         }
 
         private void BindBlame()
@@ -173,6 +179,14 @@ namespace FB.Game.Installers
             Container.BindComponentPool(_arcPrefab, _powerConfig.MaxArcs);
             Container.BindInterfacesAndSelfTo<ArcSpawner>().AsSingle();
             Container.BindInterfacesTo<ShockService>().AsSingle();
+        }
+
+        private void BindCivilian()
+        {
+            Container.BindInstance(_civilian);
+            Container.Bind<CivilianBody>().AsSingle();
+            Container.Bind<CivilianChaos>().AsSingle();
+            Container.BindInterfacesTo<CivilianBrain>().AsSingle();
         }
 
         private void BindDebug()

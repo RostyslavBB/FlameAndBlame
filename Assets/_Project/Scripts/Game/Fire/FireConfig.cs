@@ -24,9 +24,15 @@ namespace FB.Game.Fire
         [Tooltip("Water hitting near a burning object also cools it (radius in m).")]
         [SerializeField, Min(0f)] private float _waterSplashRadius = 0.6f;
 
-        [Header("Round start")]
-        [Tooltip("Prop id (GameObject name) that catches fire when the round starts.")]
-        [SerializeField] private string _startSurfaceId = "Pan";
+        [Header("Outbreaks (one per room, staggered)")]
+        [SerializeField] private FireStartGroup[] _outbreaks =
+        {
+            new FireStartGroup("Kitchen", 0f, "Pan"),
+            new FireStartGroup("Living", 6f, "FloorLamp", "CurtainRight", "Cushion2", "TvStand"),
+            new FireStartGroup("Bedroom", 14f, "NightLamp", "Bed", "Laptop", "DeskChair", "BedroomBookshelf"),
+            new FireStartGroup("Bathroom", 22f, "WashingMachine"),
+            new FireStartGroup("Hall", 30f, "CoatRack", "ShoeRack")
+        };
 
         [Header("Visuals")]
         [SerializeField, Min(1)] private int _maxFires = 30;
@@ -54,7 +60,7 @@ namespace FB.Game.Fire
         public float DryPerSecond => _dryPerSecond;
         public float WetThreshold => _wetThreshold;
         public float WaterSplashRadius => _waterSplashRadius;
-        public string StartSurfaceId => _startSurfaceId;
+        public FireStartGroup[] Outbreaks => _outbreaks;
         public int MaxFires => _maxFires;
         public int MaxFireLights => _maxFireLights;
         public float FireLightIntensity => _fireLightIntensity;

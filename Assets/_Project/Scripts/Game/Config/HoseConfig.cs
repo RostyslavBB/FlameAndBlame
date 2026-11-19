@@ -36,13 +36,15 @@ namespace FB.Game.Config
         [SerializeField, Min(0f)] private float _shakePerSecond = 1.4f;
 
         [Header("Hose")]
-        [SerializeField, Min(1f)] private float _maxLength = 13f;
+        [SerializeField, Min(1f)] private float _maxLength = 18f;
         [Tooltip("Pull-back force in Newtons per meter over the max length.")]
         [SerializeField, Min(0f)] private float _leashStiffness = 2500f;
-        [SerializeField, Range(4, 64)] private int _ropePoints = 50;
+        [Tooltip("Visual hose length as a multiple of the leash length: slack to go around door corners.")]
+        [SerializeField, Range(1f, 2f)] private float _ropeSlack = 1.3f;
+        [SerializeField, Range(4, 64)] private int _ropePoints = 60;
         [SerializeField, Min(0.01f)] private float _ropeWidth = 0.1f;
         [SerializeField, Range(0.8f, 1f)] private float _ropeDamping = 0.97f;
-        [SerializeField, Range(1, 30)] private int _ropeIterations = 14;
+        [SerializeField, Range(1, 30)] private int _ropeIterations = 16;
 
         [Header("Water effects")]
         [SerializeField, Min(0f)] private float _waterPerParticle = 0.02f;
@@ -70,6 +72,7 @@ namespace FB.Game.Config
         public float ShakePerSecond => _shakePerSecond;
         public float MaxLength => _maxLength;
         public float LeashStiffness => _leashStiffness;
+        public float RopeSlack => _ropeSlack;
         public int RopePoints => _ropePoints;
         public float RopeWidth => _ropeWidth;
         public float RopeDamping => _ropeDamping;

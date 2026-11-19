@@ -1,5 +1,6 @@
 using FB.Editor.Configs;
 using FB.Editor.Ui;
+using FB.Game.Civilian;
 using FB.Game.Debugging;
 using FB.Game.Effects;
 using FB.Game.Fire;
@@ -29,6 +30,7 @@ namespace FB.Editor.Building
             PostProcessBuilder.CreateVolume("PostProcessing", PostProcessBuilder.MainProfile(), 0f, 1f);
             LevelBuilder level = new LevelBuilder(configs.Layout, materials, meshes, configs.Profiles);
             LevelCatalog levelCatalog = level.Rebuild(scene);
+            CivilianView civilian = CivilianBuilder.Build(scene, materials, configs.Layout, levelCatalog.gameObject);
 
             // Load from disk: references returned by SaveAsPrefabAsset may be invalidated by asset reimport.
             GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetPaths.PlayerPrefab);
@@ -52,6 +54,8 @@ namespace FB.Editor.Building
             EditorAssetUtility.SetReference(installer, "_actorsConfig", configs.Actors);
             EditorAssetUtility.SetReference(installer, "_blameTextConfig", configs.BlameTexts);
             EditorAssetUtility.SetReference(installer, "_juiceConfig", configs.Juice);
+            EditorAssetUtility.SetReference(installer, "_civilianConfig", configs.Civilian);
+            EditorAssetUtility.SetReference(installer, "_civilian", civilian);
             EditorAssetUtility.SetReference(installer, "_player", player.GetComponent<PlayerBody>());
             EditorAssetUtility.SetReference(installer, "_hoseView", player.GetComponent<HoseView>());
             EditorAssetUtility.SetReference(installer, "_hoseAnchor", anchor.transform);
@@ -108,16 +112,16 @@ namespace FB.Editor.Building
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             RenderSettings.fogDensity = 0f;
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.78f, 0.74f, 0.70f);
-            RenderSettings.ambientEquatorColor = new Color(0.62f, 0.55f, 0.50f);
-            RenderSettings.ambientGroundColor = new Color(0.40f, 0.34f, 0.30f);
+            RenderSettings.ambientSkyColor = new Color(0.82f, 0.72f, 0.62f);
+            RenderSettings.ambientEquatorColor = new Color(0.66f, 0.52f, 0.42f);
+            RenderSettings.ambientGroundColor = new Color(0.42f, 0.30f, 0.24f);
 
             GameObject sun = new GameObject("Sun");
             sun.transform.rotation = Quaternion.Euler(58f, -35f, 0f);
             Light light = sun.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.color = new Color(1f, 0.92f, 0.80f);
-            light.intensity = 1.25f;
+            light.color = new Color(1f, 0.80f, 0.60f);
+            light.intensity = 1.2f;
             light.shadows = LightShadows.Hard;
             light.shadowStrength = 0.55f;
         }

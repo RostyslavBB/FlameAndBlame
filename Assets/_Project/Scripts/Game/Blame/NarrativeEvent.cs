@@ -9,6 +9,9 @@ namespace FB.Game.Blame
         ShortCircuit,
         Drowned,
         ShockPlayer,
-        ShockObject
+        ShockObject,
+        CivilianKnock,
+        CivilianSoaked,
+        CivilianShocked
     }
 }

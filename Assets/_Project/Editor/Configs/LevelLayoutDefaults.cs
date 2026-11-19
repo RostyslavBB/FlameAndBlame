@@ -14,7 +14,7 @@ namespace FB.Editor.Configs
     internal static class LevelLayoutDefaults
     {
         /// <summary>Bump when the defaults change: Build All regenerates layouts made from an older version.</summary>
-        public const int Version = 7;
+        public const int Version = 8;
 
         public static void Apply(LevelLayoutConfig config)
         {

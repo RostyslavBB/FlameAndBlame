@@ -5,6 +5,7 @@ namespace FB.Game.Blame
     {
         Player,
         Building,
-        Fire
+        Fire,
+        Civilian
     }
 }
