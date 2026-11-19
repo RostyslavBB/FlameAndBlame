@@ -1,0 +1,8 @@
+<linker>
+  <!-- Zenject resolves bindings through reflection: keep everything. -->
+  <assembly fullname="Zenject" preserve="all" />
+  <assembly fullname="Zenject-usage" preserve="all" />
+  <assembly fullname="UniTask" preserve="all" />
+  <assembly fullname="FB.Core" preserve="all" />
+  <assembly fullname="FB.Game" preserve="all" />
+</linker>

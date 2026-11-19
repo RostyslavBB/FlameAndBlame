@@ -1,0 +1,44 @@
+using FB.Core.Input;
+using FB.Core.StateMachine;
+using FB.Game.Config;
+using Zenject;
+
+namespace FB.Game.Flow
+{
+    /// <summary>Short intro card before the round. Switches to Playing after a fixed delay.</summary>
+    public sealed class BriefingState : IGameState, ITickableState
+    {
+        private readonly RoundConfig _config;
+        private readonly ICursorService _cursor;
+        private readonly LazyInject<IGameStateSwitcher> _switcher;
+        private float _elapsed;
+
+        public BriefingState(RoundConfig config, ICursorService cursor, LazyInject<IGameStateSwitcher> switcher)
+        {
+            _config = config;
+            _cursor = cursor;
+            _switcher = switcher;
+        }
+
+        public GamePhase Phase => GamePhase.Briefing;
+
+        public void Enter()
+        {
+            _elapsed = 0f;
+            _cursor.LockAllowed = true;
+        }
+
+        public void Tick(float deltaTime)
+        {
+            _elapsed += deltaTime;
+            if (_elapsed >= _config.BriefingSeconds)
+            {
+                _switcher.Value.Enter<PlayingState>();
+            }
+        }
+
+        public void Exit()
+        {
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "name": "FB.Editor",
+    "rootNamespace": "FB.Editor",
+    "references": [
+        "FB.Core",
+        "FB.Game",
+        "Zenject",
+        "UniTask",
+        "Unity.TextMeshPro",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,20 @@
+namespace FB.Editor
+{
+    internal static class AssetPaths
+    {
+        public const string Root = "Assets/_Project";
+        public const string Configs = Root + "/Configs";
+        public const string Materials = Root + "/Materials";
+        public const string Meshes = Root + "/Meshes";
+        public const string Prefabs = Root + "/Prefabs";
+        public const string Scenes = Root + "/Scenes";
+        public const string Resources = Root + "/Resources";
+
+        public const string GameScene = Scenes + "/Game.unity";
+        public const string PlayerPrefab = Prefabs + "/Player.prefab";
+        public const string ProjectContextPrefab = Resources + "/ProjectContext.prefab";
+        public const string LightingSettings = Configs + "/GameLighting.lighting";
+        public const string PlayerPhysicsMaterial = Materials + "/PM_Player.asset";
+        public const string WebGLBuildFolder = "Builds/WebGL";
+    }
+}
