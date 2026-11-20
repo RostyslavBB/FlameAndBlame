@@ -51,7 +51,7 @@ namespace FB.Game.Smoke
         private void Apply()
         {
             float layerY = Mathf.Lerp(_config.LayerTopY, _config.LayerBottomY, _visual);
-            _view.Show(_visual, layerY);
+            _view.Show(_visual, layerY, _config.MaxPuffsPerSecond * _visual);
             RenderSettings.fogDensity = _config.MaxFogDensity * _visual * _visual;
         }
     }

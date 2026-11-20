@@ -12,6 +12,10 @@ namespace FB.Game.Puddles
     {
         private readonly float[] _delta;
         private readonly Cause[] _nextCause;
+        private int _minX = int.MaxValue;
+        private int _minZ = int.MaxValue;
+        private int _maxX = -1;
+        private int _maxZ = -1;
 
         public WaterGrid(Vector2 origin, int width, int height, float cellSize)
         {
@@ -36,6 +40,9 @@ namespace FB.Game.Puddles
         public bool[] Electrified { get; }
         public Cause[] Causes { get; }
         public int Count => Depth.Length;
+
+        /// <summary>False once every cell has dried: the simulation then costs nothing.</summary>
+        public bool HasWater => _maxX >= 0;
 
         public Vector3 CellCenter(int index) =>
             new Vector3(Origin.x + (index % Width + 0.5f) * CellSize, 0f, Origin.y + (index / Width + 0.5f) * CellSize);
@@ -75,17 +82,40 @@ namespace FB.Game.Puddles
 
                     Depth[index] = Mathf.Min(Depth[index] + perCell, maxDepth);
                     Causes[index] = cause;
+                    Include(x, z);
                 }
             }
         }
 
-        public void Step(float flowRate, float film, float evaporation)
+        /// <summary>
+        /// One flow step over the wet area plus a one-cell border (water can only spread one cell per step), so
+        /// a dry floor costs nothing and a single puddle costs only its own size. Returns false when there is no
+        /// water; <paramref name="touched"/> is the area whose cells may have changed (for the texture upload).
+        /// </summary>
+        public bool Step(float flowRate, float film, float evaporation, out RectInt touched)
         {
-            System.Array.Clear(_delta, 0, _delta.Length);
-            System.Array.Copy(Causes, _nextCause, Causes.Length);
-            for (int z = 0; z < Height; z++)
+            touched = default;
+            if (!HasWater)
             {
-                for (int x = 0; x < Width; x++)
+                return false;
+            }
+
+            int x0 = Mathf.Max(0, _minX - 1);
+            int z0 = Mathf.Max(0, _minZ - 1);
+            int x1 = Mathf.Min(Width - 1, _maxX + 1);
+            int z1 = Mathf.Min(Height - 1, _maxZ + 1);
+            touched = new RectInt(x0, z0, x1 - x0 + 1, z1 - z0 + 1);
+            int rowLength = x1 - x0 + 1;
+            for (int z = z0; z <= z1; z++)
+            {
+                int start = z * Width + x0;
+                System.Array.Clear(_delta, start, rowLength);
+                System.Array.Copy(Causes, start, _nextCause, start, rowLength);
+            }
+
+            for (int z = z0; z <= z1; z++)
+            {
+                for (int x = x0; x <= x1; x++)
                 {
                     int index = z * Width + x;
                     if (Blocked[index])
@@ -93,24 +123,44 @@ namespace FB.Game.Puddles
                         continue;
                     }
 
-                    if (x + 1 < Width)
+                    if (x < x1)
                     {
                         Exchange(index, index + 1, flowRate, film);
                     }
 
-                    if (z + 1 < Height)
+                    if (z < z1)
                     {
                         Exchange(index, index + Width, flowRate, film);
                     }
                 }
             }
 
-            for (int i = 0; i < Depth.Length; i++)
+            _minX = _minZ = int.MaxValue;
+            _maxX = _maxZ = -1;
+            for (int z = z0; z <= z1; z++)
             {
-                float depth = Mathf.Max(0f, Depth[i] + _delta[i] - evaporation);
-                Depth[i] = depth;
-                Causes[i] = depth > 0f ? _nextCause[i] : null;
+                for (int x = x0; x <= x1; x++)
+                {
+                    int index = z * Width + x;
+                    float depth = Mathf.Max(0f, Depth[index] + _delta[index] - evaporation);
+                    Depth[index] = depth;
+                    Causes[index] = depth > 0f ? _nextCause[index] : null;
+                    if (depth > 0f)
+                    {
+                        Include(x, z);
+                    }
+                }
             }
+
+            return true;
+        }
+
+        private void Include(int x, int z)
+        {
+            _minX = Mathf.Min(_minX, x);
+            _minZ = Mathf.Min(_minZ, z);
+            _maxX = Mathf.Max(_maxX, x);
+            _maxZ = Mathf.Max(_maxZ, z);
         }
 
         private void Exchange(int a, int b, float flowRate, float film)

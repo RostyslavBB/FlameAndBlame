@@ -37,6 +37,9 @@ namespace FB.Game.Fire
         [Header("Visuals")]
         [SerializeField, Min(1)] private int _maxFires = 30;
         [SerializeField, Range(0, 8)] private int _maxFireLights = 4;
+        [Tooltip("Up to this many fires emit at full rate; beyond it every fire emits proportionally less (overdraw budget).")]
+        [SerializeField, Min(1)] private int _fullRateFires = 8;
+        [SerializeField, Range(0.1f, 1f)] private float _minEmissionShare = 0.4f;
         [SerializeField, Min(0f)] private float _fireLightIntensity = 2.2f;
         [SerializeField, Min(1)] private int _maxSteamPuffs = 6;
         [SerializeField, Min(1)] private int _maxSparkBursts = 4;
@@ -63,6 +66,8 @@ namespace FB.Game.Fire
         public FireStartGroup[] Outbreaks => _outbreaks;
         public int MaxFires => _maxFires;
         public int MaxFireLights => _maxFireLights;
+        public int FullRateFires => _fullRateFires;
+        public float MinEmissionShare => _minEmissionShare;
         public float FireLightIntensity => _fireLightIntensity;
         public int MaxSteamPuffs => _maxSteamPuffs;
         public int MaxSparkBursts => _maxSparkBursts;

@@ -43,6 +43,8 @@ namespace FB.Editor.Building
             collision.quality = ParticleSystemCollisionQuality.High;
             collision.collidesWith = GameLayers.AllButPlayerMask;
             collision.enableDynamicColliders = true;
+            // High quality = exact raycasts; capping the shapes each particle may consider keeps it affordable.
+            collision.maxCollisionShapes = 64;
             collision.sendCollisionMessages = true;
             collision.bounce = 0.1f;
             collision.dampen = 0.6f;

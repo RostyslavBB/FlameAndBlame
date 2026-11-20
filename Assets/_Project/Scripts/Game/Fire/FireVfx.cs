@@ -19,6 +19,7 @@ namespace FB.Game.Fire
         private float[] _baseRates;
         private float[] _baseSizes;
         private float _areaFactor = 1f;
+        private float _budget = 1f;
 
         public bool HasLight => _light.enabled;
 
@@ -65,11 +66,14 @@ namespace FB.Game.Fire
             for (int i = 0; i < _emitters.Length; i++)
             {
                 ParticleSystem.EmissionModule emission = _emitters[i].emission;
-                emission.rateOverTimeMultiplier = _baseRates[i] * _areaFactor * intensity;
+                emission.rateOverTimeMultiplier = _baseRates[i] * _areaFactor * intensity * _budget;
                 ParticleSystem.MainModule main = _emitters[i].main;
                 main.startSizeMultiplier = _baseSizes[i] * sizeScale;
             }
         }
+
+        /// <summary>Global particle budget share (0..1): fewer particles per fire when many burn, same flame size.</summary>
+        public void SetBudget(float budget) => _budget = budget;
 
         public void SetLight(bool enabled) => _light.enabled = enabled;
 
@@ -77,6 +81,7 @@ namespace FB.Game.Fire
 
         public void OnSpawned()
         {
+            _budget = 1f;
         }
 
         public void OnDespawned()

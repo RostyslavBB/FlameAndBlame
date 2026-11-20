@@ -11,7 +11,7 @@ using Zenject;
 namespace FB.Game.Audio
 {
     /// <summary>
-    /// Observer that gives every gameplay signal a sound (whoomph on ignition, hiss on extinguish, zaps, sparks,
+    /// Observer that gives every gameplay signal a sound (hiss on extinguish, zaps, sparks,
     /// the neighbour's yelps) and drives the two loops: the hose hiss follows the pressure, the fire crackle sits
     /// on the nearest fire and grows with the number of fires.
     /// </summary>
@@ -42,7 +42,6 @@ namespace FB.Game.Audio
 
         public void Initialize()
         {
-            _signalBus.Subscribe<FireSpreadSignal>(OnFireSpread);
             _signalBus.Subscribe<FireExtinguishedSignal>(OnFireExtinguished);
             _signalBus.Subscribe<ElectrocutionSignal>(OnElectrocution);
             _signalBus.Subscribe<ItemRuinedSignal>(OnItemRuined);
@@ -51,7 +50,6 @@ namespace FB.Game.Audio
 
         public void Dispose()
         {
-            _signalBus.Unsubscribe<FireSpreadSignal>(OnFireSpread);
             _signalBus.Unsubscribe<FireExtinguishedSignal>(OnFireExtinguished);
             _signalBus.Unsubscribe<ElectrocutionSignal>(OnElectrocution);
             _signalBus.Unsubscribe<ItemRuinedSignal>(OnItemRuined);
@@ -97,9 +95,6 @@ namespace FB.Game.Audio
             }
         }
 
-        private void OnFireSpread(FireSpreadSignal signal) =>
-            _audio.Play(SoundId.Ignite, signal.Target.Root.position);
-
         private void OnFireExtinguished(FireExtinguishedSignal signal) =>
             _audio.Play(SoundId.Steam, signal.Target.Root.position);
 
@@ -124,14 +119,9 @@ namespace FB.Game.Audio
         private void OnCivilianIncident(CivilianIncidentSignal signal)
         {
             Vector3 position = _neighbour.Position + Vector3.up;
-            switch (signal.Incident)
+            if (signal.Incident == CivilianIncident.Shocked)
             {
-                case CivilianIncident.Shocked:
-                    _audio.Play(SoundId.Zap, position);
-                    break;
-                case CivilianIncident.Ignited:
-                    _audio.Play(SoundId.Ignite, position);
-                    break;
+                _audio.Play(SoundId.Zap, position);
             }
         }
     }

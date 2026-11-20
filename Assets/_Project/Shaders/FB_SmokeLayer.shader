@@ -1,6 +1,7 @@
 // Smoke gathering under the ceiling (URP, WebGL2-safe). Stacked transparent planes with domain-warped, slowly
 // swirling noise give a volumetric look; scene depth softens the intersections with walls and furniture,
-// and the layer fades near the camera so walking under it never shows a hard edge.
+// and each slice fades near the camera and when seen edge-on, so neither walking under it nor jumping into it
+// shows a hard edge or stacked sheets.
 Shader "FB/SmokeLayer"
 {
     Properties
@@ -97,10 +98,14 @@ Shader "FB/SmokeLayer"
                 float sceneDepth = LinearEyeDepth(SampleSceneDepth(screenUV), _ZBufferParams);
                 float soft = saturate((sceneDepth - input.screenPos.w) / _SoftDistance);
                 float nearFade = saturate((input.screenPos.w - 0.3) / 1.2);
+                // Seen edge-on (camera at slice height) a plane collapses into a visible line: fade it by how
+                // grazing the view is, so flying up into the smoke shows haze, never stacked sheets.
+                float3 toCamera = normalize(_WorldSpaceCameraPos - input.positionWS);
+                float facing = smoothstep(0.08, 0.45, abs(toCamera.y));
 
                 half4 color;
                 color.rgb = lerp(_Color.rgb, _LightColor.rgb, saturate(n * 1.4 - 0.4));
-                color.a = coverage * _Density * _MaxAlpha * soft * nearFade;
+                color.a = coverage * _Density * _MaxAlpha * soft * nearFade * facing;
                 return color;
             }
             ENDHLSL

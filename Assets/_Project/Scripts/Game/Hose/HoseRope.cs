@@ -62,6 +62,7 @@ namespace FB.Game.Hose
         {
             float deltaTime = Mathf.Min(Time.deltaTime, 1f / 30f);
             Integrate(deltaTime);
+            _collision?.BeginFrame(_points);
             int iterations = _config.RopeIterations;
             for (int i = 0; i < iterations; i++)
             {

@@ -20,6 +20,9 @@ namespace FB.Game.Smoke
         [Tooltip("Height of the lowest smoke layer when the apartment is full of smoke (just above the eyes).")]
         [SerializeField] private float _layerBottomY = 1.85f;
 
+        [Tooltip("Ceiling smoke puffs per second at full smoke (soft billboards under the ceiling).")]
+        [SerializeField, Min(0f)] private float _maxPuffsPerSecond = 5f;
+
         [Header("Haze")]
         [SerializeField, Min(0f)] private float _maxFogDensity = 0.09f;
         [SerializeField] private Color _fogColor = new Color(0.34f, 0.31f, 0.3f);
@@ -30,6 +33,7 @@ namespace FB.Game.Smoke
         public float VisualLerpSpeed => _visualLerpSpeed;
         public float LayerTopY => _layerTopY;
         public float LayerBottomY => _layerBottomY;
+        public float MaxPuffsPerSecond => _maxPuffsPerSecond;
         public float MaxFogDensity => _maxFogDensity;
         public Color FogColor => _fogColor;
     }

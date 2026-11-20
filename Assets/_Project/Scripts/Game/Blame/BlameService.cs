@@ -118,9 +118,14 @@ namespace FB.Game.Blame
             _ledger.Add(_shares, damage, points, record);
             Last = record;
 
-            Debug.Log($"[Blame] {text} | ${damage} | {record.Chain} | {SharesText()}");
+            LogRecord(text, damage, record.Chain);
             _signalBus.Fire(new BlameEventSignal(record, _actors.ColorOf(main), _actors.NameOf(main)));
         }
+
+        /// <summary>Editor and development builds only: string building and stack traces are not free in WebGL.</summary>
+        [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        private void LogRecord(string text, int damage, string chain) =>
+            Debug.Log($"[Blame] {text} | ${damage} | {chain} | {SharesText()}");
 
         private ActorId MainActor()
         {

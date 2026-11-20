@@ -6,11 +6,15 @@ using UnityEngine.Rendering;
 
 namespace FB.Editor.Building
 {
-    /// <summary>Ceiling smoke: three stacked planes over the rooms (FB/SmokeLayer) + the smoke post-processing volume.</summary>
+    /// <summary>Ceiling smoke: thin stacked planes over the rooms (FB/SmokeLayer), soft drifting puffs under the ceiling
+    /// (they make it read as a volume from any angle) and the smoke post-processing volume.</summary>
     internal static class SmokeBuilder
     {
-        private const int Layers = 3;
-        private const float LayerSpacing = 0.25f;
+        private const int Layers = 6;
+        private const float LayerSpacing = 0.1f;
+        // Six thin slices, each fainter than the old three: same total density, smoother look.
+        private const float SliceOpacity = 0.55f;
+        private const string PuffMaterial = AssetPaths.Materials + "/M_Smoke.mat";
 
         public static SmokeView Build(LevelLayoutConfig layout, Transform parent)
         {
@@ -33,6 +37,8 @@ namespace FB.Editor.Building
                 StackedPlanes(max - min), AssetPaths.SmokeMesh);
             MeshRenderer renderer = layer.AddComponent<MeshRenderer>();
             renderer.sharedMaterial = PuddleSurfaceBuilder.ShaderMaterial(AssetPaths.SmokeMaterial, "FB/SmokeLayer");
+            renderer.sharedMaterial.SetFloat("_MaxAlpha", SliceOpacity);
+            EditorUtility.SetDirty(renderer.sharedMaterial);
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
             renderer.enabled = false;
@@ -43,6 +49,8 @@ namespace FB.Editor.Building
             SmokeView view = root.AddComponent<SmokeView>();
             EditorAssetUtility.SetReference(view, "_layer", renderer);
             EditorAssetUtility.SetReference(view, "_volume", volume);
+            EditorAssetUtility.SetReference(view, "_puffs", CeilingPuffs.Create(layer.transform, max - min,
+                AssetDatabase.LoadAssetAtPath<Material>(PuffMaterial)));
             return view;
         }
 

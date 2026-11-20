@@ -24,6 +24,9 @@ namespace FB.Editor.Building
             bloom.intensity.Override(1.15f);
             bloom.scatter.Override(0.7f);
             bloom.tint.Override(new Color(1f, 0.78f, 0.55f));
+            // Quarter-resolution, 5-level pyramid: the soft warm glow looks the same, the WebGL fill cost is a fraction.
+            bloom.downscale.Override(BloomDownscaleMode.Quarter);
+            bloom.maxIterations.Override(5);
 
             ColorAdjustments color = Add<ColorAdjustments>(profile);
             color.postExposure.Override(0.2f);
@@ -64,6 +67,8 @@ namespace FB.Editor.Building
             Bloom bloom = Add<Bloom>(profile);
             bloom.intensity.Override(1.6f);
             bloom.scatter.Override(0.8f);
+            bloom.downscale.Override(BloomDownscaleMode.Quarter);
+            bloom.maxIterations.Override(5);
             return Save(profile);
         }
 

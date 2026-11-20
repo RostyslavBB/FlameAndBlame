@@ -26,7 +26,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Density: 0
-    - _MaxAlpha: 0.92
+    - _MaxAlpha: 0.55
     - _NoiseScale: 0.55
     - _SoftDistance: 0.5
     - _Speed: 0.06

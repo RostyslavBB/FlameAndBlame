@@ -22,8 +22,6 @@ namespace FB.Editor.Audio
             {
                 Entry(SoundId.HoseLoop, 0.5f, NoPitch, 0f, false, Clip("Hose_Loop", AmbienceRecipes.HoseLoop(1))),
                 Entry(SoundId.FireLoop, 0.75f, NoPitch, 0f, true, Clip("Fire_Loop", AmbienceRecipes.FireLoop(2))),
-                Entry(SoundId.Ignite, 0.9f, new Vector2(0.9f, 1.1f), 0.12f, true,
-                    Clip("Ignite_A", AmbienceRecipes.Ignite(3)), Clip("Ignite_B", AmbienceRecipes.Ignite(4))),
                 Entry(SoundId.Steam, 0.6f, new Vector2(0.9f, 1.15f), 0.15f, true, Clip("Steam", AmbienceRecipes.Steam(5))),
                 Entry(SoundId.Zap, 0.8f, new Vector2(0.9f, 1.1f), 0.25f, true,
                     Clip("Zap_A", HitRecipes.Zap(6)), Clip("Zap_B", HitRecipes.Zap(7))),

@@ -31,20 +31,12 @@ MonoBehaviour:
     _spatial: 1
   - _id: 2
     _clips:
-    - {fileID: 8300000, guid: d3ac4169ab18137489466e3a9c5723a3, type: 3}
-    - {fileID: 8300000, guid: 3f6d92a5c8475df4784864d82949d518, type: 3}
-    _volume: 0.9
-    _pitch: {x: 0.9, y: 1.1}
-    _cooldown: 0.12
-    _spatial: 1
-  - _id: 3
-    _clips:
     - {fileID: 8300000, guid: efb15b91e822bf443a49f98d6e4d2eb7, type: 3}
     _volume: 0.6
     _pitch: {x: 0.9, y: 1.15}
     _cooldown: 0.15
     _spatial: 1
-  - _id: 4
+  - _id: 3
     _clips:
     - {fileID: 8300000, guid: 767f4bce57a8d6f4aa6f3508ad754e2c, type: 3}
     - {fileID: 8300000, guid: b9b0d447978c9764d97b6591bb0100c1, type: 3}
@@ -52,14 +44,14 @@ MonoBehaviour:
     _pitch: {x: 0.9, y: 1.1}
     _cooldown: 0.25
     _spatial: 1
-  - _id: 5
+  - _id: 4
     _clips:
     - {fileID: 8300000, guid: 7531b721f39b9f34eb205bb98c472b8d, type: 3}
     _volume: 0.8
     _pitch: {x: 0.9, y: 1.2}
     _cooldown: 0.1
     _spatial: 1
-  - _id: 6
+  - _id: 5
     _clips:
     - {fileID: 8300000, guid: 3126aa24cd7706c49a74f2c68578fa9b, type: 3}
     - {fileID: 8300000, guid: 1b78e289ecd37994da8f7e2df9c13212, type: 3}
@@ -68,35 +60,35 @@ MonoBehaviour:
     _pitch: {x: 0.9, y: 1.1}
     _cooldown: 0.04
     _spatial: 1
-  - _id: 7
+  - _id: 6
     _clips:
     - {fileID: 8300000, guid: 60eed74fb6050164ba07dea55d90036b, type: 3}
     _volume: 0.4
     _pitch: {x: 1, y: 1}
     _cooldown: 0.1
     _spatial: 0
-  - _id: 8
+  - _id: 7
     _clips:
     - {fileID: 8300000, guid: c3bfd0c213d311346ac312c67f521710, type: 3}
     _volume: 0.45
     _pitch: {x: 1, y: 1}
     _cooldown: 0.05
     _spatial: 0
-  - _id: 9
+  - _id: 8
     _clips:
     - {fileID: 8300000, guid: e45036d8b9d253542affd3214a5203a2, type: 3}
     _volume: 1
     _pitch: {x: 1, y: 1}
     _cooldown: 0
     _spatial: 0
-  - _id: 10
+  - _id: 9
     _clips:
     - {fileID: 8300000, guid: d17683a6dc06d4648bd0dcb076d2ebd1, type: 3}
     _volume: 0.6
     _pitch: {x: 0.95, y: 1.05}
     _cooldown: 0.1
     _spatial: 0
-  - _id: 11
+  - _id: 10
     _clips:
     - {fileID: 8300000, guid: af355dadc1f54d34ea7769765287ff15, type: 3}
     _volume: 0.5

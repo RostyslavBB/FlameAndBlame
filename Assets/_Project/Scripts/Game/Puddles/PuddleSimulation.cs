@@ -1,4 +1,5 @@
 using System;
+using Unity.Collections;
 using FB.Game.Blame;
 using FB.Game.Common;
 using FB.Game.Level;
@@ -26,7 +27,6 @@ namespace FB.Game.Puddles
         private readonly Vector4[] _ripples;
         private WaterGrid _grid;
         private Texture2D _texture;
-        private Color[] _pixels;
         private Cause _lastWater;
         private Cause _puddleCause;
         private float _accumulator;
@@ -58,8 +58,7 @@ namespace FB.Game.Puddles
                 filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp
             };
-            _pixels = new Color[width * height];
-            Upload();
+            Upload(new RectInt(0, 0, width, height));
             _view.Bind(_texture);
             _signalBus.Subscribe<WaterHitSignal>(OnWaterHit);
         }
@@ -81,16 +80,20 @@ namespace FB.Game.Puddles
             float step = 1f / _config.SimulationRate;
             _accumulator = Mathf.Min(_accumulator + Time.deltaTime, step * MaxStepsPerFrame);
             bool stepped = false;
+            RectInt changed = default;
             while (_accumulator >= step)
             {
                 _accumulator -= step;
-                _grid.Step(_config.FlowRate, _config.FilmThickness, _config.EvaporationPerSecond * step);
-                stepped = true;
+                if (_grid.Step(_config.FlowRate, _config.FilmThickness, _config.EvaporationPerSecond * step, out RectInt touched))
+                {
+                    changed = stepped ? Union(changed, touched) : touched;
+                    stepped = true;
+                }
             }
 
             if (stepped)
             {
-                Upload();
+                Upload(changed);
             }
 
             _view.SetRipples(_ripples);
@@ -146,17 +149,35 @@ namespace FB.Game.Puddles
             }
         }
 
-        private void Upload()
+        /// <summary>
+        /// Writes half-floats (R = depth, G = electrified) straight into the texture memory, only for the cells that
+        /// may have changed: no Color[] conversion of the whole grid every step.
+        /// </summary>
+        private void Upload(RectInt area)
         {
+            NativeArray<ushort> data = _texture.GetPixelData<ushort>(0);
             float[] depth = _grid.Depth;
             bool[] electrified = _grid.Electrified;
-            for (int i = 0; i < _pixels.Length; i++)
+            ushort one = Mathf.FloatToHalf(1f);
+            int width = _grid.Width;
+            for (int z = area.yMin; z < area.yMax; z++)
             {
-                _pixels[i] = new Color(depth[i], electrified[i] ? 1f : 0f, 0f, 0f);
+                for (int x = area.xMin; x < area.xMax; x++)
+                {
+                    int index = z * width + x;
+                    data[index * 2] = Mathf.FloatToHalf(depth[index]);
+                    data[index * 2 + 1] = electrified[index] ? one : (ushort)0;
+                }
             }
 
-            _texture.SetPixels(_pixels);
             _texture.Apply(false, false);
+        }
+
+        private static RectInt Union(RectInt a, RectInt b)
+        {
+            int xMin = Mathf.Min(a.xMin, b.xMin);
+            int yMin = Mathf.Min(a.yMin, b.yMin);
+            return new RectInt(xMin, yMin, Mathf.Max(a.xMax, b.xMax) - xMin, Mathf.Max(a.yMax, b.yMax) - yMin);
         }
     }
 }

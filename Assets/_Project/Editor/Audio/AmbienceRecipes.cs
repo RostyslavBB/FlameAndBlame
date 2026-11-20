@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace FB.Editor.Audio
 {
-    /// <summary>Noise-based sounds: hose hiss and fire crackle loops, ignition whoomph, steam, whoosh.</summary>
+    /// <summary>Noise-based sounds: hose hiss and fire crackle loops, steam, whoosh.</summary>
     internal static class AmbienceRecipes
     {
         /// <summary>Pressurized water: band-limited hiss with a slow surge and a bubbly flutter.</summary>
@@ -64,26 +64,6 @@ namespace FB.Editor.Audio
             samples = SoundSynth.MakeLoop(samples, 0.35f);
             SoundSynth.Normalize(samples, 0.75f);
             return samples;
-        }
-
-        /// <summary>"Whoomph": filtered noise opening and closing over a dropping sub thump.</summary>
-        public static float[] Ignite(int seed)
-        {
-            SoundSynth synth = new SoundSynth(seed);
-            float[] samples = SoundSynth.Buffer(0.9f);
-            Biquad filter = Biquad.LowPass(200f);
-            float phase = 0f;
-            for (int i = 0; i < samples.Length; i++)
-            {
-                float t = SoundSynth.Time(i);
-                float cutoff = t < 0.12f ? Mathf.Lerp(200f, 2600f, t / 0.12f) : Mathf.Lerp(2600f, 300f, (t - 0.12f) / 0.78f);
-                filter.SetLowPass(cutoff, 1.1f);
-                float envelope = Mathf.Min(1f, t / 0.03f) * Mathf.Exp(-t * 3.2f);
-                phase += 2f * Mathf.PI * Mathf.Lerp(75f, 35f, t / 0.9f) / SoundSynth.Rate;
-                samples[i] = filter.Process(synth.Noise()) * envelope + Mathf.Sin(phase) * 0.5f * Mathf.Exp(-t * 5f);
-            }
-
-            return Finish(samples, 0.9f);
         }
 
         /// <summary>"Pshhh": bright noise that fades out.</summary>

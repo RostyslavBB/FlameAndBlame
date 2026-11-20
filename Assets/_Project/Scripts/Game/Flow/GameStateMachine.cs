@@ -33,8 +33,11 @@ namespace FB.Game.Flow
         public void Enter<TState>() where TState : IGameState
         {
             _machine.Enter<TState>();
-            Debug.Log($"[Flow] Phase: {_machine.Current.Phase}");
+            LogPhase();
             _signalBus.Fire(new GamePhaseChangedSignal(_machine.Current.Phase));
         }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        private void LogPhase() => Debug.Log($"[Flow] Phase: {_machine.Current.Phase}");
     }
 }

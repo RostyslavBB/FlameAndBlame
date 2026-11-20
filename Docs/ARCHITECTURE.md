@@ -143,6 +143,11 @@ prop box, recolors their materials into the palette and adds a box collider; gam
 - Shadows are off in the WebGL quality level (`Apply WebGL Settings`): URP 17 on WebGL2 bound a shadow texture to a
   comparison sampler with a mismatching format (`GL_INVALID_OPERATION`) and every Lit draw call was dropped.
   The Windows build keeps shadows.
+- Performance budgets: the puddle grid simulates and uploads only its wet rectangle (+1 cell) and sleeps when the
+  floor is dry, writing half-floats straight into the texture; the hose rope does one broad-phase box query per
+  frame and tests segments against cached collider bounds; beyond 8 fires every fire emits proportionally fewer
+  particles (overdraw budget); bloom runs at quarter resolution; water particles consider at most 64 shapes; blame
+  and flow logs exist only in editor/development builds, log stack traces are off in WebGL.
 
 ## Look and atmosphere
 
@@ -151,8 +156,9 @@ prop box, recolors their materials into the palette and adds a box collider; gam
   and door casings are generated with the walls. Five rooms: hall, kitchen, living room, bathroom, bedroom.
 - Fire: layered pooled VFX (base glow, 4x4 animated flame flipbook, additive HDR core, turbulent embers, thick smoke);
   `FireVisualService` scales each fire with the heat of what burns, so fires grow from a flicker to a blaze.
-- Smoke: `SmokeService` accumulates smoke from burning objects; `FB/SmokeLayer` (stacked swirling planes with soft
-  depth intersections) lowers from the ceiling, fog density rises and a "smoke" post-processing volume fades in.
+- Smoke: `SmokeService` accumulates smoke from burning objects; `FB/SmokeLayer` (6 thin stacked swirling planes with soft
+  depth intersections, each fading when seen edge-on) lowers from the ceiling, soft billboard puffs (`CeilingPuffs`,
+  emission driven by the smoke amount, max 45) drift under it so it reads as a volume from any angle, fog density rises and a "smoke" post-processing volume fades in.
 - Post-processing (code-generated `VolumeProfile`s): warm "evening fire" grade - ACES, orange-tinted bloom, warm white
   balance and color filter, brown shadows (shadows/midtones/highlights), warm vignette; FXAA on the camera. A third
   "shock" profile (chromatic aberration, lens distortion, cold flash) is driven by `ShockOverlayPresenter` together
@@ -169,10 +175,10 @@ prop box, recolors their materials into the palette and adds a box collider; gam
   envelopes) into WAVs in `Audio/`; no third-party audio.
 - `AudioConfig` is the mixing table (variants, volume, random pitch, anti-spam cooldown, 2D/3D per `SoundId`).
 - `AudioService` plays on a fixed pool of 12 pre-built `AudioSource`s (`AudioRig`), stealing the oldest voice.
-- `GameSoundEvents` is an Observer: fire spread, extinguish, shocks, short circuits and neighbour incidents each get a
+- `GameSoundEvents` is an Observer: extinguish, shocks, short circuits and neighbour incidents each get a
   sound; it also drives the hose loop (volume/pitch = pressure) and the fire loop (on the nearest fire, louder with
   more fires). `ImpactSensor` (passive collision bridge on loose props) feeds `ImpactSounds` (speed -> volume,
-  mass -> pitch). The neighbour has no voice on purpose (user decision); his shocks and ignition use the zap and whoomph. UI presenters add ticks, pops, whooshes, cash and the stamp.
+  mass -> pitch). The neighbour has no voice on purpose (user decision); his shocks use the zap; ignition is silent (user decision). UI presenters add ticks, pops, whooshes, cash and the stamp.
 
 ## The neighbour (NPC)
 

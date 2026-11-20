@@ -10,7 +10,7 @@ using Zenject;
 namespace FB.Game.Fire
 {
     /// <summary>
-    /// Observer of fire signals: pooled flames per burning surface, a budget of point lights (WebGL),
+    /// Observer of fire signals: pooled flames per burning surface, budgets of point lights and particles (WebGL),
     /// steam when a fire is put out, sparks on short circuits.
     /// </summary>
     public sealed class FireVisualService : IInitializable, IDisposable, ITickable
@@ -53,11 +53,15 @@ namespace FB.Game.Fire
         public void Tick()
         {
             float time = Time.time * 9f;
+            float budget = _active.Count <= _config.FullRateFires
+                ? 1f
+                : Mathf.Max(_config.MinEmissionShare, _config.FullRateFires / (float)_active.Count);
             foreach (KeyValuePair<ISurface, FireVfx> pair in _active)
             {
                 // Fire grows with the heat of what burns: small when it just caught, raging at full heat.
                 Surface surface = _surfaces.All[pair.Key.Id];
                 float heat = Mathf.Clamp01(surface.Heat / (surface.Profile.IgnitionHeat * _config.MaxHeatFactor));
+                pair.Value.SetBudget(budget);
                 pair.Value.SetIntensity(Mathf.Lerp(0.35f, 1.2f, heat));
 
                 if (pair.Value.HasLight)

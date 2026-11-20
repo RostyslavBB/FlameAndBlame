@@ -5,7 +5,6 @@ namespace FB.Game.Audio
     {
         HoseLoop,
         FireLoop,
-        Ignite,
         Steam,
         Zap,
         Spark,
